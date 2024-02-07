@@ -1,0 +1,6 @@
+locations:
+- build:
+    directory: ./dagster_fanareas
+  code_source:
+    module_name: dagster_fanareas.definitions
+  location_name: dagster_fanareas
