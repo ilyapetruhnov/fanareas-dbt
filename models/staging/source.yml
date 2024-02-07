@@ -1,0 +1,36 @@
+version: 2
+
+sources:
+  - name: src_postgres
+    schema: source
+    database: defaultdb
+
+    tables:
+      - name: cities
+        identifier: id
+      - name: coaches
+        identifier: id
+      - name: continents
+        identifier: id
+      - name: coutries
+      - name: fixtures
+      - name: leagues
+      - name: player_stats
+      - name: player_stats_detailed
+      - name: players
+      - name: referees
+      - name: regions
+      - name: rouds
+      - name: seasons
+        identifier: id
+      - name: squads
+        identifier: id
+      - name: standigs
+      - name: teams_stats
+      - name: teams_stats_detailed
+      - name: teams
+      - name: topscorers
+      - name: types
+      - name: venues
+        identifier: id
+  

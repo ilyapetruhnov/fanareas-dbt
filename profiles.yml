@@ -1,7 +1,23 @@
-jaffle_shop:
+fanareas:
   target: dev
   outputs:
     dev:
-      type: duckdb
-      path: 'tutorial.duckdb'
-      threads: 24
+      type: postgres
+      threads: 1
+      host: "{{ env_var('hostname') }}"
+      port: 25060
+      user: "{{ env_var('uid') }}"
+      pass: "{{ env_var('pwd') }}"
+      dbname: "{{ env_var('db') }}"
+      schema: public
+
+    prod:
+      type: postgres
+      threads: 1
+      host: "{{ env_var('hostname') }}"
+      port: 25060
+      user: "{{ env_var('uid') }}"
+      pass: "{{ env_var('pwd') }}"
+      dbname: "{{ env_var('db') }}"
+    schema: public
+
