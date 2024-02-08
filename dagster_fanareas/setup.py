@@ -13,7 +13,8 @@ setup(
         "dagster",
         "dagster-cloud",
         "dagster-dbt",
-        "dbt-duckdb",
+        "dbt-postgres",
+        # "dbt-duckdb",
     ],
     extras_require={
         "dev": [

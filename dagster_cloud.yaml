@@ -4,3 +4,45 @@ locations:
   code_source:
     module_name: dagster_fanareas.definitions
   location_name: dagster_fanareas
+
+# storage:
+#   postgres:
+#     postgres_db:
+#       username: { env: uid}
+#       password: { env: pwd}
+#       hostname: { env: hostname}
+#       db_name: { env: db}
+#       port: 25060
+
+event_log_storage:
+  module: dagster_postgres.event_log
+  class: PostgresEventLogStorage
+  config:
+    postgres_db:
+      username: { "env": "uid"}
+      password: { "env": "pwd"}
+      hostname: { "env": "hostname"}
+      db_name: { "env": "event_log_storage"}
+      port: 25060
+
+run_storage:
+  module: dagster_postgres.run_storage
+  class: PostgresRunStorage
+  config:
+    postgres_db:
+      username: { "env": "uid"}
+      password: { "env": "pwd"}
+      hostname: { "env": "hostname"}
+      db_name: { "env": "run_storage"}
+      port: 25060
+
+schedule_storage:
+  module: dagster_postgres.schedule_storage
+  class: PostgresScheduleStorage
+  config:
+    postgres_db:
+      username: { "env": "uid"}
+      password: { "env": "pwd"}
+      hostname: { "env": "hostname"}
+      db_name: { "env": "schedule_storage"}
+      port: 25060
