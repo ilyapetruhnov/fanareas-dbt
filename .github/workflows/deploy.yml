@@ -53,6 +53,7 @@ jobs:
           cd ${{ env.DBT_PROJECT_DIR }}/${{ env.DAGSTER_PROJECT_NAME }}
           pip install . MarkupSafe==2.0.1 'click>8.1.0' 'Jinja2>3.0.0'
           pip install pyOpenSSL --upgrade
+          pip install dbt-postgres
           cd -
           rsync -avz --exclude ${{ env.DAGSTER_PROJECT_NAME }} --exclude .git ${{ env.DBT_PROJECT_DIR }}/ ${{ env.DBT_PACKAGE_DATA_DIR }}
           dbt deps --project-dir ${{ env.DBT_PACKAGE_DATA_DIR }} --profiles-dir ${{ env.DBT_PACKAGE_DATA_DIR }}
