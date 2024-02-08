@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: src_postgres
-    schema: source
+    schema: public
     database: defaultdb
 
     tables:
@@ -19,7 +19,6 @@ sources:
       - name: player_stats_detailed
       - name: players
       - name: referees
-        identifier: id
       - name: regions
       - name: rouds
       - name: seasons
