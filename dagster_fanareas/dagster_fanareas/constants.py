@@ -4,11 +4,7 @@ from pathlib import Path
 from dagster_dbt import DbtCliResource
 from dagster import EnvVar
 # from collections.abc import namedtuple
-from dagster import EnvVar
-import os
 from urllib.parse import quote
-# from dagster_postgres.utils import get_conn_string
-
 # start_resources_marker_0
 # DbInfo = namedtuple("DbInfo", "engine url jdbc_url dialect load_table host db_name")
 # end_resources_0
@@ -24,18 +20,18 @@ def get_conn_string(
 
 POSTGRES_CONFIG = {
     "con_string": get_conn_string(
-        username= EnvVar("uid"),
-        password=EnvVar("pwd"),
-        hostname= EnvVar("hostname"),
-        port= EnvVar("port"),
-        db_name= EnvVar("db"),
+        username= os.getenv("POSTGRES_USER"),
+        password=os.getenv("POSTGRES_PWD"),
+        hostname= os.getenv("POSTGRES_HOST"),
+        port= "25060",
+        db_name= os.getenv("POSTGRES_DBNAME"),
         scheme = 'postgresql'
     )
 }
 
-api_key = EnvVar("api_key")
-base_url = EnvVar("base_url")
-core_url = EnvVar("core_url")
+api_key = os.getenv("API_KEY")
+base_url = "https://api.sportmonks.com/v3/football"
+core_url = "https://api.sportmonks.com/v3/core"
 
 # We expect the dbt project to be installed as package data.
 # For details, see https://docs.python.org/3/distutils/setupscript.html#installing-package-data.

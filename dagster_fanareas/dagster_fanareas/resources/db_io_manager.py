@@ -4,7 +4,7 @@
 # from dagster import AssetKey, EnvVar
 
 # # from dagster_embedded_elt.sling import (SlingResource, SlingSourceConnection, SlingTargetConnection)
-from dagster_fanareas.ops.utils import fetch_data, base_url, upsert
+from dagster_fanareas.ops.utils import fetch_data, upsert
 import pandas as pd
 from dagster import IOManager, io_manager
 from dagster import (
