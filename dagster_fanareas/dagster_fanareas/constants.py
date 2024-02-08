@@ -2,9 +2,8 @@ import os
 from pathlib import Path
 
 from dagster_dbt import DbtCliResource
-from dagster import EnvVar
 # from collections.abc import namedtuple
-from urllib.parse import quote
+# from urllib.parse import quote
 # start_resources_marker_0
 # DbInfo = namedtuple("DbInfo", "engine url jdbc_url dialect load_table host db_name")
 # end_resources_0
@@ -16,7 +15,7 @@ def get_conn_string(
     port: str,
     scheme: str = "postgresql"
 ) -> str:
-    return f"{scheme}://{quote(username)}:{quote(password)}@{hostname}:{port}/{db_name}"
+    return f"{scheme}://{username}:{password}@{hostname}:{port}/{db_name}"
 
 POSTGRES_CONFIG = {
     "con_string": get_conn_string(
