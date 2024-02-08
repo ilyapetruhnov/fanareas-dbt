@@ -4,20 +4,20 @@ fanareas:
     dev:
       type: postgres
       threads: 1
-      host: "{{ env_var('hostname') }}"
+      host: "{{ env_var('POSTGRES_HOST') }}"
       port: 25060
-      user: "{{ env_var('uid') }}"
-      pass: "{{ env_var('pwd') }}"
-      dbname: "{{ env_var('db') }}"
+      user: "{{ env_var('POSTGRES_USER') }}"
+      pass: "{{ env_var('POSTGRES_PWD') }}"
+      dbname: "{{ env_var('POSTGRES_DBNAME') }}"
       schema: public
 
     prod:
       type: postgres
       threads: 1
-      host: "{{ env_var('hostname') }}"
+      host: "{{ env_var('POSTGRES_HOST') }}"
       port: 25060
-      user: "{{ env_var('uid') }}"
-      pass: "{{ env_var('pwd') }}"
-      dbname: "{{ env_var('db') }}"
+      user: "{{ env_var('POSTGRES_USER') }}"
+      pass: "{{ env_var('POSTGRES_PWD') }}"
+      dbname: "{{ env_var('POSTGRES_DBNAME') }}"
     schema: public
 
