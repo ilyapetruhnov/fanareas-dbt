@@ -4,6 +4,12 @@ with players as (
 
 ),
 
+continents as (
+
+    select * from {{ source('src_postgres', 'continents') }}
+
+),
+
 countries as (
 
     select * from {{ source('src_postgres', 'countries') }}
@@ -40,10 +46,25 @@ teams as (
 
 ),
 
+countries_cities_continents as (
+
+    select
+        cities.id as city_id,
+        cities.name as city,
+        countries.id as country_id,
+        countries.name as country,
+        continents.name as continent
+    from cities
+    left join countries
+    on cities.country_id = countries.id
+    left join continents
+    on countries.continent_id = continents.id
+),
+
 squads_seasons_teams as (
 
-        select
-        id as squad_id,
+    select
+        squads.id as squad_id,
         player_id,
         teams.name as team,
         seasons.name as season
@@ -60,10 +81,11 @@ select
 
     players.id as player_id,
     squad_id,
-    countries.name as country,
-    cities.name as city,
+    countries_cities_continents.country as country,
+    countries_cities_continents.city as city,
+    countries_cities_continents.continent as continent,
     types.name as position,
-    squads_seasons_teams.name as team,
+    squads_seasons_teams.team as team,
     squads_seasons_teams.season,
     firstname,
     lastname,
@@ -71,15 +93,12 @@ select
     weight,
     date_of_birth
     from players
-    left join countries
-    on country_id = countries.id
-    left join cities
-    on city_id = cities.id
+    left join countries_cities_continents
+    on players.city_id = countries_cities_continents.city_id
     left join types
     on detailed_position_id = types.id
     left join squads_seasons_teams
     on squads_seasons_teams.player_id = players.id
-
 )
 
 select * from final

@@ -8,6 +8,10 @@ from dagster_fanareas.resources.db_io_manager import db_io_manager
 
 all_assets = load_assets_from_modules([assets, dbt, core_assets])
 
+# postgres_instance = db_io_manager.configured(POSTGRES_CONFIG)
+
+# airbyte_assets = load_assets_from_airbyte_instance( airbyte_instance,  key_prefix=["src_postgres"])
+
 defs = Definitions(
     assets=[*all_assets],
     schedules=schedules,
