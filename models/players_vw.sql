@@ -46,17 +46,13 @@ teams as (
 
 ),
 
-countries_cities_continents as (
+     countries_continents as (
 
     select
-        cities.id as city_id,
-        cities.name as city,
         countries.id as country_id,
         countries.name as country,
         continents.name as continent
-    from cities
-    left join countries
-    on cities.country_id = countries.id
+    from countries
     left join continents
     on countries.continent_id = continents.id
 ),
@@ -81,9 +77,9 @@ select
 
     players.id as player_id,
     squad_id,
-    countries_cities_continents.country as country,
-    countries_cities_continents.city as city,
-    countries_cities_continents.continent as continent,
+    countries_continents.continent as continent,
+    countries_continents.country as nationality,
+    cities.name as city,
     types.name as position,
     squads_seasons_teams.team as team,
     squads_seasons_teams.season,
@@ -93,8 +89,10 @@ select
     weight,
     date_of_birth
     from players
-    left join countries_cities_continents
-    on players.city_id = countries_cities_continents.city_id
+    left join countries_continents
+    on players.nationality_id = countries_continents.country_id
+    left join cities
+    on players.city_id = cities.id
     left join types
     on detailed_position_id = types.id
     left join squads_seasons_teams
@@ -102,11 +100,3 @@ select
 )
 
 select * from final
-
-
-
-
-
-
-
-;
