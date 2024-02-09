@@ -7,45 +7,24 @@ sources:
 
     tables:
       - name: cities
-        identifier: id
       - name: coaches
-        identifier: id
       - name: continents
-        identifier: id
       - name: countries
-        identifier: id
       - name: fixtures
-        identifier: id
       - name: leagues
-        identifier: id
       - name: player_stats
-        identifier: id
       - name: player_stats_detailed
-        identifier: id
       - name: players
-        identifier: id
       - name: referees
-        identifier: id
       - name: regions
-        identifier: id
       - name: rouds
-        identifier: id
       - name: seasons
-        identifier: id
       - name: squads
-        identifier: id
       - name: standigs
-        identifier: id
       - name: teams_stats
-        identifier: id
       - name: teams_stats_detailed
-        identifier: id
       - name: teams
-        identifier: id
       - name: topscorers
-        identifier: id
       - name: types
-        identifier: id
-      - name: venues
-        identifier: id
+      - name: venuesчы
   
