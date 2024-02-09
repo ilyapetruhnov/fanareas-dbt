@@ -62,7 +62,9 @@ squads_seasons_teams as (
     select
         squads.id as squad_id,
         player_id,
+        teams.id as team_id,
         teams.name as team,
+        seasons.id as season_id,
         seasons.name as season
     from squads
     left join seasons
@@ -77,11 +79,15 @@ select
 
     players.id as player_id,
     squad_id,
+    countries_continents.country_id as nationality_id,
     countries_continents.continent as continent,
     countries_continents.country as nationality,
     cities.name as city,
+    types.id as position_id,
     types.name as position,
+    squads_seasons_teams.team_id as team_id,
     squads_seasons_teams.team as team,
+    squads_seasons_teams.season_id as season_id,
     squads_seasons_teams.season,
     firstname,
     lastname,
