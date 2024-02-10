@@ -5,7 +5,7 @@ with players as (
 player_stats as (
     select * from {{ ref('stg_player_stats') }}
 
-)
+),
 
 agg_player_stats as (
 
