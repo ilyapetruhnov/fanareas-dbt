@@ -5,15 +5,6 @@ locations:
     module_name: dagster_fanareas.definitions
   location_name: dagster_fanareas
 
-# storage:
-#   postgres:
-#     postgres_db:
-#       username: { env: uid}
-#       password: { env: pwd}
-#       hostname: { env: hostname}
-#       db_name: { env: db}
-#       port: 25060
-
 event_log_storage:
   module: dagster_postgres.event_log
   class: PostgresEventLogStorage
