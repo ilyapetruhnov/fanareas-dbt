@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: player_stats
+  - name: dim_player_stats
     columns:
       - name: player_id
         tests:
