@@ -1,31 +1,35 @@
 version: 2
 
 models:
-  - name: stg_customers
+  - name: stg_players
+    description: This table contains basic information about players
     columns:
-      - name: customer_id
+      - name: id
         tests:
           - unique
           - not_null
+          # - relationships:
+          #     to: ref('players')
+          #     field: id
 
-  - name: stg_orders
+  - name: stg_player_stats
+    description: This table contains players statistics per season
+    # description: '{{ doc("orders_status") }}'
     columns:
-      - name: order_id
+      - name: id
         tests:
           - unique
           - not_null
-      - name: status
+      - name: firstname
         tests:
-          - accepted_values:
-              values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
-
-  - name: stg_payments
-    columns:
-      - name: payment_id
-        tests:
-          - unique
           - not_null
-      - name: payment_method
+      - name: lastname
         tests:
-          - accepted_values:
-              values: ['credit_card', 'coupon', 'bank_transfer', 'gift_card']
+          - not_null
+      - name: nationality
+        tests:
+          - not_null
+      # - name: status
+      #   tests:
+      #     - accepted_values:
+      #         values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']

@@ -1,0 +1,12 @@
+version: 2
+
+models:
+  - name: player_stats
+    columns:
+      - name: player_id
+        tests:
+          - not_null
+      # - name: status
+      #   tests:
+      #     - accepted_values:
+      #         values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
