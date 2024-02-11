@@ -43,7 +43,7 @@ final as (
         continent,
         nationality,
         team,
-        season,
+        substr(season, 1, 4) as season,
         position,
         height,
         weight,
