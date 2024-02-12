@@ -42,7 +42,7 @@ final as (
         date_of_birth,
         continent,
         nationality,
-        team_id,
+        agg_player_stats.team_id,
         team,
         substr(season, 1, 4) as season,
         position,
