@@ -1,20 +1,20 @@
 CREATE TYPE season_stats AS
 (
-    season           INTEGER,
-    captain          INTEGER,
-    yellow_cards     INTEGER,
-    red_cards        INTEGER,
-    yellow_red_cards INTEGER,
-    minutes_played   INTEGER,
-    appearances      INTEGER,
-    assists          INTEGER,
-    lineups          INTEGER,
-    goals            INTEGER,
-    home             INTEGER,
-    away             INTEGER,
-    penalties        INTEGER,
-    own_goals        INTEGER,
-    goals_conceded   INTEGER
+    season            INTEGER,
+    captain           INTEGER,
+    yellow_cards      INTEGER,
+    red_cards         INTEGER,
+    yellow_red_cards  INTEGER,
+    home_yellow_cards INTEGER,
+    away_yellow_cards INTEGER,
+    minutes_played    INTEGER,
+    appearances       INTEGER,
+    assists           INTEGER,
+    lineups           INTEGER,
+    goals             INTEGER,
+    penalties         INTEGER,
+    own_goals         INTEGER,
+    goals_conceded    INTEGER
 );
 
 CREATE TABLE dim_players(

@@ -1,6 +1,7 @@
 SELECT
   firstname,
   lastname,
+  array_to_string(team, '/') as team,
   t.*
 FROM
   dim_players

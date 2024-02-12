@@ -18,7 +18,7 @@ WITH
     FROM
       dim_player_stats
     WHERE
-      cast(substr(season, 1, 4) as int) = cur_season + 1
+      season = cur_season + 1
   )
 SELECT
   COALESCE(ts.player_id, ls.player_id) AS player_id,
@@ -28,7 +28,6 @@ SELECT
   COALESCE(ts.continent, ls.continent) AS continent,
   COALESCE(ts.nationality, ls.nationality) AS nationality,
   COALESCE(ts.team, ls.team) AS team,
-  COALESCE(ts.position, ls.position) AS position,
   COALESCE(ts.height, ls.height) AS height,
   COALESCE(ts.weight, ls.weight) AS weight,
   CASE
@@ -37,7 +36,7 @@ SELECT
         THEN
         ARRAY[
             ROW (
-        cast(substr(ts.season, 1, 4) as int),
+        ts.season,
         ts.captain,
         ts.yellow_cards,
         ts.red_cards,
@@ -47,8 +46,8 @@ SELECT
         ts.assists,
         ts.lineups,
         ts.goals,
-        ts.home,
-        ts.away,
+        ts.home_yellow_cards,
+        ts.away_yellow_cards,
         ts.penalties,
         ts.own_goals,
         ts.goals_conceded
@@ -58,7 +57,7 @@ SELECT
         THEN ARRAY_CAT(ls.season_stats,
                        ARRAY [
                            ROW (
-                               cast(substr(ts.season, 1, 4) as int),
+                               ts.season,
                                ts.captain,
                                ts.yellow_cards,
                                ts.red_cards,
@@ -68,8 +67,8 @@ SELECT
                                ts.assists,
                                ts.lineups,
                                ts.goals,
-                               ts.home,
-                               ts.away,
+                               ts.home_yellow_cards,
+                               ts.away_yellow_cards,
                                ts.penalties,
                                ts.own_goals,
                                ts.goals_conceded
@@ -83,7 +82,7 @@ SELECT
     WHEN ts.season IS NOT NULL THEN 0
     ELSE years_since_last_active + 1
   END AS years_since_last_active,
-  COALESCE(cast(substr(ts.season, 1, 4) as int), ls.current_season + 1) AS current_season
+  COALESCE(ts.season, ls.current_season + 1) AS current_season
 FROM
   last_season ls
   FULL OUTER JOIN this_season ts ON ls.player_id = ts.player_id;
