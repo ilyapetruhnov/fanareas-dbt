@@ -73,7 +73,7 @@ joined as (
 final as (
 
 SELECT
-    (player_id + season) as pkey
+    (player_id + season) as pkey,
     player_id,
     season,
     max(firstname) as firstname,
