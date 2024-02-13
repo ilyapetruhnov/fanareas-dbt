@@ -80,7 +80,7 @@ SELECT
     max(date_of_birth)  as date_of_birth,
     max(continent) as continent,
     max(nationality) as nationality,
-    max(postition) as postition,
+    max(position) as position,
     array_agg(team_id) as team_id,
     array_agg(team) as team,
     array_agg(cast(jersey_number as int)) as jersey_number,
