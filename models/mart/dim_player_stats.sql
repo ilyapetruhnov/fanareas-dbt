@@ -73,7 +73,6 @@ joined as (
 final as (
 
 SELECT
-    (player_id + season) as pkey,
     player_id,
     season,
     max(firstname) as firstname,
@@ -81,11 +80,13 @@ SELECT
     max(date_of_birth)  as date_of_birth,
     max(continent) as continent,
     max(nationality) as nationality,
+    max(postition) as postition,
     array_agg(team_id) as team_id,
     array_agg(team) as team,
-    array_agg(jersey_number) as jersey_number,
+    array_agg(cast(jersey_number as int)) as jersey_number,
     max(height) as height,
     max(weight) as weight,
+    sum(minutes_played) as minutes_played,
     sum(captain) as captain,
     sum(yellow_cards) as yellow_cards,
     sum(home) as home_yellow_cards,
