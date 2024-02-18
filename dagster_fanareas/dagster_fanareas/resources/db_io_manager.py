@@ -78,6 +78,44 @@ class DbIOManager(IOManager):
         """
         return pd.read_sql(query, con=self._con)
 
+    
+    def load_players_two_clubs_query(self):
+
+        """Load the contents of a table as a pandas DataFrame."""
+        #context.add_output_metadata({"table_name": model_name})
+        query = f"""
+                    with vw as (SELECT player_id
+                        , lastname
+                        , fullname
+                        , nationality
+                        , date_of_birth
+                        , t.team                                as team_arr
+                        , array_to_string(t.team, ',')          as team
+                        , array_to_string(t.team_id, ',')       as team_id
+                        , array_to_string(t.jersey_number, ',') as jersey_number
+                        , t.season
+                        , t.captain
+                        , t.yellow_cards
+                        , t.red_cards
+                        , t.yellow_red_cards
+                        , t.minutes_played
+                        , t.appearances
+                        , t.assists
+                        , t.lineups
+                        , t.goals
+                        , t.home_yellow_cards
+                        , t.penalties
+                        , t.own_goals
+                        , t.goals_conceded
+                    FROM dim_players
+                            CROSS JOIN UNNEST(season_stats) AS t
+                    WHERE current_season = 2023
+                    )
+        select *
+        from vw
+        where array_length(team_arr, 1) > 1
+        """
+        return pd.read_sql(query, con=self._con)
 
     def load_table_by_id(self, context, input_id) -> pd.DataFrame:
         """Load the contents of a table as a pandas DataFrame."""
