@@ -89,6 +89,7 @@ select
     squads_seasons_teams.team as team,
     squads_seasons_teams.season_id as season_id,
     squads_seasons_teams.season,
+    players.name as fullname,
     firstname,
     lastname,
     height,

@@ -39,7 +39,7 @@ joined as (
         agg_player_stats.player_id,
         firstname,
         lastname,
-        players.name as fullname,
+        fullname,
         date_of_birth,
         continent,
         nationality,
