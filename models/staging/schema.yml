@@ -8,15 +8,12 @@ models:
         tests:
           - unique
           - not_null
-      - name: firstname
+      - name: fullname
         tests:
           - not_null
-      - name: lastname
-        tests:
-          - not_null
-      - name: nationality
-        tests:
-          - not_null
+      # - name: nationality
+      #   tests:
+      #     - not_null
           # - relationships:
           #     to: ref('players')
           #     field: id
