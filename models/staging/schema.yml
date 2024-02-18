@@ -4,19 +4,14 @@ models:
   - name: stg_players
     description: This table contains basic information about players
     columns:
-      - name: player_id
+      - name: id
         tests:
           - unique
           - not_null
       - name: fullname
         tests:
           - not_null
-      # - name: nationality
-      #   tests:
-      #     - not_null
-          # - relationships:
-          #     to: ref('players')
-          #     field: id
+
 
   - name: stg_player_stats
     description: This table contains players statistics per season
@@ -26,7 +21,3 @@ models:
         tests:
           - unique
           - not_null
-      # - name: status
-      #   tests:
-      #     - accepted_values:
-      #         values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
