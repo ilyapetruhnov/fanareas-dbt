@@ -57,7 +57,7 @@ import json
 @asset( group_name="templates", compute_kind="pandas", io_manager_key="db_io_manager")
 def quiz_player_transferred_from_to(context) -> pd.DataFrame:
 
-    team_df = context.resources.db_io_manager.load_players_two_clubs_query(context)
+    team_df = context.resources.db_io_manager.load_players_two_clubs_query()
     result_lst = []
     for i in range(10):
         sample_df = team_df.sample(n=4)
