@@ -76,7 +76,6 @@ squads_seasons_teams as (
 final as (
 
 select
-
     players.id as player_id,
     squad_id,
     countries_continents.country_id as nationality_id,
