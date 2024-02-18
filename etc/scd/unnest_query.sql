@@ -2,6 +2,7 @@ SELECT
   firstname,
   lastname,
   array_to_string(team, '/') as team,
+  array_to_string(jersey_number, '/') as jersey_number,
   t.*
 FROM
   dim_players
