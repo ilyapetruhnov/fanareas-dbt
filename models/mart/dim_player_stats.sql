@@ -46,6 +46,7 @@ joined as (
         agg_player_stats.team_id as team_id,
         team,
         cast(substr(season, 1, 4) as int) as season,
+        season as season_name,
         position,
         height,
         weight,
@@ -76,6 +77,7 @@ final as (
 SELECT
     player_id,
     season,
+    max(season_name) as season_name,
     max(firstname) as firstname,
     max(lastname)  as lastname,
     max(fullname)  as fullname,
