@@ -36,12 +36,12 @@ def api_call(url):
         print(f"Error: {response.status_code}")
         return None
 
+@op
 def fetch_data(context, url):
     data = []
     result = api_call(url)
-    context.log.info(result.json().keys())
-    if 'data' in result.json().keys():
-        while True:
+    if result:
+        while 'data' in result.json().keys():
             data.append(result.json()['data'])
             url = result.json()['pagination']['next_page']
             limit = result.json()['rate_limit']['remaining']
