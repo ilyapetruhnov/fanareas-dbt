@@ -24,10 +24,10 @@ SELECT
   COALESCE(ts.player_id, ls.player_id) AS player_id,
   COALESCE(ts.firstname, ls.firstname) AS firstname,
   COALESCE(ts.lastname, ls.lastname) AS lastname,
+  COALESCE(ts.fullname, ls.fullname) AS fullname,
   COALESCE(ts.date_of_birth, ls.date_of_birth) AS date_of_birth,
   COALESCE(ts.continent, ls.continent) AS continent,
   COALESCE(ts.nationality, ls.nationality) AS nationality,
-  COALESCE(ts.team, ls.team) AS team,
   COALESCE(ts.height, ls.height) AS height,
   COALESCE(ts.weight, ls.weight) AS weight,
   CASE
@@ -37,6 +37,11 @@ SELECT
         ARRAY[
             ROW (
         ts.season,
+        ts.season_name,
+        ts.team,
+        ts.team_id,
+        ts.jersey_number,
+        ts.position,
         ts.captain,
         ts.yellow_cards,
         ts.red_cards,
@@ -57,7 +62,12 @@ SELECT
         THEN ARRAY_CAT(ls.season_stats,
                        ARRAY [
                            ROW (
-                               ts.season,
+                                ts.season,
+                                ts.season_name,
+                                ts.team,
+                                ts.team_id,
+                                ts.jersey_number,
+                                ts.position,
                                ts.captain,
                                ts.yellow_cards,
                                ts.red_cards,

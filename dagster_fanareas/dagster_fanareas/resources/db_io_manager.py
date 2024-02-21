@@ -132,7 +132,7 @@ class DbIOManager(IOManager):
         except Exception as e:
             existing_df = pd.DataFrame([])
             url = f"{base_url}/{dataset_name}"
-        new_df = fetch_data(url)
+        new_df = fetch_data(context, url)
         merged_df = upsert(existing_df, new_df)
         context.log.info(merged_df.head())
         return merged_df
