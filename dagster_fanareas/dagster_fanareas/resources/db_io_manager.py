@@ -128,8 +128,11 @@ class DbIOManager(IOManager):
         dataset_name = context.asset_key.path[-1]
         try:
             existing_df = self.load_input(context)
-            last_id = max(existing_df['id'])
-            url = f"{base_url}/{dataset_name}?filters=idAfter:{last_id}"
+            if existing_df.empty == True:
+                url = f"{base_url}/{dataset_name}"
+            else:
+                last_id = max(existing_df['id'])
+                url = f"{base_url}/{dataset_name}?filters=idAfter:{last_id}"
         except Exception as e:
             existing_df = pd.DataFrame([])
             url = f"{base_url}/{dataset_name}"
