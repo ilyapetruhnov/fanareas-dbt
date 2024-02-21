@@ -159,6 +159,7 @@ def player_stats_detailed(context, player_stats_dict: dict) -> pd.DataFrame:
 @asset( group_name="team_stats", compute_kind="pandas")
 def team_stats_dict(context, teams: pd.DataFrame) -> dict:
     team_ids = list(teams['id'].unique())
+    context.log.info(team_ids)
     team_stats = []
     team_stats_detailed = []
     for team_id in team_ids:

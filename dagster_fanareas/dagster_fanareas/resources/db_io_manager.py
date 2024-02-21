@@ -134,11 +134,11 @@ class DbIOManager(IOManager):
             existing_df = pd.DataFrame([])
             url = f"{base_url}/{dataset_name}"
         context.log.info(url)   
-        new_df = fetch_data(context, url)
-        context.log.info(new_df.empty)
-        merged_df = upsert(existing_df, new_df)
-        context.log.info(merged_df.head())
-        return merged_df
+        df = fetch_data(context, url)
+        context.log.info(df.empty)
+        # merged_df = upsert(existing_df, new_df)
+        # context.log.info(merged_df.head())
+        return df
 
 
 @io_manager(config_schema={"con_string": str})
