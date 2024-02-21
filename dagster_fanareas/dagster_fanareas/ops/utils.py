@@ -39,6 +39,7 @@ def api_call(url):
 def fetch_data(context, url):
     data = []
     result = api_call(url)
+    context.log.info(result.json().keys())
     if 'data' in result.json().keys():
         while True:
             data.append(result.json()['data'])
