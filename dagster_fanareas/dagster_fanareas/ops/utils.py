@@ -54,9 +54,9 @@ def fetch_data(context, url):
                 if has_more == False:
                     break
                 result = api_call(url)
-        result_df = pd.DataFrame(list(chain(*data)))  
+        result_df = pd.DataFrame(list(chain(*data)))
     else:
-        result_df = pd.DataFrame([])  
+        result_df = pd.DataFrame([])
     return result_df
 
 @op
