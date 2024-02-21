@@ -25,12 +25,13 @@ class DbIOManager(IOManager):
         self._con = con_string
 
     def handle_output(self, context, obj):
-        if isinstance(obj, pd.DataFrame):
+        if isinstance(obj, pd.DataFrame) and obj.empty == True:
+            pass
+        # dbt has already written the data to this table
+
+        elif isinstance(obj, pd.DataFrame) and obj.empty == False:
             # write df to table
             obj.set_index('id').to_sql(name=context.asset_key.path[-1], con=self._con, if_exists="append")
-        elif obj is None or obj.empty == True:
-            # dbt has already written the data to this table
-            pass
         else:
             raise ValueError(f"Unsupported object type {type(obj)} for DbIOManager.")
 
