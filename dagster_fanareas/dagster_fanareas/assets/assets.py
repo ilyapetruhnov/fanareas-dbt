@@ -185,7 +185,10 @@ def team_stats(context, team_stats_dict: dict) -> pd.DataFrame:
     df = pd.DataFrame(result)
     df = df.drop('details', axis=1)
     existing_df = context.resources.db_io_manager.load_input(context)
-    return upsert(existing_df, df)
+
+    outer = existing_df.merge(df, how='outer', indicator=True)
+    diff = outer[(outer._merge=='left_only')].drop('_merge', axis=1)
+    return diff
 
 
 @asset( group_name="team_stats", compute_kind="pandas",io_manager_key="db_io_manager")
@@ -196,5 +199,7 @@ def team_stats_detailed(context, team_stats_dict: dict) -> pd.DataFrame:
     cols = [i.replace('.','_').replace('-','_') for i in df.columns]
     df.columns = cols
     existing_df = context.resources.db_io_manager.load_input(context)
-    return upsert(existing_df, df)
+    outer = existing_df.merge(df, how='outer', indicator=True)
+    diff = outer[(outer._merge=='left_only')].drop('_merge', axis=1)
+    return diff
 
