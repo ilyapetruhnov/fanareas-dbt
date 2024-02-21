@@ -138,7 +138,7 @@ class DbIOManager(IOManager):
             url = f"{base_url}/{dataset_name}"
         context.log.info(url)   
         df = fetch_data(context, url)
-        context.log.info(df.empty)
+        context.log.info(df.head())
         # merged_df = upsert(existing_df, new_df)
         # context.log.info(merged_df.head())
         return df
