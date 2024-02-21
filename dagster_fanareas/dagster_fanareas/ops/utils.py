@@ -36,7 +36,6 @@ def api_call(url):
         print(f"Error: {response.status_code}")
         return None
 
-@op
 def fetch_data(context, url):
     data = []
     result = api_call(url)
