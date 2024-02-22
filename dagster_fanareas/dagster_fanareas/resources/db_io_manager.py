@@ -38,11 +38,11 @@ class DbIOManager(IOManager):
 
             # If it already exists...
             temp_table_name = f"temp_{uuid.uuid4().hex[:6]}"
-            obj.to_sql(temp_table_name, engine, index=True)
-            index = list(obj.index.names)
+            obj = obj.set_index('id')
+            obj.to_sql(temp_table_name, engine, if_exists='replace')
             index_sql_txt = "id"
             columns = list(obj.columns)
-            headers = index + columns
+            headers = index_sql_txt + columns
             headers_sql_txt = ", ".join(
                 [f'"{i}"' for i in headers]
             )  # index1, index2, ..., column 1, col2, ...
@@ -69,7 +69,7 @@ class DbIOManager(IOManager):
             SET {update_column_stmt};
             """
             engine.execute(query_upsert)
-            engine.execute(f'DROP TABLE "{temp_table_name}"')
+            # engine.execute(f'DROP TABLE "{temp_table_name}"')
 
 
         # dbt has already written the data to this table
