@@ -39,8 +39,10 @@ def api_call(url):
 def fetch_data(context, url):
     data = []
     result = api_call(url)
-    if result:
-        while 'data' in result.json().keys():
+    context.log.info(result)
+    context.log.info(result.json())
+    if 'data' in result.json().keys():
+        while True:
             data.append(result.json()['data'])
             context.log.info('executing data statement')
             url = result.json()['pagination']['next_page']
