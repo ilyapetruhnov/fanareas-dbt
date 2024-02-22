@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
-# import os
+import sqlalchemy
+import os
 from dagster_fanareas.constants import api_key, base_url
 from itertools import chain
 from dagster import op, OpExecutionContext
@@ -16,6 +17,19 @@ def get_records(response):
     else:
         records.append(tuple(data.values()))
     return records
+
+@op
+def create_db_session():
+    uid = os.getenv("POSTGRES_USER")
+    pwd = os.getenv("POSTGRES_PWD")
+    server = os.getenv("POSTGRES_HOST")
+    port = "25060"
+    db = os.getenv("POSTGRES_DBNAME")
+    url = f"postgresql://{uid}:{pwd}@{server}:{port}/{db}"
+    engine = sqlalchemy.create_engine(url)
+    return engine
+
+
 
 @op
 def get_fields(response):

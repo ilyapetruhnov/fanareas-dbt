@@ -20,7 +20,7 @@ def get_conn_string(
 POSTGRES_CONFIG = {
     "con_string": get_conn_string(
         username= os.getenv("POSTGRES_USER"),
-        password=os.getenv("POSTGRES_PWD"),
+        password= os.getenv("POSTGRES_PWD"),
         hostname= os.getenv("POSTGRES_HOST"),
         port= "25060",
         db_name= os.getenv("POSTGRES_DBNAME"),
