@@ -42,7 +42,7 @@ class DbIOManager(IOManager):
             obj.to_sql(temp_table_name, engine, if_exists='replace')
             index_sql_txt = "id"
             columns = list(obj.columns)
-            headers = index_sql_txt + columns
+            headers = list(index_sql_txt) + columns
             headers_sql_txt = ", ".join(
                 [f'"{i}"' for i in headers]
             )  # index1, index2, ..., column 1, col2, ...
