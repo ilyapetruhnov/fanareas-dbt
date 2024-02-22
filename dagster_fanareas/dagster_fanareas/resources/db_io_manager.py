@@ -52,15 +52,8 @@ class DbIOManager(IOManager):
             update_column_stmt = ", ".join([f'"{col}" = EXCLUDED."{col}"' for col in columns])
 
             # For the ON CONFLICT clause, postgres requires that the columns have unique constraint
-            query_pk = f"""
-            ALTER TABLE "{table_name}" ADD CONSTRAINT {table_name}_unique_constraint_for_upsert UNIQUE ({index_sql_txt});
-            """
-            query_upsert = f"""
-            INSERT INTO "{table_name}" ({headers_sql_txt}) 
-            SELECT {headers_sql_txt} FROM "{temp_table_name}"
-            ON CONFLICT ({index_sql_txt}) DO UPDATE 
-            SET {update_column_stmt};
-            """
+            query_pk = f"""ALTER TABLE {table_name} ADD CONSTRAINT {table_name}_unique_constraint_for_upsert UNIQUE ({index_sql_txt});"""
+            query_upsert = f"""INSERT INTO {table_name} ({headers_sql_txt}) SELECT {headers_sql_txt} FROM {temp_table_name} ON CONFLICT ({index_sql_txt}) DO UPDATE SET {update_column_stmt};"""
             with engine.connect() as conn:
                 try:
                     conn.execute(query_pk)
