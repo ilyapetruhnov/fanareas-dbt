@@ -42,6 +42,7 @@ def fetch_data(context, url):
     if result:
         while 'data' in result.json().keys():
             data.append(result.json()['data'])
+            context.log.info('executing data statement')
             url = result.json()['pagination']['next_page']
             limit = result.json()['rate_limit']['remaining']
             if limit == 1:
@@ -52,10 +53,12 @@ def fetch_data(context, url):
             else:
                 has_more = result.json()['pagination']['has_more']
                 if has_more == False:
+                    context.log.info('breaking the loop')
                     break
                 result = api_call(url)
         result_df = pd.DataFrame(list(chain(*data)))
     else:
+        context.log.info('executing else statement')
         result_df = pd.DataFrame([])
     return result_df
 
