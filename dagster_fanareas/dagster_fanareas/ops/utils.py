@@ -64,22 +64,19 @@ def fetch_data(url):
     return result_df
 
 @op
-def upsert(dataset_name: str, existing_df: pd.DataFrame) -> pd.DataFrame:
+def upsert(dataset_name: str, existing_df: pd.DataFrame, new_df: None) -> pd.DataFrame:
     # Perform upsert (merge) based on the 'id' column
-    # merged_df = pd.concat([existing_df, new_df], ignore_index=True)
-    # merged_df = merged_df.drop_duplicates(subset='id', keep='last')
-    try:
-        # existing_df = context.resources.db_io_manager.load_input(context)
+    if new_df or new_df.empty == True:
+        pass
+    else:
         if existing_df.empty == True:
             url = f"{base_url}/{dataset_name}"
         else:
             last_id = max(existing_df['id'])
             url = f"{base_url}/{dataset_name}?filters=idAfter:{last_id}"
-    except Exception as e:
-        existing_df = pd.DataFrame([])
-        url = f"{base_url}/{dataset_name}" 
-    df = fetch_data(url)
-    return df
+
+        new_df = fetch_data(url)
+    return new_df
 
 @op
 def flatten_list(nested_list):

@@ -10,11 +10,6 @@ def transfers(context) -> pd.DataFrame:
     df = context.resources.db_io_manager.upsert_input(context)
     return df
 
-# @asset( group_name="seasons", compute_kind="pandas", io_manager_key="db_io_manager")
-# def seasons(context) -> pd.DataFrame:
-#     df = context.resources.db_io_manager.upsert_input(context)
-#     return df
-
 @asset( group_name="seasons", compute_kind="pandas", io_manager_key="db_io_manager")
 def seasons(context) -> pd.DataFrame:
     dataset_name = context.asset_key.path[-1]
@@ -44,26 +39,6 @@ def fixtures(context, fixtures_df: pd.DataFrame) -> pd.DataFrame:
 def coaches(context) -> pd.DataFrame:
     df = context.resources.db_io_manager.upsert_input(context)
     return df
-
-# @asset( group_name="teams", compute_kind="pandas", io_manager_key="db_io_manager")
-# def teams(context) -> pd.DataFrame:
-#     dataset_name = context.asset_key.path[-1]
-#     try:
-#         existing_df = context.resources.db_io_manager.load_input(context)
-#         context.log.info(existing_df.head())
-#         if existing_df.empty == True:
-#             url = f"{base_url}/{dataset_name}"
-#         else:
-#             last_id = max(existing_df['id'])
-#             url = f"{base_url}/{dataset_name}?filters=idAfter:{last_id}"
-#     except Exception as e:
-#         existing_df = pd.DataFrame([])
-#         url = f"{base_url}/{dataset_name}"
-#     context.log.info(url)
-#     context.log.info('pulling data')  
-#     df = fetch_data(url)
-#     context.log.info(df.head())
-#     return df
 
 @asset( group_name="teams", compute_kind="pandas", io_manager_key="db_io_manager")
 def teams(context) -> pd.DataFrame:
@@ -213,11 +188,11 @@ def team_stats(context, team_stats_dict: dict) -> pd.DataFrame:
     result = flatten_list(team_stats)
     df = pd.DataFrame(result)
     df = df.drop('details', axis=1)
-    existing_df = context.resources.db_io_manager.load_input(context)
 
-    outer = existing_df.merge(df, how='outer', indicator=True)
-    diff = outer[(outer._merge=='left_only')].drop('_merge', axis=1)
-    return diff
+    dataset_name = context.asset_key.path[-1]
+    existing_df = context.resources.db_io_manager.load_input(context)
+    df = upsert(dataset_name, existing_df, new_df = df)
+    return df
 
 
 @asset( group_name="team_stats", compute_kind="pandas",io_manager_key="db_io_manager")
@@ -227,8 +202,8 @@ def team_stats_detailed(context, team_stats_dict: dict) -> pd.DataFrame:
     context.log.info(df.head())
     cols = [i.replace('.','_').replace('-','_') for i in df.columns]
     df.columns = cols
+    dataset_name = context.asset_key.path[-1]
     existing_df = context.resources.db_io_manager.load_input(context)
-    outer = existing_df.merge(df, how='outer', indicator=True)
-    diff = outer[(outer._merge=='left_only')].drop('_merge', axis=1)
-    return diff
+    df = upsert(dataset_name, existing_df, new_df = df)
+    return df
 
