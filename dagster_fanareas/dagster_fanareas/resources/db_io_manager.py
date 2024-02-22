@@ -40,9 +40,9 @@ class DbIOManager(IOManager):
             temp_table_name = f"temp_{uuid.uuid4().hex[:6]}"
             obj = obj.set_index('id')
             obj.to_sql(temp_table_name, engine, if_exists='replace')
-            index_sql_txt = "id"
+            index_sql_txt = list('id')
             columns = list(obj.columns)
-            headers = list(index_sql_txt) + columns
+            headers = index_sql_txt + columns
             headers_sql_txt = ", ".join(
                 [f'"{i}"' for i in headers]
             )  # index1, index2, ..., column 1, col2, ...

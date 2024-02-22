@@ -1,7 +1,7 @@
 from dagster import asset
 import pandas as pd
 import random
-from dagster_fanareas.ops.utils import api_call, fetch_data, flatten_list, upsert
+from dagster_fanareas.ops.utils import post_json
 import json
 
 
@@ -75,11 +75,15 @@ def quiz_player_transferred_from_to(context) -> pd.DataFrame:
             "response": correct_response
             }
         result_lst.append(result)
-    json_template = {'question': None, 'options': None, 'response': None}
-    json_strings = [json.dumps({**json_template, **entry}) for entry in result]
-    df = pd.DataFrame({'output': json_strings})
+    json_template = {'question': None, 'quizQuestionOptions': None, 'correctAnswer': None}
+    json_data = [json.dumps({**json_template, **entry}) for entry in result]
 
-    return df
+    return json_data
+
+@asset(group_name="templates")
+def post_player_transferred_from_to_quiz(json_data: json) -> bool:
+    return post_json(json_data)
+
 
 
 
