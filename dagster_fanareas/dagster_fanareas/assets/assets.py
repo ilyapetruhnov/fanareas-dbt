@@ -1,7 +1,7 @@
 from dagster import asset
 import pandas as pd
 from dagster_fanareas.ops.utils import api_call, fetch_data, flatten_list, upsert
-from dagster_fanareas.constants import base_url
+from dagster_fanareas.constants import base_url, api_key
 from itertools import product
 import time
 
@@ -40,7 +40,23 @@ def coaches(context) -> pd.DataFrame:
 
 @asset( group_name="teams", compute_kind="pandas", io_manager_key="db_io_manager")
 def teams(context) -> pd.DataFrame:
-    df = context.resources.db_io_manager.upsert_input(context)
+    dataset_name = context.asset_key.path[-1]
+    try:
+        existing_df = context.resources.db_io_manager.load_input(context)
+        context.log.info(existing_df.head())
+        if existing_df.empty == True:
+            url = f"{base_url}/{dataset_name}"
+        else:
+            last_id = max(existing_df['id'])
+            url = f"{base_url}/{dataset_name}?filters=idAfter:{last_id}"
+    except Exception as e:
+        existing_df = pd.DataFrame([])
+        url = f"{base_url}/{dataset_name}"
+    context.log.info(url)
+    context.log.info(api_key)
+    context.log.info('pulling data')  
+    df = fetch_data(url, api_key)
+    context.log.info(df.head())
     return df
 
 
