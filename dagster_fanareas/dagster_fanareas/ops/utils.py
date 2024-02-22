@@ -3,7 +3,7 @@ import pandas as pd
 # import os
 
 from itertools import chain
-from dagster import op
+from dagster import op, OpExecutionContext
 import time
 
 @op
@@ -35,8 +35,9 @@ def api_call(url, api_key):
     else:
         print(f"Error: {response.status_code}")
         return None
-
-def fetch_data(context, url, api_key):
+    
+@op
+def fetch_data(context: OpExecutionContext, url, api_key):
     data = []
     result = api_call(url, api_key)
     context.log.info(result)

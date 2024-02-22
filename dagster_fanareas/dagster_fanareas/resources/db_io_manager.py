@@ -128,6 +128,7 @@ class DbIOManager(IOManager):
         dataset_name = context.asset_key.path[-1]
         try:
             existing_df = self.load_input(context)
+            context.log.info(existing_df.head())
             if existing_df.empty == True:
                 url = f"{base_url}/{dataset_name}"
             else:
@@ -136,7 +137,8 @@ class DbIOManager(IOManager):
         except Exception as e:
             existing_df = pd.DataFrame([])
             url = f"{base_url}/{dataset_name}"
-        context.log.info(url)   
+        context.log.info(url)
+        context.log.info('pulling data')  
         df = fetch_data(context, url, api_key)
         context.log.info(df.head())
         # merged_df = upsert(existing_df, new_df)
