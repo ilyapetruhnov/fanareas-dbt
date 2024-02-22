@@ -36,6 +36,7 @@ class DbIOManager(IOManager):
         
             engine = sqlalchemy.create_engine(self._con)
             table_name = context.asset_key.path[-1]
+            context.log.info(table_name)
 
             # If it already exists...
             temp_table_name = f"temp_{uuid.uuid4().hex[:6]}"

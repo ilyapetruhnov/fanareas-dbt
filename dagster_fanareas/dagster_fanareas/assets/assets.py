@@ -191,6 +191,7 @@ def team_stats(context, team_stats_dict: dict) -> pd.DataFrame:
     df = pd.DataFrame(result)
     context.log.info(df.head())
     df = df.drop('details', axis=1)
+    context.log.info(len(df))
 
     # dataset_name = context.asset_key.path[-1]
     # existing_df = context.resources.db_io_manager.load_input(context)
