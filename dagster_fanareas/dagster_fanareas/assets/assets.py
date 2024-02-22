@@ -10,9 +10,15 @@ def transfers(context) -> pd.DataFrame:
     df = context.resources.db_io_manager.upsert_input(context)
     return df
 
+# @asset( group_name="seasons", compute_kind="pandas", io_manager_key="db_io_manager")
+# def seasons(context) -> pd.DataFrame:
+#     df = context.resources.db_io_manager.upsert_input(context)
+#     return df
+
 @asset( group_name="seasons", compute_kind="pandas", io_manager_key="db_io_manager")
 def seasons(context) -> pd.DataFrame:
-    df = context.resources.db_io_manager.upsert_input(context)
+    existing_df = context.resources.db_io_manager.load_input(context)
+    df = upsert(context, existing_df)
     return df
 
 
@@ -38,25 +44,30 @@ def coaches(context) -> pd.DataFrame:
     df = context.resources.db_io_manager.upsert_input(context)
     return df
 
+# @asset( group_name="teams", compute_kind="pandas", io_manager_key="db_io_manager")
+# def teams(context) -> pd.DataFrame:
+#     dataset_name = context.asset_key.path[-1]
+#     try:
+#         existing_df = context.resources.db_io_manager.load_input(context)
+#         context.log.info(existing_df.head())
+#         if existing_df.empty == True:
+#             url = f"{base_url}/{dataset_name}"
+#         else:
+#             last_id = max(existing_df['id'])
+#             url = f"{base_url}/{dataset_name}?filters=idAfter:{last_id}"
+#     except Exception as e:
+#         existing_df = pd.DataFrame([])
+#         url = f"{base_url}/{dataset_name}"
+#     context.log.info(url)
+#     context.log.info('pulling data')  
+#     df = fetch_data(url)
+#     context.log.info(df.head())
+#     return df
+
 @asset( group_name="teams", compute_kind="pandas", io_manager_key="db_io_manager")
 def teams(context) -> pd.DataFrame:
-    dataset_name = context.asset_key.path[-1]
-    try:
-        existing_df = context.resources.db_io_manager.load_input(context)
-        context.log.info(existing_df.head())
-        if existing_df.empty == True:
-            url = f"{base_url}/{dataset_name}"
-        else:
-            last_id = max(existing_df['id'])
-            url = f"{base_url}/{dataset_name}?filters=idAfter:{last_id}"
-    except Exception as e:
-        existing_df = pd.DataFrame([])
-        url = f"{base_url}/{dataset_name}"
-    context.log.info(url)
-    # context.log.info(f"key: {api_key}")
-    context.log.info('pulling data')  
-    df = fetch_data(url)
-    context.log.info(df.head())
+    existing_df = context.resources.db_io_manager.load_input(context)
+    df = upsert(context, existing_df)
     return df
 
 
