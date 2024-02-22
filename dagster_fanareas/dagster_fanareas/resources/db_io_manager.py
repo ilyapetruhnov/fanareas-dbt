@@ -54,21 +54,28 @@ class DbIOManager(IOManager):
             query_pk = f"""
             ALTER TABLE "{table_name}" ADD CONSTRAINT {table_name}_unique_constraint_for_upsert UNIQUE ({index_sql_txt});
             """
-            try:
-                engine.execute(query_pk)
-            except Exception as e:
-                # relation "unique_constraint_for_upsert" already exists
-                if not 'unique_constraint_for_upsert" already exists' in e.args[0]:
-                    raise e
-            
-            # Compose and execute upsert query
             query_upsert = f"""
             INSERT INTO "{table_name}" ({headers_sql_txt}) 
             SELECT {headers_sql_txt} FROM "{temp_table_name}"
             ON CONFLICT ({index_sql_txt}) DO UPDATE 
             SET {update_column_stmt};
             """
-            engine.execute(query_upsert)
+            with engine.connect() as conn:
+                try:
+                    conn.execute(query_pk)
+                    conn.execute(query_upsert)
+                except Exception as e:
+                    # relation "unique_constraint_for_upsert" already exists
+                    if not 'unique_constraint_for_upsert" already exists' in e.args[0]:
+                        raise e
+            # Compose and execute upsert query
+            # query_upsert = f"""
+            # INSERT INTO "{table_name}" ({headers_sql_txt}) 
+            # SELECT {headers_sql_txt} FROM "{temp_table_name}"
+            # ON CONFLICT ({index_sql_txt}) DO UPDATE 
+            # SET {update_column_stmt};
+            # """
+            
             # engine.execute(f'DROP TABLE "{temp_table_name}"')
 
 

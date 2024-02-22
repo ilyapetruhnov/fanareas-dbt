@@ -84,3 +84,17 @@ def flatten_list(nested_list):
         else:
             flattened_list.append(item)
     return flattened_list
+
+@op
+def post_json(json_data):
+    url = 'https://fanareas.com/api/quizzes/createQuizz'
+    response = requests.post(url, json=json_data)
+
+    if response.status_code == 200:
+        print('POST request successful!')
+        print('Response:', response.text)
+    else:
+        print('POST request failed with status code:', response.status_code)
+        print('Response:', response.text)
+    
+    return True
