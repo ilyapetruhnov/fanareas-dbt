@@ -55,7 +55,7 @@ def teams(context) -> pd.DataFrame:
     context.log.info(url)
     context.log.info(api_key)
     context.log.info('pulling data')  
-    df = fetch_data(url, api_key)
+    df = fetch_data(context, url, api_key)
     context.log.info(df.head())
     return df
 
