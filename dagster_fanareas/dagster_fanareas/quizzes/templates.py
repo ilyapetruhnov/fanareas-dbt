@@ -108,7 +108,7 @@ def quiz_player_transferred_from_to() -> dict:
         options = list(sample_df['fullname'])
         correct_response = correct_row['fullname']
         question = {
-        "question": question,
+        "description": question,
         "quizQuestionOptions": options,
         "correctAnswer": correct_response
                     }
