@@ -58,7 +58,7 @@ import json
 def quiz_player_transferred_from_to(context) -> pd.DataFrame:
 
     team_df = context.resources.db_io_manager.load_players_two_clubs_query()
-    result_lst = []
+    q_lst = []
     for i in range(10):
         sample_df = team_df.sample(n=4)
         correct_idx = random.randint(0, 3)
@@ -69,19 +69,22 @@ def quiz_player_transferred_from_to(context) -> pd.DataFrame:
         question = f"Which player had a transfer from {clubname1} to {clubname2} in the {season} season?"
         options = list(sample_df['fullname'])
         correct_response = correct_row['fullname']
-        result = {
-            "question": question,
-            "options": options,
-            "response": correct_response
-            }
-        result_lst.append(result)
-    json_template = {'question': None, 'quizQuestionOptions': None, 'correctAnswer': None}
-    json_data = [json.dumps({**json_template, **entry}) for entry in result]
+        question = {
+        "question": question,
+        "quizQuestionOptions": options,
+        "correctAnswer": correct_response
+                    }
+        q_lst.append(question)
+
+
+    json_data = {"title": "Guess the player", 
+                 "description": "Answer 10 questions",
+                 'questions': q_lst}
 
     return json_data
 
 @asset(group_name="templates")
-def post_player_transferred_from_to_quiz(json_data: json) -> bool:
+def post_player_transferred_from_to_quiz(json_data) -> bool:
     return post_json(json_data)
 
 
