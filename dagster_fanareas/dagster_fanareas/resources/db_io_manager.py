@@ -5,7 +5,7 @@
 
 # # from dagster_embedded_elt.sling import (SlingResource, SlingSourceConnection, SlingTargetConnection)
 from dagster_fanareas.ops.utils import fetch_data, upsert
-from dagster_fanareas.constants import base_url
+from dagster_fanareas.constants import base_url, api_key
 import pandas as pd
 from dagster import IOManager, io_manager
 from dagster import (
@@ -137,7 +137,7 @@ class DbIOManager(IOManager):
             existing_df = pd.DataFrame([])
             url = f"{base_url}/{dataset_name}"
         context.log.info(url)   
-        df = fetch_data(context, url)
+        df = fetch_data(context, url, api_key)
         context.log.info(df.head())
         # merged_df = upsert(existing_df, new_df)
         # context.log.info(merged_df.head())
