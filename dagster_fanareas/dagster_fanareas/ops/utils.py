@@ -37,31 +37,29 @@ def api_call(url, api_key):
         return None
     
 @op
-def fetch_data(context: OpExecutionContext, url, api_key):
+def fetch_data(url, api_key):
     data = []
     result = api_call(url, api_key)
-    context.log.info(result)
-    context.log.info(result.json())
     if 'data' in result.json().keys():
         while True:
             data.append(result.json()['data'])
-            context.log.info('executing data statement')
+            # context.log.info('executing data statement')
             url = result.json()['pagination']['next_page']
             limit = result.json()['rate_limit']['remaining']
             if limit == 1:
                 seconds_until_reset = result.json()['rate_limit']['resets_in_seconds']
-                context.log.info(seconds_until_reset)
+                # context.log.info(seconds_until_reset)
                 time.sleep(seconds_until_reset)
                 continue
             else:
                 has_more = result.json()['pagination']['has_more']
                 if has_more == False:
-                    context.log.info('breaking the loop')
+                    # context.log.info('breaking the loop')
                     break
                 result = api_call(url, api_key)
         result_df = pd.DataFrame(list(chain(*data)))
     else:
-        context.log.info('executing else statement')
+        # context.log.info('executing else statement')
         result_df = pd.DataFrame([])
     return result_df
 

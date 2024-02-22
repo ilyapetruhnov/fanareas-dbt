@@ -53,9 +53,9 @@ def teams(context) -> pd.DataFrame:
         existing_df = pd.DataFrame([])
         url = f"{base_url}/{dataset_name}"
     context.log.info(url)
-    context.log.info(api_key)
+    context.log.info(f"key: {api_key}")
     context.log.info('pulling data')  
-    df = fetch_data(context, url, api_key)
+    df = fetch_data(url, api_key)
     context.log.info(df.head())
     return df
 
