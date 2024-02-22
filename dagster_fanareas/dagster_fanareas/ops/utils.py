@@ -3,7 +3,7 @@ import pandas as pd
 # import os
 from dagster_fanareas.constants import api_key, base_url
 from itertools import chain
-from dagster import op
+from dagster import op, OpExecutionContext
 import time
 
 @op
@@ -64,14 +64,12 @@ def fetch_data(url):
     return result_df
 
 @op
-def upsert(context, existing_df: pd.DataFrame) -> pd.DataFrame:
+def upsert(dataset_name: str, existing_df: pd.DataFrame) -> pd.DataFrame:
     # Perform upsert (merge) based on the 'id' column
     # merged_df = pd.concat([existing_df, new_df], ignore_index=True)
     # merged_df = merged_df.drop_duplicates(subset='id', keep='last')
-    dataset_name = context.asset_key.path[-1]
     try:
         # existing_df = context.resources.db_io_manager.load_input(context)
-        context.log.info(existing_df.head())
         if existing_df.empty == True:
             url = f"{base_url}/{dataset_name}"
         else:
@@ -79,11 +77,8 @@ def upsert(context, existing_df: pd.DataFrame) -> pd.DataFrame:
             url = f"{base_url}/{dataset_name}?filters=idAfter:{last_id}"
     except Exception as e:
         existing_df = pd.DataFrame([])
-        url = f"{base_url}/{dataset_name}"
-    context.log.info(url)
-    context.log.info('pulling data')  
+        url = f"{base_url}/{dataset_name}" 
     df = fetch_data(url)
-    context.log.info(df.head())
     return df
 
 @op

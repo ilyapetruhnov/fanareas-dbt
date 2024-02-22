@@ -17,8 +17,9 @@ def transfers(context) -> pd.DataFrame:
 
 @asset( group_name="seasons", compute_kind="pandas", io_manager_key="db_io_manager")
 def seasons(context) -> pd.DataFrame:
+    dataset_name = context.asset_key.path[-1]
     existing_df = context.resources.db_io_manager.load_input(context)
-    df = upsert(context, existing_df)
+    df = upsert(dataset_name, existing_df)
     return df
 
 
@@ -66,8 +67,9 @@ def coaches(context) -> pd.DataFrame:
 
 @asset( group_name="teams", compute_kind="pandas", io_manager_key="db_io_manager")
 def teams(context) -> pd.DataFrame:
+    dataset_name = context.asset_key.path[-1]
     existing_df = context.resources.db_io_manager.load_input(context)
-    df = upsert(context, existing_df)
+    df = upsert(dataset_name, existing_df)
     return df
 
 
