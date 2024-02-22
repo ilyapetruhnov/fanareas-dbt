@@ -54,7 +54,7 @@ import json
 
 
 
-@asset( group_name="templates", compute_kind="pandas", io_manager_key="db_io_manager")
+@asset( group_name="templates", compute_kind="pandas")
 def quiz_player_transferred_from_to(context) -> dict:
 
     team_df = context.resources.db_io_manager.load_players_two_clubs_query()
