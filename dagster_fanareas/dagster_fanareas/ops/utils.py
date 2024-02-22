@@ -64,9 +64,9 @@ def fetch_data(url):
     return result_df
 
 @op
-def upsert(dataset_name: str, existing_df: pd.DataFrame, new_df: None) -> pd.DataFrame:
+def upsert(dataset_name: str, existing_df: pd.DataFrame, new_df = pd.DataFrame([])) -> pd.DataFrame:
     # Perform upsert (merge) based on the 'id' column
-    if new_df or new_df.empty == True:
+    if new_df.empty:
         pass
     else:
         if existing_df.empty == True:
