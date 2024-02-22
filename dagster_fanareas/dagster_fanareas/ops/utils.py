@@ -64,18 +64,15 @@ def fetch_data(url):
     return result_df
 
 @op
-def upsert(dataset_name: str, existing_df: pd.DataFrame, new_df = pd.DataFrame([])) -> pd.DataFrame:
+def upsert(dataset_name: str, existing_df: pd.DataFrame) -> pd.DataFrame:
     # Perform upsert (merge) based on the 'id' column
-    if new_df.empty:
-        pass
+    if existing_df.empty == True:
+        url = f"{base_url}/{dataset_name}"
     else:
-        if existing_df.empty == True:
-            url = f"{base_url}/{dataset_name}"
-        else:
-            last_id = max(existing_df['id'])
-            url = f"{base_url}/{dataset_name}?filters=idAfter:{last_id}"
+        last_id = max(existing_df['id'])
+        url = f"{base_url}/{dataset_name}?filters=idAfter:{last_id}"
 
-        new_df = fetch_data(url)
+    new_df = fetch_data(url)
     return new_df
 
 @op

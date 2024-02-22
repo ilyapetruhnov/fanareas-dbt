@@ -185,13 +185,18 @@ def team_stats_dict(context, teams: pd.DataFrame) -> dict:
 @asset( group_name="team_stats", compute_kind="pandas",io_manager_key="db_io_manager")
 def team_stats(context, team_stats_dict: dict) -> pd.DataFrame:
     team_stats = team_stats_dict['stats']
+    context.log.info(team_stats)
     result = flatten_list(team_stats)
+    context.log.info(result)
     df = pd.DataFrame(result)
+    context.log.info(df.head())
     df = df.drop('details', axis=1)
 
-    dataset_name = context.asset_key.path[-1]
-    existing_df = context.resources.db_io_manager.load_input(context)
-    df = upsert(dataset_name, existing_df, new_df = df)
+    # dataset_name = context.asset_key.path[-1]
+    # existing_df = context.resources.db_io_manager.load_input(context)
+
+
+    # df = upsert(dataset_name, existing_df, new_df = df)
     return df
 
 
