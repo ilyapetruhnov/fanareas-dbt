@@ -140,7 +140,7 @@ class DbIOManager(IOManager):
         context.log.info(url)
         context.log.info(api_key)
         context.log.info('pulling data')  
-        df = fetch_data(context, url, api_key)
+        df = fetch_data(url, api_key)
         context.log.info(df.head())
         # merged_df = upsert(existing_df, new_df)
         # context.log.info(merged_df.head())

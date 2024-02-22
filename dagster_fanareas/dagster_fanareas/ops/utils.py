@@ -1,9 +1,9 @@
 import requests
 import pandas as pd
 # import os
-
+from dagster_fanareas.constants import api_key
 from itertools import chain
-from dagster import op, OpExecutionContext
+from dagster import op
 import time
 
 @op
@@ -27,7 +27,7 @@ def get_fields(response):
     return keys
 
 @op
-def api_call(url, api_key):
+def api_call(url):
     headers = { 'Authorization': api_key }
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
@@ -37,9 +37,9 @@ def api_call(url, api_key):
         return None
     
 @op
-def fetch_data(url, api_key):
+def fetch_data(url):
     data = []
-    result = api_call(url, api_key)
+    result = api_call(url)
     if 'data' in result.json().keys():
         while True:
             data.append(result.json()['data'])
@@ -56,7 +56,7 @@ def fetch_data(url, api_key):
                 if has_more == False:
                     # context.log.info('breaking the loop')
                     break
-                result = api_call(url, api_key)
+                result = api_call(url)
         result_df = pd.DataFrame(list(chain(*data)))
     else:
         # context.log.info('executing else statement')
