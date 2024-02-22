@@ -55,7 +55,7 @@ import json
 
 
 @asset( group_name="templates", compute_kind="pandas", io_manager_key="db_io_manager")
-def quiz_player_transferred_from_to(context) -> pd.DataFrame:
+def quiz_player_transferred_from_to(context) -> dict:
 
     team_df = context.resources.db_io_manager.load_players_two_clubs_query()
     q_lst = []
@@ -84,8 +84,8 @@ def quiz_player_transferred_from_to(context) -> pd.DataFrame:
     return json_data
 
 @asset(group_name="templates")
-def post_player_transferred_from_to_quiz(json_data) -> bool:
-    return post_json(json_data)
+def post_player_transferred_from_to_quiz(quiz_player_transferred_from_to: dict) -> bool:
+    return post_json(quiz_player_transferred_from_to)
 
 
 
