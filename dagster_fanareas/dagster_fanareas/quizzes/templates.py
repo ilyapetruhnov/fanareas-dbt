@@ -204,7 +204,7 @@ def quiz_player_transferred_from_to(context) -> list:
 #     return post_json(quiz_player_transferred_from_to)
 
 @asset(group_name="templates")
-def post_guess_the_player_quiz(quiz_player_age_nationality: dict, quiz_player_age_team: dict, quiz_player_shirt_number: dict) -> bool:
+def post_guess_the_player_quiz(quiz_player_age_nationality: list, quiz_player_age_team: list, quiz_player_shirt_number: list) -> bool:
     title = "Guess the player"
     description = "Guess 10 football players from the Premier League"
     l1 = quiz_player_age_nationality()
@@ -220,7 +220,7 @@ def post_guess_the_player_quiz(quiz_player_age_nationality: dict, quiz_player_ag
 
 
 @asset(group_name="templates")
-def post_transfers_quiz(quiz_player_transferred_from_to: dict, quiz_player_2_clubs_played: dict) -> bool:
+def post_transfers_quiz(quiz_player_transferred_from_to: list, quiz_player_2_clubs_played: list) -> bool:
     title = "Daily transfers"
     description = "Answer 10 question about Premier League transfers"
     l1 = quiz_player_transferred_from_to()
