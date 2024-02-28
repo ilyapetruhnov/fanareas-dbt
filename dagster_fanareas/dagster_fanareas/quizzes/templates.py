@@ -10,8 +10,8 @@ def guess_player_template(query:str, statement: str, *cols):
     q_lst = []
     for i in range(10):
         dimension = cols[0]
-        dimension = df[dimension].unique()[i]
-        sample_df = df[df[dimension]==dimension].sample(n=4)
+        val_dim = df[dimension].unique()[i]
+        sample_df = df[df[dimension]==val_dim].sample(n=4)
         correct_idx = random.randint(0, 3)
         correct_row = sample_df.iloc[correct_idx]
         correct_vals = [correct_row[i] for i in cols]
