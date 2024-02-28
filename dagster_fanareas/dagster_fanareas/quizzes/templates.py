@@ -3,31 +3,11 @@ import pandas as pd
 import random
 from dagster_fanareas.ops.utils import post_json, create_db_session
 
-def quiz_template(quiz_type: int, title:str, description: str, q_lst: list):
-    # engine = create_db_session()
-    # df = pd.read_sql(query, con=engine)
-    
-    # q_lst = []
-    # for i in range(10):
-    #     dimension = cols[0]
-    #     val_dim = df[dimension].unique()[i]
-    #     sample_df = df[df[dimension]==val_dim].sample(n=4)
-    #     correct_idx = random.randint(0, 3)
-    #     correct_row = sample_df.iloc[correct_idx]
-    #     correct_vals = [correct_row[i] for i in cols]
-    #     question = statement.format(*correct_vals)
-    #     options = list(sample_df['fullname'])
-    #     correct_response = correct_row['fullname']
-    #     question = {
-    #     "description": question,
-    #     "quizQuestionOptions": options,
-    #     "correctAnswer": correct_response
-    #                 }
-        # q_lst.append(question)
+def quiz_template(quiz_type: int, title:str, description: str, result_list: list):
     json_data = {"title": title,
                      "type": quiz_type,
                     "description": description,
-                    'questions': q_lst}
+                    'questions': result_list}
         
     return json_data
 
@@ -240,7 +220,7 @@ def post_guess_the_player_quiz(quiz_player_age_nationality: dict, quiz_player_ag
 
 
 @asset(group_name="templates")
-def post_guess_the_player_quiz(quiz_player_transferred_from_to: dict, quiz_player_2_clubs_played: dict) -> bool:
+def post_transfers_quiz(quiz_player_transferred_from_to: dict, quiz_player_2_clubs_played: dict) -> bool:
     title = "Daily transfers"
     description = "Answer 10 question about Premier League transfers"
     l1 = quiz_player_transferred_from_to()
