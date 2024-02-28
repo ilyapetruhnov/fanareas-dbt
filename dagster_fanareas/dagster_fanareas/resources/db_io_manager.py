@@ -28,62 +28,15 @@ class DbIOManager(IOManager):
         self._con = con_string
 
     def handle_output(self, context, obj):
-                
         if isinstance(obj, pd.DataFrame) and obj.empty:
             pass
-
-        elif isinstance(obj, pd.DataFrame):
-        
-            engine = sqlalchemy.create_engine(self._con)
-            table_name = context.asset_key.path[-1]
-            context.log.info(table_name)
-
-            # If it already exists...
-            temp_table_name = f"temp_{uuid.uuid4().hex[:6]}"
-            obj = obj.set_index('id')
-            obj.to_sql(temp_table_name, engine, if_exists='replace')
-            index = list(obj.index.names)
-            index_sql_txt = ", ".join([f'"{i}"' for i in index])
-            columns = list(obj.columns)
-            headers = index + columns
-            headers_sql_txt = ", ".join(
-                [f'"{i}"' for i in headers]
-            )  # index1, index2, ..., column 1, col2, ...
-
-            # col1 = exluded.col1, col2=excluded.col2
-            update_column_stmt = ", ".join([f'"{col}" = EXCLUDED."{col}"' for col in columns])
-
-            # For the ON CONFLICT clause, postgres requires that the columns have unique constraint
-            # query_pk = f"""ALTER TABLE {table_name} ADD CONSTRAINT {table_name}_unique_constraint_for_upsert UNIQUE ({index_sql_txt});"""
-            query_upsert = text(f"""INSERT INTO {table_name} ({headers_sql_txt}) SELECT {headers_sql_txt} FROM {temp_table_name} ON CONFLICT ({index_sql_txt}) DO UPDATE SET {update_column_stmt};""")
-            with engine.connect() as conn:
-                try:
-                    # conn.execute(query_pk)
-                    conn.execute(query_upsert)
-                except Exception as e:
-                    # relation "unique_constraint_for_upsert" already exists
-                    if not 'unique_constraint_for_upsert" already exists' in e.args[0]:
-                        raise e
-            # Compose and execute upsert query
-            # query_upsert = f"""
-            # INSERT INTO "{table_name}" ({headers_sql_txt}) 
-            # SELECT {headers_sql_txt} FROM "{temp_table_name}"
-            # ON CONFLICT ({index_sql_txt}) DO UPDATE 
-            # SET {update_column_stmt};
-            # """
-            
-            # engine.execute(f'DROP TABLE "{temp_table_name}"')
-
-
         # dbt has already written the data to this table
-
-        # elif isinstance(obj, pd.DataFrame) and obj.empty == False:
-        #     # write df to table
-        #     obj.set_index('id').to_sql(name=context.asset_key.path[-1], con=self._con, if_exists="append")
+        elif isinstance(obj, pd.DataFrame) and obj.empty == False:
+            # write df to table
+            obj.set_index('id').to_sql(name=context.asset_key.path[-1], con=self._con, if_exists="append")
         else:
             raise ValueError(f"Unsupported object type {type(obj)} for DbIOManager.")
         
-
 
     def load_input(self, context) -> pd.DataFrame:
         """Load the contents of a table as a pandas DataFrame."""
