@@ -68,7 +68,7 @@ def quiz_player_age_nationality(context) -> list:
         lastname,
         fullname,
         nationality,
-        int(date_part('year', cast(date_of_birth as date)) ) as birth_year,
+        cast(date_part('year', cast(date_of_birth as date)) as int) as birth_year,
         array_to_string(team, '/') as team,
         array_to_string(jersey_number, '/') as jersey_number,
         t.season
@@ -94,7 +94,7 @@ def quiz_player_age_team(context) -> list:
         lastname,
         fullname,
         nationality,
-        date_part('year', cast(date_of_birth as date) ) as birth_year,
+        cast(date_part('year', cast(date_of_birth as date)) as int) as birth_year,
         array_to_string(team, '/') as team,
         array_to_string(jersey_number, '/') as jersey_number,
         t.season
@@ -175,34 +175,6 @@ def quiz_player_transferred_from_to(context) -> list:
     return q_list
 
 
-# @asset(group_name="templates")
-# def post_quiz_player_shirt_number(quiz_player_shirt_number: dict) -> bool:
-#     return post_json(quiz_player_shirt_number)
-
-# @asset(group_name="templates")
-# def post_quiz_player_age_nationality(quiz_player_age_nationality: dict) -> bool:
-#     return post_json(quiz_player_age_nationality)
-
-# @asset(group_name="templates")
-# def post_quiz_player_age_team(quiz_player_age_team: dict) -> bool:
-#     return post_json(quiz_player_age_team)
-
-# @asset(group_name="templates")
-# def post_quiz_player_2_clubs_played(quiz_player_2_clubs_played: dict) -> bool:
-#     return post_json(quiz_player_2_clubs_played)
-
-# @asset(group_name="templates")
-# def post_quiz_player_transferred_from_to(quiz_player_transferred_from_to: dict) -> bool:
-#     return post_json(quiz_player_transferred_from_to)
-
-
-# @asset(group_name="templates")
-# def post_transfer_quiz(quiz_player_transferred_from_to: dict, quiz_player_2_clubs_played: dict) -> bool:
-
-#     post_json(quiz_player_transferred_from_to)
-#     post_json(quiz_player_2_clubs_played)
-#     return post_json(quiz_player_transferred_from_to)
-
 @asset(group_name="templates")
 def post_guess_the_player_quiz(quiz_player_age_nationality: list, quiz_player_age_team: list, quiz_player_shirt_number: list) -> bool:
     title = "Guess the player"
@@ -220,7 +192,7 @@ def post_guess_the_player_quiz(quiz_player_age_nationality: list, quiz_player_ag
 
 
 @asset(group_name="templates")
-def post_transfers_quiz(quiz_player_transferred_from_to: list, quiz_player_2_clubs_played: list) -> bool:
+def post_transfers_quiz(context, quiz_player_transferred_from_to: list, quiz_player_2_clubs_played: list) -> bool:
     title = "Daily transfers"
     description = "Answer 10 question about Premier League transfers"
     l1 = quiz_player_transferred_from_to()
