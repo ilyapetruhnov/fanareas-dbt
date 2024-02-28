@@ -180,9 +180,7 @@ def post_guess_the_player_quiz( quiz_player_age_team: list, quiz_player_shirt_nu
     title = "Guess the player"
     description = "Guess 10 football players from the Premier League"
     # l1 = quiz_player_age_nationality()
-    l2 = quiz_player_age_team()
-    l3 = quiz_player_shirt_number()
-    combined_q_list = l2 + l3
+    combined_q_list = quiz_player_age_team + quiz_player_shirt_number
     random.shuffle(combined_q_list)
     result_list = combined_q_list[:9]
     quiz_type=0
@@ -192,12 +190,10 @@ def post_guess_the_player_quiz( quiz_player_age_team: list, quiz_player_shirt_nu
 
 
 @asset(group_name="templates")
-def post_transfers_quiz(context, quiz_player_transferred_from_to: list, quiz_player_2_clubs_played: list) -> bool:
+def post_transfers_quiz(quiz_player_transferred_from_to: list, quiz_player_2_clubs_played: list) -> bool:
     title = "Daily transfers"
     description = "Answer 10 question about Premier League transfers"
-    l1 = quiz_player_transferred_from_to()
-    l2 = quiz_player_2_clubs_played()
-    combined_q_list = l1 + l2
+    combined_q_list = quiz_player_transferred_from_to + quiz_player_2_clubs_played
     random.shuffle(combined_q_list)
     result_list = combined_q_list[:9]
     quiz_type=1
