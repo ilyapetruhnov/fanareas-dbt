@@ -82,7 +82,7 @@ def quiz_player_age_nationality(context) -> list:
         and is_active = true
         """
     statement = "Which player was born in {} in {}?"
-    q_list = generate_quiz_questions(query, statement, 'nationality', 'birth_year')
+    q_list = generate_quiz_questions(query, statement, 'birth_year', 'nationality')
 
     return q_list
 
