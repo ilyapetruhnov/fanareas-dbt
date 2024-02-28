@@ -179,10 +179,10 @@ def quiz_player_transferred_from_to(context) -> list:
 def post_guess_the_player_quiz(quiz_player_age_nationality: list, quiz_player_age_team: list, quiz_player_shirt_number: list) -> bool:
     title = "Guess the player"
     description = "Guess 10 football players from the Premier League"
-    l1 = quiz_player_age_nationality()
+    # l1 = quiz_player_age_nationality()
     l2 = quiz_player_age_team()
     l3 = quiz_player_shirt_number()
-    combined_q_list = l1 + l2 + l3
+    combined_q_list = l2 + l3
     random.shuffle(combined_q_list)
     result_list = combined_q_list[:9]
     quiz_type=0
