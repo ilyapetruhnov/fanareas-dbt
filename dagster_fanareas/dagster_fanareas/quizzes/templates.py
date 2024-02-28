@@ -60,31 +60,31 @@ def quiz_player_shirt_number(context) -> list:
     q_list = generate_quiz_questions(query, statement, 'team', 'jersey_number')
     return q_list
 
-@asset( group_name="templates", compute_kind="pandas")
-def quiz_player_age_nationality(context) -> list:
-    query="""
-        SELECT
-        firstname,
-        lastname,
-        fullname,
-        nationality,
-        cast(date_part('year', cast(date_of_birth as date)) as int) as birth_year,
-        array_to_string(team, '/') as team,
-        array_to_string(jersey_number, '/') as jersey_number,
-        t.season
-        FROM
-        dim_players
-        CROSS JOIN UNNEST (season_stats) AS t
-        WHERE
-        t.season = 2023
-        and date_of_birth is not null
-        and array_length(t.team,1) = 1
-        and is_active = true
-        """
-    statement = "Which player was born in {} in {}?"
-    q_list = generate_quiz_questions(query, statement, 'birth_year', 'nationality')
+# @asset( group_name="templates", compute_kind="pandas")
+# def quiz_player_age_nationality(context) -> list:
+#     query="""
+#         SELECT
+#         firstname,
+#         lastname,
+#         fullname,
+#         nationality,
+#         cast(date_part('year', cast(date_of_birth as date)) as int) as birth_year,
+#         array_to_string(team, '/') as team,
+#         array_to_string(jersey_number, '/') as jersey_number,
+#         t.season
+#         FROM
+#         dim_players
+#         CROSS JOIN UNNEST (season_stats) AS t
+#         WHERE
+#         t.season = 2023
+#         and date_of_birth is not null
+#         and array_length(t.team,1) = 1
+#         and is_active = true
+#         """
+#     statement = "Which player was born in {} in {}?"
+#     q_list = generate_quiz_questions(query, statement, 'birth_year', 'nationality')
 
-    return q_list
+#     return q_list
 
 @asset( group_name="templates", compute_kind="pandas")
 def quiz_player_age_team(context) -> list:
@@ -176,7 +176,7 @@ def quiz_player_transferred_from_to(context) -> list:
 
 
 @asset(group_name="templates")
-def post_guess_the_player_quiz(quiz_player_age_nationality: list, quiz_player_age_team: list, quiz_player_shirt_number: list) -> bool:
+def post_guess_the_player_quiz( quiz_player_age_team: list, quiz_player_shirt_number: list) -> bool:
     title = "Guess the player"
     description = "Guess 10 football players from the Premier League"
     # l1 = quiz_player_age_nationality()
