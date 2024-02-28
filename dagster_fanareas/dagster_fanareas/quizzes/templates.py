@@ -10,8 +10,8 @@ def guess_player_template(query:str, statement: str, *cols):
     q_lst = []
     for i in range(10):
         dimension = cols[0]
-        team = df[dimension].unique()[i]
-        sample_df = df[df['team']==team].sample(n=4)
+        dimension = df[dimension].unique()[i]
+        sample_df = df[df[dimension]==dimension].sample(n=4)
         correct_idx = random.randint(0, 3)
         correct_row = sample_df.iloc[correct_idx]
         correct_vals = [correct_row[i] for i in cols]
@@ -132,7 +132,7 @@ def quiz_player_2_clubs_played(context) -> dict:
     """
     statement = "Which player played for {} and {} in his career?"
     
-    json_data = guess_player_template(query, statement, 'team', 'transferred_from_team')
+    json_data = guess_player_template(query, statement, 'team', 'transfer_from_team')
     return json_data
 
 @asset( group_name="templates", compute_kind="pandas")
