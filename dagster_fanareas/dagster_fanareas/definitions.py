@@ -21,7 +21,7 @@ quiz_player_age_team_job = define_asset_job(name="quiz_player_age_team_job", sel
 quiz_player_2_clubs_played_job = define_asset_job(name="quiz_player_2_clubs_played_job", selection="post_quiz_player_2_clubs_played")
 quiz_player_transferred_from_to_job = define_asset_job(name="quiz_player_transferred_from_to_job", selection="post_quiz_player_transferred_from_to")
 
-templates_job = define_asset_job("templates_job", AssetSelection.groups(templates))
+templates_job = define_asset_job("templates_job", AssetSelection.groups("templates"))
 templates_schedule = ScheduleDefinition(job=templates_job, cron_schedule="* * * * *")
 
 defs = Definitions(
