@@ -1,5 +1,5 @@
 import os
-from dagster import Definitions, load_assets_from_modules, asset, define_asset_job, AssetSelection 
+from dagster import Definitions, load_assets_from_modules, define_asset_job, AssetSelection 
 from dagster_dbt import DbtCliResource
 from dagster_fanareas.assets import assets, dbt, core_assets
 from dagster_fanareas.quizzes import templates
@@ -30,7 +30,7 @@ defs = Definitions(
             quiz_player_transferred_from_to_job,
             templates_job],
     schedules=[schedules,
-               templates_schedule]
+               templates_schedule],
     resources={
         "dbt": DbtCliResource(project_dir=os.fspath(dbt_project_dir)),
         "db_io_manager": db_io_manager.configured(POSTGRES_CONFIG)
