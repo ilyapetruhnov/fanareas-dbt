@@ -76,9 +76,9 @@ def quiz_player_age_nationality(context) -> dict:
         and array_length(t.team,1) = 1
         and is_active = true
         """
-    statement = "Which player has a nationality {} and was born in {}?"
+    statement = "Which player was born in {} in {}?"
     quiz_type=0
-    json_data = guess_player_template(quiz_type, query, statement, 'nationality', 'birth_year')
+    json_data = guess_player_template(quiz_type, query, statement, 'birth_year', 'nationality')
     return json_data
 
 @asset( group_name="templates", compute_kind="pandas")
@@ -116,6 +116,7 @@ def quiz_player_2_clubs_played(context) -> dict:
             player_id,
             firstname,
             lastname,
+            fullname,
             lag(array_to_string(team, '/')) over
                 (partition by player_id order by t.season) transfer_from_team,
             array_to_string(team, '/') as team,
