@@ -4,7 +4,7 @@ from dagster_dbt import DbtCliResource
 from dagster_fanareas.assets import assets, dbt, core_assets
 from dagster_fanareas.quizzes import templates
 from .constants import dbt_project_dir, POSTGRES_CONFIG
-from .schedules import schedules
+# from .schedules import schedules
 from dagster_fanareas.resources.db_io_manager import db_io_manager
 
 all_assets = load_assets_from_modules([assets, dbt, core_assets, templates])
@@ -31,8 +31,7 @@ defs = Definitions(
             quiz_player_2_clubs_played_job,
             quiz_player_transferred_from_to_job,
             templates_job],
-    schedules=[schedules,
-               templates_schedule],
+    schedules=[templates_schedule],
     resources={
         "dbt": DbtCliResource(project_dir=os.fspath(dbt_project_dir)),
         "db_io_manager": db_io_manager.configured(POSTGRES_CONFIG)
