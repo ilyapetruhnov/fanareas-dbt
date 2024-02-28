@@ -3,7 +3,7 @@ import pandas as pd
 import random
 from dagster_fanareas.ops.utils import post_json, create_db_session
 
-def guess_player_template(query:str, statement: str, *cols):
+def guess_player_template(quiz_type:str, query:str, statement: str, *cols):
     engine = create_db_session()
     df = pd.read_sql(query, con=engine)
     
@@ -24,9 +24,10 @@ def guess_player_template(query:str, statement: str, *cols):
         "correctAnswer": correct_response
                     }
         q_lst.append(question)
-        json_data = {"title": "Guess the player", 
-                 "description": "Answer 10 questions",
-                 'questions': q_lst}
+        json_data = {"title": "Guess the player",
+                     "type": quiz_type,
+                    "description": "Answer 10 questions",
+                    'questions': q_lst}
         
     return json_data
 
@@ -50,7 +51,8 @@ def quiz_player_shirt_number(context) -> dict:
         and is_active = true
         """
     statement = "Which player currently plays for {} under {} shirt number?"
-    json_data = guess_player_template(query, statement, 'team', 'jersey_number')
+    quiz_type=0
+    json_data = guess_player_template(quiz_type, query, statement, 'team', 'jersey_number')
     return json_data
 
 @asset( group_name="templates", compute_kind="pandas")
@@ -75,8 +77,8 @@ def quiz_player_age_nationality(context) -> dict:
         and is_active = true
         """
     statement = "Which player has a nationality {} and was born in {}?"
-
-    json_data = guess_player_template(query, statement, 'nationality', 'birth_year')
+    quiz_type=0
+    json_data = guess_player_template(quiz_type, query, statement, 'nationality', 'birth_year')
     return json_data
 
 @asset( group_name="templates", compute_kind="pandas")
@@ -101,7 +103,8 @@ def quiz_player_age_team(context) -> dict:
         and is_active = true
         """
     statement = "Which player currently plays for team {} and was born in {}?"
-    json_data = guess_player_template(query, statement, 'team', 'birth_year')
+    quiz_type=0
+    json_data = guess_player_template(quiz_type, query, statement, 'team', 'birth_year')
     return json_data
 
 
@@ -131,8 +134,8 @@ def quiz_player_2_clubs_played(context) -> dict:
             where team != transfer_from_team
     """
     statement = "Which player played for {} and {} in his career?"
-    
-    json_data = guess_player_template(query, statement, 'team', 'transfer_from_team')
+    quiz_type=1
+    json_data = guess_player_template(quiz_type, query, statement, 'team', 'transfer_from_team')
     return json_data
 
 @asset( group_name="templates", compute_kind="pandas")
@@ -162,8 +165,8 @@ def quiz_player_transferred_from_to(context) -> dict:
             where team != transfer_from_team
     """
     statement = "Which player had a transfer from {} to {} in the {} season?"
-    
-    json_data = guess_player_template(query, statement, 'transfer_from_team', 'team', 'season')
+    quiz_type=1
+    json_data = guess_player_template(quiz_type, query, statement, 'transfer_from_team', 'team', 'season')
     return json_data
 
 
