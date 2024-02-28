@@ -1,10 +1,10 @@
 import os
-from dagster import Definitions, load_assets_from_modules, asset, define_asset_job
+from dagster import Definitions, load_assets_from_modules, asset, define_asset_job, AssetSelection 
 from dagster_dbt import DbtCliResource
 from dagster_fanareas.assets import assets, dbt, core_assets
 from dagster_fanareas.quizzes import templates
 from .constants import dbt_project_dir, POSTGRES_CONFIG
-from .schedules import schedules
+from .schedules import schedules, templates_schedule
 from dagster_fanareas.resources.db_io_manager import db_io_manager
 
 all_assets = load_assets_from_modules([assets, dbt, core_assets, templates])
@@ -19,6 +19,7 @@ quiz_player_age_team_job = define_asset_job(name="quiz_player_age_team_job", sel
 quiz_player_2_clubs_played_job = define_asset_job(name="quiz_player_2_clubs_played_job", selection="post_quiz_player_2_clubs_played")
 quiz_player_transferred_from_to_job = define_asset_job(name="quiz_player_transferred_from_to_job", selection="post_quiz_player_transferred_from_to")
 
+templates_job = define_asset_job("templates_job", AssetSelection.groups("templates"))
 
 defs = Definitions(
     assets=[*all_assets],
@@ -26,8 +27,10 @@ defs = Definitions(
             quiz_player_age_nationality_job,
             quiz_player_age_team_job,
             quiz_player_2_clubs_played_job,
-            quiz_player_transferred_from_to_job],
-    schedules=schedules,
+            quiz_player_transferred_from_to_job,
+            templates_job],
+    schedules=[schedules,
+               templates_schedule]
     resources={
         "dbt": DbtCliResource(project_dir=os.fspath(dbt_project_dir)),
         "db_io_manager": db_io_manager.configured(POSTGRES_CONFIG)
