@@ -12,49 +12,6 @@ def quiz_template(quiz_type: int, title:str, description: str, result_list: list
     return json_data
 
 
-# def generate_quiz_questions(query: str, statement: str, *cols) -> list:
-#     engine = create_db_session()
-#     df = pd.read_sql(query, con=engine)
-#     if cols:
-#         q_lst = []
-#         for i in range(10):
-#             dimension = cols[0]
-#             val_dim = df[df[dimension].map(df[dimension].value_counts()) > 4][dimension].value_counts().index.unique()[i]
-#             # val_dim = df[dimension].unique()[i]
-#             sample_df = df[df[dimension]==val_dim].sample(n=4)
-#             correct_idx = random.randint(0, 3)
-#             correct_row = sample_df.iloc[correct_idx]
-#             correct_vals = [correct_row[i] for i in cols]
-#             question = statement.format(*correct_vals)
-#             options = list(sample_df['fullname'])
-#             correct_response = correct_row['fullname']
-#             question = {
-#             "description": question,
-#             "quizQuestionOptions": options,
-#             "correctAnswer": correct_response
-#                         }
-#             q_lst.append(question)
-#     else:
-#         q_lst = []
-#         for i in range(10):
-
-#             sample_df = df.sample(n=4).sort_values('height')
-#             # height = sample_df.iloc[3]['height']
-#             # player_name = sample_df.iloc[3]['player_name']
-#             # correct_vals = [correct_row[i] for i in cols]
-#             question = statement.format(*correct_vals)
-#             options = list(sample_df['fullname'])
-#             correct_response = sample_df.iloc[3]['player_name']
-#             question = {
-#             "description": question,
-#             "quizQuestionOptions": options,
-#             "correctAnswer": correct_response
-#                         }
-#             q_lst.append(question)
-
-#     return q_lst
-
-
 def generate_quiz_questions(query: str, statement: str, *cols) -> list:
     engine = create_db_session()
     df = pd.read_sql(query, con=engine)
@@ -334,7 +291,7 @@ def post_guess_the_player_quiz(quiz_player_height:list, quiz_player_2_clubs_play
     quiz_type=0
     json_data = quiz_template(quiz_type, title, description, result_list)
 
-    return post_json(json_data)
+    return post_json(json_data, url = 'https://fanareas.com/api/quizzes/createQuizz')
 
 
 @asset(group_name="templates")
@@ -347,4 +304,4 @@ def post_transfers_quiz(quiz_player_transferred_from_to: list, quiz_player_2_clu
     quiz_type=1
     json_data = quiz_template(quiz_type, title, description, result_list)
 
-    return post_json(json_data)
+    return post_json(json_data, url = 'https://fanareas.com/api/quizzes/createQuizz')
