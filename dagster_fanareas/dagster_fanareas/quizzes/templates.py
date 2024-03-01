@@ -20,7 +20,7 @@ def generate_quiz_questions(query: str, statement: str, *cols) -> list:
     for i in range(10):
         dimension = cols[0]
         val_dim = df[df[dimension].map(df[dimension].value_counts()) > 4][dimension].value_counts().index.unique()[i]
-        # val_dim = df[dimension].unique()[i]
+        
         sample_df = df[df[dimension]==val_dim].sample(n=4)
         correct_idx = random.randint(0, 3)
         correct_row = sample_df.iloc[correct_idx]
