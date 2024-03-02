@@ -161,7 +161,7 @@ def publish_facts():
 @asset(group_name="facts")
 def publish_one_fact():
     metric_list = ['goals','assists','yellow_cards','red_cards','minutes_played']
-    selected_metric = random.sample(metric_list, 1)
+    selected_metric = random.choice(metric_list)
     post_one_fact(selected_metric)
     return True
 
