@@ -102,7 +102,7 @@ def top_10_stats(season: int) -> pd.DataFrame:
 def top_five_by_team(season: int, selected_metric: str) -> dict:
     df = top_5_stats_by_team(season)
     teams = list(df['team'].unique())
-    selected_team = random.sample(teams, 1)
+    selected_team = random.choice(teams)
     df = df[(df[f'{selected_metric}_rn']<=5) & (df['team']==selected_team)][['fullname','team','season_name', selected_metric]].sort_values(selected_metric, ascending=False)
     season_name = df['season_name'].iloc[0]
     metric_formatted = selected_metric.replace('_',' ')
