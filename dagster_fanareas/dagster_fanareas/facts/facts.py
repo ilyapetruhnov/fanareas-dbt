@@ -2,6 +2,7 @@ from dagster import asset
 import pandas as pd
 import random
 from dagster_fanareas.ops.utils import post_json, create_db_session
+from sqlalchemy import create_engine, text
 
 def fact_template(season_name: str, quiz_type: int, title: str, description: list):
     json_data = {
@@ -54,7 +55,7 @@ def top_5_stats_by_team(season: int) -> pd.DataFrame:
                 or yellow_cards_rn <= 5)
     """
     engine = create_db_session()
-    df = pd.read_sql(query, con=engine)
+    df = pd.read_sql(text(query), con=engine)
     return df
 
 
@@ -94,7 +95,7 @@ def top_10_stats(season: int) -> pd.DataFrame:
                 or yellow_cards_rn <= 10
         """
     engine = create_db_session()
-    df = pd.read_sql(query, con=engine)
+    df = pd.read_sql(text(query), con=engine)
     return df
 
 
