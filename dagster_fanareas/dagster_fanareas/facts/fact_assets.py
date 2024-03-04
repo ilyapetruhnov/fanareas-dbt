@@ -1,7 +1,7 @@
 from dagster import asset
-from facts import Facts
+from dagster_fanareas.facts.facts import Facts
 import random
-from facts.queries import top_players_query, top_teams_query
+from dagster_fanareas.facts.queries import top_players_query, top_teams_query
 
 query = top_players_query
 season = random.randint(2008,2023)

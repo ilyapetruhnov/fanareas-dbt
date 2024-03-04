@@ -1,6 +1,6 @@
 from dagster import asset
-from quizzes import Quizzes
-from queries import *
+from dagster_fanareas.quizzes.quizzes import Quizzes
+from dagster_fanareas.quizzes.queries import *
 import random
 
 @asset(group_name="quizzes")
