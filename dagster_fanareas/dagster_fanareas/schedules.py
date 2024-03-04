@@ -7,9 +7,6 @@ from dagster_dbt import build_schedule_from_dbt_selection
 from dagster_fanareas.assets.dbt import fanareas_dbt_assets
 
 
-
-
-
 schedules = [
     build_schedule_from_dbt_selection(
         [fanareas_dbt_assets],
