@@ -53,6 +53,22 @@ class Quizzes:
             q_lst.append(question)
         return q_lst
     
+    def generate_simple_questions(self, query_str: str, statement: str,  dimension: str, query_param: None):
+        query = self.generate_query(query_str, query_param)
+        df = self.generate_df(query)
+        q_lst = []
+        for i in range(10):
+            sample_df = df.sample(n=4).sort_values(dimension)
+            options = list(sample_df['fullname'])
+            correct_response = sample_df.iloc[3]['fullname']
+            question = {
+            "description": statement,
+            "quizQuestionOptions": options,
+            "correctAnswer": correct_response
+                        }
+            q_lst.append(question)
+        return q_lst
+    
 
     def mixed_quiz_questions(*quizzes:list):
         combined_q_list = [x + y for x, y in quizzes] # DEBUG

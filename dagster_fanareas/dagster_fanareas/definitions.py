@@ -2,14 +2,14 @@ import os
 from dagster import Definitions, load_assets_from_modules, define_asset_job, AssetSelection, ScheduleDefinition
 from dagster_dbt import DbtCliResource
 from dagster_fanareas.assets import assets, dbt, core_assets
-from dagster_fanareas.quizzes import templates
-from dagster_fanareas.facts import facts
+from dagster_fanareas.quizzes import templates, quiz_assets
+from dagster_fanareas.facts import facts, fact_assets
 
 from .constants import dbt_project_dir, POSTGRES_CONFIG
 # from .schedules import schedules
 from dagster_fanareas.resources.db_io_manager import db_io_manager
 
-all_assets = load_assets_from_modules([assets, dbt, core_assets, templates, facts])
+all_assets = load_assets_from_modules([assets, dbt, core_assets, templates, facts, fact_assets, quiz_assets])
 
 # postgres_instance = db_io_manager.configured(POSTGRES_CONFIG)
 

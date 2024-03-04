@@ -30,8 +30,9 @@ def guess_the_player_quiz() -> bool:
                                                             'team', 
                                                             'birth_year')
 
-    quiz_player_height = quiz_obj.generate_quiz_questions(query_player_height, 
-                                                          statement_player_height, 
+    quiz_player_height = quiz_obj.generate_simple_questions(query_player_height, 
+                                                          statement_player_height,
+                                                          dimension = 'height',
                                                           query_param = random.randint(0, 40))
 
     combined_q_list = quiz_player_height + quiz_player_shirt_number + quiz_player_2_clubs_played + quiz_player_age_nationality + quiz_player_age_team

@@ -181,7 +181,7 @@ statement_player_transferred_from_to = "Which player had a transfer from {} to {
 
 
 statement_player_height = "Guess the tallest player from the following players"
-# i = random.randint(0, 40)
+
 query_player_height=f"""
             with vw as (
                     SELECT
