@@ -11,11 +11,11 @@ class Facts:
         self.metric_list = metric_list
         self.url = "https://fanareas.com/api/facts/createFact"
 
-    def fact_template(season_name: str, quiz_type: int, title: str, description: list):
+    def fact_template(self, season_name: str, quiz_type: int, title: str, facts: list):
         json_data = {
             "season": season_name,
             "title": title,
-            "description": description,
+            "description": facts,
             "type": quiz_type
             }
         return json_data
