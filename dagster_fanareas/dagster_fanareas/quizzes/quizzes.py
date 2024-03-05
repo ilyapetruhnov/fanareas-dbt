@@ -1,4 +1,3 @@
-from typing import Any
 import pandas as pd
 import random
 from dagster_fanareas.ops.utils import post_json, create_db_session
