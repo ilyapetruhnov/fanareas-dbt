@@ -1,8 +1,7 @@
 import pandas as pd
 import random
 from dagster_fanareas.ops.utils import post_json, create_db_session
-from sqlalchemy import text
-from queries import *
+from dagster_fanareas.quizzes.queries import *
 
 class Quizzes:
     def __init__(self, title: str, description: str, quiz_type: int) -> None:
