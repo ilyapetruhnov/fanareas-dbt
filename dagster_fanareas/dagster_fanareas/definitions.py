@@ -21,15 +21,23 @@ guess_the_player_quiz_job = define_asset_job(name="quiz_guess_the_player", selec
 transfers_quiz_job = define_asset_job(name="quiz_transfers", selection="post_transfers_quiz")
 
 
+post_news_job = define_asset_job(name="post_news", selection="post_news")
+
 templates_job = define_asset_job("templates_job", AssetSelection.groups("templates"))
-templates_schedule = ScheduleDefinition(job=transfers_quiz_job, cron_schedule="* * * * *")
+
+news_schedule = ScheduleDefinition(job=post_news_job, cron_schedule="0 0,4,8,12,16,20 * * *")
+
+quiz_schedule = ScheduleDefinition(job=transfers_quiz_job, cron_schedule="0 22 * * *")
 
 defs = Definitions(
     assets=[*all_assets],
     jobs = [guess_the_player_quiz_job,
-            transfers_quiz_job
+            transfers_quiz_job,
+            post_news_job
             ],
-    schedules=[templates_schedule],
+    schedules=[news_schedule,
+               quiz_schedule
+               ],
     resources={
         "dbt": DbtCliResource(project_dir=os.fspath(dbt_project_dir)),
         "db_io_manager": db_io_manager.configured(POSTGRES_CONFIG)
