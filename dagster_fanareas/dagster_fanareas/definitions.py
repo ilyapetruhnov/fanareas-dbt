@@ -21,7 +21,7 @@ guess_the_player_quiz_job = define_asset_job(name="quiz_guess_the_player", selec
 transfers_quiz_job = define_asset_job(name="quiz_transfers", selection="post_transfers_quiz")
 
 
-post_news_job = define_asset_job(name="post_news", selection="post_news")
+post_news_job = define_asset_job(name="post_news", selection="trigger_post_news")
 
 templates_job = define_asset_job("templates_job", AssetSelection.groups("templates"))
 
