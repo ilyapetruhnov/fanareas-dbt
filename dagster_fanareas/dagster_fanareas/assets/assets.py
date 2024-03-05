@@ -1,6 +1,6 @@
 from dagster import asset
 import pandas as pd
-from dagster_fanareas.ops.utils import api_call, fetch_data, flatten_list, upsert
+from dagster_fanareas.ops.utils import api_call, fetch_data, flatten_list, upsert, call_news
 from dagster_fanareas.constants import base_url
 from itertools import product
 import time
@@ -212,4 +212,13 @@ def team_stats_detailed(context, team_stats_dict: dict) -> pd.DataFrame:
     existing_df = context.resources.db_io_manager.load_input(context)
     df = upsert(dataset_name, existing_df, new_df = df)
     return df
+
+
+@asset( group_name="news")
+def post_news() -> bool:
+    url = "https://fanareas.com/api/news/parseNews"
+    call_news(url)
+    return True
+
+
 

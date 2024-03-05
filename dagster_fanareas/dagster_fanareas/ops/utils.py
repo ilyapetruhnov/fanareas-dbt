@@ -111,3 +111,16 @@ def post_json(json_data, url):
         print('Response:', response.text)
     
     return True
+
+@op
+def call_news(url):
+    response = requests.post(url)
+
+    if response.status_code == 200:
+        print('POST request successful!')
+        print('Response:', response.text)
+    else:
+        print('POST request failed with status code:', response.status_code)
+        print('Response:', response.text)
+    
+    return True

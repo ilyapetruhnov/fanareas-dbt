@@ -12,31 +12,32 @@ def guess_the_player_quiz() -> bool:
 
     quiz_player_shirt_number = quiz_obj.generate_quiz_questions(query_player_shirt_number, 
                                                                 statement_player_shirt_number, 
-                                                                'team', 
-                                                                'jersey_number')
+                                                                ('team', 'jersey_number')
+    )
 
     quiz_player_2_clubs_played = quiz_obj.generate_quiz_questions(query_player_2_clubs_played, 
                                                                   statement_player_2_clubs_played, 
-                                                                  'team', 
-                                                                  'transfer_from_team')
+                                                                 ('team', 'transfer_from_team')
+    )
 
     quiz_player_age_nationality = quiz_obj.generate_quiz_questions(query_player_age_nationality, 
                                                                    statement_player_age_nationality,
-                                                                   'birth_year', 
-                                                                   'nationality')
+                                                                   ('birth_year', 'nationality')
+    )
 
     quiz_player_age_team = quiz_obj.generate_quiz_questions(query_player_age_team, 
                                                             statement_player_age_team,
-                                                            'team', 
-                                                            'birth_year')
+                                                            ('team', 'birth_year')
+    )
 
-    quiz_player_height = quiz_obj.generate_simple_questions(query_player_height, 
-                                                          statement_player_height,
-                                                          dimension = 'height',
-                                                          query_param = random.randint(0, 40))
+    # quiz_player_height = quiz_obj.generate_simple_questions(query_player_height, 
+    #                                                       statement_player_height,
+    #                                                       dimension = 'height',
+    #                                                       query_param = random.randint(0, 40))
 
-    combined_q_list = quiz_player_height + quiz_player_shirt_number + quiz_player_2_clubs_played + quiz_player_age_nationality + quiz_player_age_team
-    mixed_quiz_questions = quiz_obj.mixed_quiz_questions(combined_q_list)
+    combined_q_list = quiz_player_shirt_number + quiz_player_2_clubs_played + quiz_player_age_nationality + quiz_player_age_team
+    random.shuffle(combined_q_list)
+    mixed_quiz_questions = combined_q_list[:10]
 
     return quiz_obj.post_quiz(mixed_quiz_questions)
 
@@ -49,13 +50,15 @@ def transfers_quiz() -> bool:
     quiz_obj = Quizzes(title, description, quiz_type)
     quiz_player_transferred_from_to = quiz_obj.generate_quiz_questions(query_player_transferred_from_to, 
                                                                        statement_player_transferred_from_to, 
-                                                                       'transfer_from_team', 
+                                                                       ('transfer_from_team', 
                                                                        'team', 
                                                                        'season')
+    )
     quiz_player_2_clubs_played = quiz_obj.generate_quiz_questions(query_player_2_clubs_played, 
                                                                   statement_player_2_clubs_played, 
-                                                                  'team', 
+                                                                 ('team', 
                                                                   'transfer_from_team')
+    )
 
     combined_q_list = quiz_player_2_clubs_played + quiz_player_transferred_from_to
 

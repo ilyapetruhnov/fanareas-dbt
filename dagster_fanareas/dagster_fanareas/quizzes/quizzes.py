@@ -18,7 +18,7 @@ class Quizzes:
             
         return json_data
     
-    def generate_query(self, query_str: str, query_param) -> str:
+    def generate_query(self, query_str: str, query_param=None) -> str:
         if query_param:
             return query_str.format(query_param)
         return query_str
@@ -27,7 +27,7 @@ class Quizzes:
         engine = create_db_session()
         return pd.read_sql(query, con=engine)
 
-    def generate_quiz_questions(self, query_str: str, statement: str,  query_param: None, *cols: str) -> list:
+    def generate_quiz_questions(self, query_str: str, statement: str, cols: tuple, query_param=None) -> list:
         query = self.generate_query(query_str, query_param)
         df = self.generate_df(query)
         
@@ -68,10 +68,9 @@ class Quizzes:
         return q_lst
     
 
-    def mixed_quiz_questions(*quizzes:list):
-        combined_q_list = [x + y for x, y in quizzes] # DEBUG
-        random.shuffle(combined_q_list)
-        result_list = combined_q_list[:10]
+    def mixed_quiz_questions(self, quizzes:list):
+        random.shuffle(quizzes)
+        result_list = quizzes[:10]
         return result_list
 
 
