@@ -17,17 +17,17 @@ all_assets = load_assets_from_modules([assets, dbt, core_assets, templates, fact
 
 
 
-guess_the_player_quiz_job = define_asset_job(name="quiz_guess_the_player", selection="post_guess_the_player_quiz")
-transfers_quiz_job = define_asset_job(name="quiz_transfers", selection="post_transfers_quiz")
+guess_the_player_quiz_job = define_asset_job(name="trigger_guess_the_player_quiz", selection="guess_the_player_quiz")
+transfers_quiz_job = define_asset_job(name="trigger_transfers_quiz", selection="transfers_quiz")
 
 
-post_news_job = define_asset_job(name="post_news", selection="trigger_post_news")
+post_news_job = define_asset_job(name="trigger_post_news", selection="post_news")
 
 templates_job = define_asset_job("templates_job", AssetSelection.groups("templates"))
 
 news_schedule = ScheduleDefinition(job=post_news_job, cron_schedule="0 0,4,8,12,16,20 * * *")
 
-quiz_schedule = ScheduleDefinition(job=transfers_quiz_job, cron_schedule="0 22 * * *")
+quiz_schedule = ScheduleDefinition(job=transfers_quiz_job, cron_schedule="0 23 * * *")
 
 defs = Definitions(
     assets=[*all_assets],
