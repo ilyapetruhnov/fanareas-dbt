@@ -8,7 +8,8 @@ top_players_query = """
                         t.assists as assists,
                         t.goals as goals,
                         t.red_cards as red_cards,
-                        t.yellow_cards as yellow_cards
+                        t.yellow_cards as yellow_cards,
+                        t.penalties as penalties
                         FROM
                         dim_players
                         CROSS JOIN UNNEST (season_stats) AS t
@@ -23,6 +24,7 @@ top_players_query = """
                             , row_number() over (ORDER BY goals desc nulls last)        as goals_rn
                             , row_number() over (ORDER BY red_cards desc nulls last)    as red_cards_rn
                             , row_number() over (ORDER BY yellow_cards desc nulls last) as yellow_cards_rn
+                            , row_number() over (ORDER BY penalties desc nulls last) as as penalties_rn
                         from vw
                         )
                 select *
@@ -31,6 +33,7 @@ top_players_query = """
                 or goals_rn <= 10
                 or red_cards_rn <= 10
                 or yellow_cards_rn <= 10
+                or penalties_rn <= 10
         """
 
 
@@ -45,7 +48,8 @@ top_teams_query = """
                         t.goals as goals,
                         t.red_cards as red_cards,
                         t.yellow_cards as yellow_cards,
-                        t.minutes_played as minutes_played
+                        t.minutes_played as minutes_played,
+                        t.penalties as penalties
                         FROM
                         dim_players
                         CROSS JOIN UNNEST (season_stats) AS t
@@ -60,7 +64,7 @@ top_teams_query = """
                             , row_number() over (partition by team ORDER BY goals desc nulls last)        as goals_rn
                             , row_number() over (partition by team ORDER BY red_cards desc nulls last)    as red_cards_rn
                             , row_number() over (partition by team ORDER BY yellow_cards desc nulls last) as yellow_cards_rn
-                            , row_number() over (partition by team ORDER BY minutes_played desc nulls last) as minutes_played_rn
+                            , row_number() over (partition by team ORDER BY penalties desc nulls last)    as penalties_rn
                         from vw
                         )
                 select *
@@ -71,5 +75,6 @@ top_teams_query = """
                 or minutes_played_rn <= 5
                 or assists_rn <= 5
                 or red_cards_rn <= 5
-                or yellow_cards_rn <= 5)
+                or yellow_cards_rn <= 5
+                or penalties_rn <=5)
     """
