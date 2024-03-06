@@ -27,7 +27,8 @@ templates_job = define_asset_job("templates_job", AssetSelection.groups("templat
 
 news_schedule = ScheduleDefinition(job=post_news_job, cron_schedule="0 0,4,8,12,16,20 * * *")
 
-quiz_schedule = ScheduleDefinition(job=transfers_quiz_job, cron_schedule="0 23 * * *")
+transfers_quiz_schedule = ScheduleDefinition(job=transfers_quiz_job, cron_schedule="0 11 * * *")
+guess_the_player_quiz_schedule = ScheduleDefinition(job=guess_the_player_quiz_job, cron_schedule="0 12 * * *")
 
 defs = Definitions(
     assets=[*all_assets],
@@ -36,7 +37,8 @@ defs = Definitions(
             post_news_job
             ],
     schedules=[news_schedule,
-               quiz_schedule
+               transfers_quiz_schedule,
+               guess_the_player_quiz_schedule
                ],
     resources={
         "dbt": DbtCliResource(project_dir=os.fspath(dbt_project_dir)),
