@@ -24,7 +24,7 @@ top_players_query = """
                             , row_number() over (ORDER BY goals desc nulls last)        as goals_rn
                             , row_number() over (ORDER BY red_cards desc nulls last)    as red_cards_rn
                             , row_number() over (ORDER BY yellow_cards desc nulls last) as yellow_cards_rn
-                            , row_number() over (ORDER BY penalties desc nulls last) as as penalties_rn
+                            , row_number() over (ORDER BY penalties desc nulls last)    as penalties_rn
                         from vw
                         )
                 select *
