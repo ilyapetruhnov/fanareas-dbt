@@ -32,7 +32,7 @@ news_schedule = ScheduleDefinition(job=post_news_job, cron_schedule="0 0,4,8,12,
 transfers_quiz_schedule = ScheduleDefinition(job=transfers_quiz_job, cron_schedule="0 11 * * *")
 guess_the_player_quiz_schedule = ScheduleDefinition(job=guess_the_player_quiz_job, cron_schedule="0 12 * * *")
 
-facts_schedule = ScheduleDefinition(job=post_facts_job, cron_schedule="0 13 * * *")
+facts_schedule = ScheduleDefinition(job=post_facts_job, cron_schedule="0 8,13,18 * * *")
 
 defs = Definitions(
     assets=[*all_assets],
