@@ -27,7 +27,7 @@ post_facts_job = define_asset_job(name="trigger_post_facts", selection="publish_
 
 templates_job = define_asset_job("templates_job", AssetSelection.groups("templates"))
 
-news_schedule = ScheduleDefinition(job=post_news_job, cron_schedule="0 0,4,8,12,16,20 * * *")
+news_schedule = ScheduleDefinition(job=post_news_job, cron_schedule="0 0,2,4,6,8,10,12,14,16,18,20,22 * * *")
 
 transfers_quiz_schedule = ScheduleDefinition(job=transfers_quiz_job, cron_schedule="0 11 * * *")
 guess_the_player_quiz_schedule = ScheduleDefinition(job=guess_the_player_quiz_job, cron_schedule="0 12 * * *")
