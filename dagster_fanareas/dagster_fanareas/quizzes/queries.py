@@ -51,7 +51,7 @@ query_player_age_nationality="""
         or next_birth_year != birth_year
         """
 
-statement_player_age_nationality = "Which Premier League player was born in {} in {}?"
+statement_player_age_nationality = "Which Premier League player was born in {} and is a citizen of {}?"
 
 query_player_age_team="""
             with vw as (
@@ -183,19 +183,19 @@ statement_player_transferred_from_to = "Which player had a transfer from {} to {
 statement_player_height = "Guess the tallest player from the following players"
 
 query_player_height=f"""
-            with vw as (
+        with vw as (
                     SELECT
                     height,
-                    array_agg(fullname) as fullname
+                    array_agg(fullname ORDER BY random()) as fullname
                     FROM
                     dim_players
                     where height is not null
                     and height != 0
                     and is_active = true
-            group by height
-            )
-            select
-            height,
-            fullname[{0}] AS fullname
-            from vw
+        group by height
+        )
+        select
+        height,
+        fullname[1] as fullname
+        from vw
         """

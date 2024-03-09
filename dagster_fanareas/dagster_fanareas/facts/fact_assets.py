@@ -6,7 +6,7 @@ from dagster_fanareas.facts.queries import top_players_query, top_teams_query
 query = top_players_query
 season = random.randint(2008,2023)
 top_n = 10
-metric_list = ['goals','assists','yellow_cards','red_cards', 'penalties']
+metric_list = ['goals','assists','yellow_cards','penalties']
 
 @asset(group_name="facts")
 def publish_all_facts():

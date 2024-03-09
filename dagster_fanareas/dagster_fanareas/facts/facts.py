@@ -40,7 +40,10 @@ class Facts:
             selected_team = random.choice(teams)
             team_filter = (df['team']==selected_team)
             df = df[ metric_filter & team_filter][col_list].sort_values(metric, ascending=False)
-            title = f"Premier League {season_name}: Top {self.top_n} {selected_team} players with the most {metric_formatted}"
+            if metric_formatted == 'penalties':
+                title = f"Premier League {season_name}: Top {self.top_n} {selected_team} players with the most {metric_formatted} goals"
+            else:
+                title = f"Premier League {season_name}: Top {self.top_n} {selected_team} players with the most {metric_formatted}"
             
         else:
             df = df[metric_filter][col_list].sort_values(metric, ascending=False)

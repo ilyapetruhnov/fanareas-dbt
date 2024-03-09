@@ -17,18 +17,12 @@ class Quizzes:
                     "questions": questions}
             
         return json_data
-    
-    def generate_query(self, query_str: str, query_param=None) -> str:
-        if query_param:
-            return query_str.format(query_param)
-        return query_str
 
     def generate_df(self, query: str) -> pd.DataFrame:
         engine = create_db_session()
         return pd.read_sql(query, con=engine)
 
-    def generate_quiz_questions(self, query_str: str, statement: str, cols: tuple, query_param=None) -> list:
-        query = self.generate_query(query_str, query_param)
+    def generate_quiz_questions(self, query: str, statement: str, cols: tuple) -> list:
         df = self.generate_df(query)
         
         q_lst = []
@@ -51,8 +45,7 @@ class Quizzes:
             q_lst.append(question)
         return q_lst
     
-    def generate_simple_questions(self, query_str: str, statement: str,  dimension: str, query_param: None):
-        query = self.generate_query(query_str, query_param)
+    def generate_simple_questions(self, query: str, statement: str,  dimension: str):
         df = self.generate_df(query)
         q_lst = []
         for i in range(10):
