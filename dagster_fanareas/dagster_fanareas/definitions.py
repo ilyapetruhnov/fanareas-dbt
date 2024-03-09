@@ -2,14 +2,14 @@ import os
 from dagster import Definitions, load_assets_from_modules, define_asset_job, AssetSelection, ScheduleDefinition
 from dagster_dbt import DbtCliResource
 from dagster_fanareas.assets import assets, dbt, core_assets
-from dagster_fanareas.quizzes import templates, quiz_assets
+from dagster_fanareas.quizzes import quiz_assets
 from dagster_fanareas.facts import facts, fact_assets
 
 from .constants import dbt_project_dir, POSTGRES_CONFIG
 # from .schedules import schedules
 from dagster_fanareas.resources.db_io_manager import db_io_manager
 
-all_assets = load_assets_from_modules([assets, dbt, core_assets, templates, facts, fact_assets, quiz_assets])
+all_assets = load_assets_from_modules([assets, dbt, core_assets, facts, fact_assets, quiz_assets])
 
 # postgres_instance = db_io_manager.configured(POSTGRES_CONFIG)
 
@@ -25,7 +25,7 @@ post_news_job = define_asset_job(name="trigger_post_news", selection="post_news"
 
 post_facts_job = define_asset_job(name="trigger_post_facts", selection="publish_one_fact")
 
-templates_job = define_asset_job("templates_job", AssetSelection.groups("templates"))
+# templates_job = define_asset_job("templates_job", AssetSelection.groups("templates"))
 
 news_schedule = ScheduleDefinition(job=post_news_job, cron_schedule="0 0,2,4,6,8,10,12,14,16,18,20,22 * * *")
 
