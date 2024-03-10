@@ -5,7 +5,7 @@
 
 # # from dagster_embedded_elt.sling import (SlingResource, SlingSourceConnection, SlingTargetConnection)
 from dagster_fanareas.ops.utils import fetch_data, upsert
-from dagster_fanareas.constants import base_url, api_key
+from dagster_fanareas.constants import base_url
 import pandas as pd
 import sqlalchemy
 from sqlalchemy import text
@@ -64,9 +64,8 @@ class DbIOManager(IOManager):
             existing_df = pd.DataFrame([])
             url = f"{base_url}/{dataset_name}"
         context.log.info(url)
-        context.log.info(api_key)
         context.log.info('pulling data')  
-        df = fetch_data(url, api_key)
+        df = fetch_data(url)
         context.log.info(df.head())
         # merged_df = upsert(existing_df, new_df)
         # context.log.info(merged_df.head())

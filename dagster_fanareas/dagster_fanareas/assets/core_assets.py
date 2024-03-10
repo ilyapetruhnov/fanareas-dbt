@@ -54,8 +54,3 @@ def types(context) -> pd.DataFrame:
     existing_df = context.resources.db_io_manager.load_input(context)
     types_df = fetch_data(f"{core_url}/continents")
     return upsert(existing_df, types_df)
-
-@asset( group_name="commentaries", compute_kind="pandas", io_manager_key="db_io_manager")
-def commentaries(context) -> pd.DataFrame:
-    df = context.resources.db_io_manager.upsert_input(context)
-    return df
