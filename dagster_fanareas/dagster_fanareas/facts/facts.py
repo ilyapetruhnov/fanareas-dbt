@@ -20,6 +20,13 @@ class Facts:
             }
         return json_data
     
+    def format_metric(self, metric: str) -> str:
+        if metric == 'penalties':
+            result = 'penalty goals'
+        else:
+            result = metric.replace('_',' ')
+        return result
+
     def generate_query(self, query_str) -> str:
         return query_str.format(self.season)
 
@@ -31,7 +38,7 @@ class Facts:
     def top_n_facts_assembler(self, metric: str, by_team=False) -> dict:
         df = self.generate_df()
         metric_filter = (df[f'{metric}_rn'] <= self.top_n)
-        metric_formatted = metric.replace('_',' ')
+        metric_formatted = self.format_metric(metric)
         col_list = ['fullname','team','season_name', metric]
         season_name = df['season_name'].iloc[0]
         quiz_type = 0
@@ -40,14 +47,12 @@ class Facts:
             selected_team = random.choice(teams)
             team_filter = (df['team']==selected_team)
             df = df[ metric_filter & team_filter][col_list].sort_values(metric, ascending=False)
-            if metric_formatted == 'penalties':
-                title = f"Premier League {season_name}: Top {self.top_n} {selected_team} players with the most {metric_formatted} goals"
-            else:
-                title = f"Premier League {season_name}: Top {self.top_n} {selected_team} players with the most {metric_formatted}"
+            title = f"Premier League {season_name}: Top {self.top_n} {selected_team} players with the most {metric_formatted}"
             
         else:
             df = df[metric_filter][col_list].sort_values(metric, ascending=False)
             title = f"Premier League {season_name}: Top {self.top_n} players with the most {metric_formatted}"
+            
 
         top_facts = []
         for idx, row in df.iterrows():

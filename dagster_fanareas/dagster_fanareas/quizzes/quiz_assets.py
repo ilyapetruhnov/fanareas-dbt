@@ -36,10 +36,11 @@ def guess_the_player_quiz() -> bool:
                                                           )
 
     combined_q_list = quiz_player_shirt_number + quiz_player_2_clubs_played + quiz_player_age_nationality + quiz_player_age_team + quiz_player_height
-    random.shuffle(combined_q_list)
-    mixed_quiz_questions = combined_q_list[:10]
 
-    return quiz_obj.post_quiz(mixed_quiz_questions)
+    mixed_quiz_questions = quiz_obj.mixed_quiz_questions(combined_q_list)
+    quiz_obj.post_quiz(mixed_quiz_questions)
+
+    return True
 
 
 @asset(group_name="quizzes")
@@ -63,5 +64,6 @@ def transfers_quiz() -> bool:
     combined_q_list = quiz_player_2_clubs_played + quiz_player_transferred_from_to
 
     mixed_quiz_questions = quiz_obj.mixed_quiz_questions(combined_q_list)
+    quiz_obj.post_quiz(mixed_quiz_questions)
 
-    return quiz_obj.post_quiz(mixed_quiz_questions)
+    return True
