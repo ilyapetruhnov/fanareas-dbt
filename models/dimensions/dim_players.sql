@@ -1,10 +1,5 @@
-truncate dim_players;
-
-with dim_player_stats as (
-    select * from {{ ref('dim_player_stats') }}
-),
-
 do $$
+truncate dim_players
 begin
     for cur_season in 2004..2022 loop
 INSERT INTO
@@ -22,7 +17,7 @@ WITH
     SELECT
       *
     FROM
-      dim_player_stats
+      {{ ref('dim_player_stats') }}
     WHERE
       season = cur_season + 1
   )
@@ -30,12 +25,10 @@ SELECT
   COALESCE(ts.player_id, ls.player_id) AS player_id,
   COALESCE(ts.firstname, ls.firstname) AS firstname,
   COALESCE(ts.lastname, ls.lastname) AS lastname,
+  COALESCE(ts.fullname, ls.fullname) AS fullname,
   COALESCE(ts.date_of_birth, ls.date_of_birth) AS date_of_birth,
   COALESCE(ts.continent, ls.continent) AS continent,
   COALESCE(ts.nationality, ls.nationality) AS nationality,
-  COALESCE(ts.team, ls.team) AS team,
-  COALESCE(ts.jersey_number, ls.jersey_number) AS jersey_number,
-  COALESCE(ts.position, ls.position) AS position,
   COALESCE(ts.height, ls.height) AS height,
   COALESCE(ts.weight, ls.weight) AS weight,
   CASE
@@ -45,6 +38,11 @@ SELECT
         ARRAY[
             ROW (
         ts.season,
+        ts.season_name,
+        ts.team,
+        ts.team_id,
+        ts.jersey_number,
+        ts.position,
         ts.captain,
         ts.yellow_cards,
         ts.red_cards,
@@ -65,7 +63,12 @@ SELECT
         THEN ARRAY_CAT(ls.season_stats,
                        ARRAY [
                            ROW (
-                               ts.season,
+                                ts.season,
+                                ts.season_name,
+                                ts.team,
+                                ts.team_id,
+                                ts.jersey_number,
+                                ts.position,
                                ts.captain,
                                ts.yellow_cards,
                                ts.red_cards,
@@ -96,3 +99,4 @@ FROM
   FULL OUTER JOIN this_season ts ON ls.player_id = ts.player_id;
     end loop;
 end; $$
+
