@@ -137,13 +137,15 @@ def players(context) -> pd.DataFrame:
 
 @asset( group_name="player_stats", compute_kind="pandas")
 def player_stats_dict(context, players: pd.DataFrame) -> dict:
-    players_df = players[players['is_active'] == True]
-    player_ids = list(players_df['id'].unique())
+    dim_players = context.resources.db_io_manager.load_table(table_name = 'dim_players')
+    non_active_player_ids = set(dim_players[(dim_players['current_season']==2023) & (dim_players['is_active']==False)]['player_id'].unique())
+    all_player_ids = set(players['id'].unique())
+    active_player_ids = all_player_ids.difference(non_active_player_ids)
     season_id = 21646
     player_stats = []
     player_stats_detailed = []
-    context.log.info(len(player_ids))
-    for player_id in player_ids:
+    context.log.info(len(active_player_ids))
+    for player_id in active_player_ids:
         url = f"{base_url}/statistics/seasons/players/{player_id}?filters=playerstatisticSeasons:{season_id}"
         response = api_call(url)
         try:

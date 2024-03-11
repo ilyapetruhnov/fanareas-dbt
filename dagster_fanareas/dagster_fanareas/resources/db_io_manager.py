@@ -43,6 +43,12 @@ class DbIOManager(IOManager):
         model_name = context.asset_key.path[-1]
         #context.add_output_metadata({"table_name": model_name})
         return pd.read_sql(f"SELECT * FROM {model_name}", con=self._con)
+    
+
+    def load_table(self, table_name) -> pd.DataFrame:
+        """Load the contents of a table as a pandas DataFrame."""
+        #context.add_output_metadata({"table_name": model_name})
+        return pd.read_sql(f"SELECT * FROM {table_name}", con=self._con)
 
     def load_table_by_id(self, context, input_id) -> pd.DataFrame:
         """Load the contents of a table as a pandas DataFrame."""
