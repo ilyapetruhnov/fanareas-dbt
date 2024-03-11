@@ -29,8 +29,6 @@ def create_db_session():
     engine = sqlalchemy.create_engine(url)
     return engine
 
-
-
 @op
 def get_fields(response):
     data = response.json()['data']
@@ -78,16 +76,11 @@ def fetch_data(url):
     return result_df
 
 @op
-def upsert(dataset_name: str, existing_df: pd.DataFrame) -> pd.DataFrame:
+def upsert(new_df: pd.DataFrame, existing_df: pd.DataFrame) -> pd.DataFrame:
     # Perform upsert (merge) based on the 'id' column
-    if existing_df.empty == True:
-        url = f"{base_url}/{dataset_name}"
-    else:
-        last_id = max(existing_df['id'])
-        url = f"{base_url}/{dataset_name}?filters=idAfter:{last_id}"
-
-    new_df = fetch_data(url)
-    return new_df
+    existing_ids = existing_df['id'].unique()
+    df = new_df[['id'].isin(existing_ids)] # tilde
+    return df
 
 @op
 def flatten_list(nested_list):

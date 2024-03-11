@@ -71,7 +71,8 @@ def squads_df(seasons, teams) -> pd.DataFrame:
 @asset( group_name="squads", compute_kind="pandas", io_manager_key="db_io_manager")
 def squads(context, squads_df: pd.DataFrame) -> pd.DataFrame:
     existing_df = context.resources.db_io_manager.load_input(context)
-    return upsert(existing_df, squads_df)
+    df = upsert(squads_df, existing_df)
+    return df
 
 @asset(group_name="topscorers", compute_kind="pandas")
 def topscorers_list(context, seasons) -> list:
@@ -109,14 +110,41 @@ def players(context) -> pd.DataFrame:
     df = context.resources.db_io_manager.upsert_input(context)
     return df
 
+# @asset( group_name="player_stats", compute_kind="pandas")
+# def player_stats_dict(context, players: pd.DataFrame) -> dict:
+#     player_ids = list(players['id'].unique())
+#     player_stats = []
+#     player_stats_detailed = []
+#     context.log.info(len(player_ids))
+#     for player_id in player_ids:
+#         url = f"{base_url}/statistics/seasons/players/{player_id}"
+#         response = api_call(url)
+#         try:
+#             player_stats.append([i for i in response.json()['data']])
+#             player_stats_detailed.append([i['details'] for i in response.json()['data']])
+#         except Exception as e:
+#             pass
+#         limit = response.json()['rate_limit']['remaining']
+#         context.log.info(limit)
+#         if limit == 1:
+#             seconds_until_reset = response.json()['rate_limit']['resets_in_seconds']
+#             context.log.info(seconds_until_reset)
+#             time.sleep(seconds_until_reset+1)
+#         else:
+#             continue
+#     return {'stats': player_stats, 'detailed_stats': player_stats_detailed}
+
+
 @asset( group_name="player_stats", compute_kind="pandas")
 def player_stats_dict(context, players: pd.DataFrame) -> dict:
-    player_ids = list(players['id'].unique())
+    players_df = players[players['is_active'] == True]
+    player_ids = list(players_df['id'].unique())
+    season_id = 21646
     player_stats = []
     player_stats_detailed = []
     context.log.info(len(player_ids))
     for player_id in player_ids:
-        url = f"{base_url}/statistics/seasons/players/{player_id}"
+        url = f"{base_url}/statistics/seasons/players/{player_id}?filters=playerstatisticSeasons:{season_id}"
         response = api_call(url)
         try:
             player_stats.append([i for i in response.json()['data']])
@@ -133,6 +161,7 @@ def player_stats_dict(context, players: pd.DataFrame) -> dict:
             continue
     return {'stats': player_stats, 'detailed_stats': player_stats_detailed}
 
+
 @asset( group_name="player_stats", compute_kind="pandas", io_manager_key="db_io_manager")
 def player_stats(context, player_stats_dict: dict) -> pd.DataFrame:
     player_stats = player_stats_dict['stats']
@@ -140,7 +169,8 @@ def player_stats(context, player_stats_dict: dict) -> pd.DataFrame:
     df = pd.DataFrame(result)
     df = df.drop('details', axis=1)
     existing_df = context.resources.db_io_manager.load_input(context)
-    return upsert(existing_df, df)
+    df = upsert(df, existing_df)
+    return df
 
 @asset( group_name="player_stats", compute_kind="pandas",io_manager_key="db_io_manager")
 def player_stats_detailed(context, player_stats_dict: dict) -> pd.DataFrame:
@@ -154,7 +184,8 @@ def player_stats_detailed(context, player_stats_dict: dict) -> pd.DataFrame:
     df['away'] = df['value'].apply(lambda x: x['away'] if 'away' in x.keys() else None)
     df = df.drop('value', axis=1)
     existing_df = context.resources.db_io_manager.load_input(context)
-    return upsert(existing_df, df)
+    df = upsert(df, existing_df)
+    return df
 
 @asset( group_name="team_stats", compute_kind="pandas")
 def team_stats_dict(context, teams: pd.DataFrame) -> dict:
