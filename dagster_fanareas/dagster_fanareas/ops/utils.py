@@ -78,8 +78,12 @@ def fetch_data(url):
 @op
 def upsert(new_df: pd.DataFrame, existing_df: pd.DataFrame) -> pd.DataFrame:
     # Perform upsert (merge) based on the 'id' column
-    existing_ids = existing_df['id'].unique()
-    df = new_df[~new_df['id'].isin(existing_ids)]
+    existing_df.set_index('ID', inplace=True)
+    new_df.set_index('ID', inplace=True)
+    existing_df.update(new_df, overwrite=True)
+    existing_df.reset_index(inplace=True)
+    new_df.reset_index(inplace=True)
+    df = existing_df.append(new_df[~new_df['id'].isin(existing_df['id'])], ignore_index=True)
     return df
 
 @op

@@ -158,6 +158,7 @@ def player_stats(context, player_stats_dict: dict) -> pd.DataFrame:
     df = pd.DataFrame(result)
     df = df.drop('details', axis=1)
     existing_df = context.resources.db_io_manager.load_input(context)
+    context.log.info(df.head())
     df = upsert(df, existing_df)
     return df
 
@@ -173,6 +174,7 @@ def player_stats_detailed(context, player_stats_dict: dict) -> pd.DataFrame:
     df['away'] = df['value'].apply(lambda x: x['away'] if 'away' in x.keys() else None)
     df = df.drop('value', axis=1)
     existing_df = context.resources.db_io_manager.load_input(context)
+    context.log.info(df.head())
     df = upsert(df, existing_df)
     return df
 

@@ -28,12 +28,18 @@ class DbIOManager(IOManager):
         self._con = con_string
 
     def handle_output(self, context, obj):
+        overwrite_tables = ['player_stats','player_stats_detailed','team_stats','team_stats_detailed', 
+                            'raw_player_stats','raw_player_stats_detailed','raw_team_stats','raw_team_stats_detailed'
+                            ]
         if isinstance(obj, pd.DataFrame) and obj.empty:
             pass
         # dbt has already written the data to this table
         elif isinstance(obj, pd.DataFrame) and obj.empty == False:
             # write df to table
-            obj.set_index('id').to_sql(name=context.asset_key.path[-1], con=self._con, if_exists="append")
+            if context.asset_key.path[-1] in overwrite_tables:
+                obj.set_index('id').to_sql(name=context.asset_key.path[-1], con=self._con, if_exists="overwrite")
+            else:
+                obj.set_index('id').to_sql(name=context.asset_key.path[-1], con=self._con, if_exists="append")
         else:
             raise ValueError(f"Unsupported object type {type(obj)} for DbIOManager.")
         
@@ -73,8 +79,6 @@ class DbIOManager(IOManager):
         context.log.info('pulling data')  
         df = fetch_data(url)
         context.log.info(df.head())
-        # merged_df = upsert(existing_df, new_df)
-        # context.log.info(merged_df.head())
         return df
 
 
