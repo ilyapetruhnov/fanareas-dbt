@@ -32,7 +32,6 @@ def fixtures(context, fixtures_df: pd.DataFrame) -> pd.DataFrame:
     existing_df = context.resources.db_io_manager.load_input(context)
     return upsert(existing_df, fixtures_df)
 
-
 @asset( group_name="coaches", compute_kind="pandas", io_manager_key="db_io_manager")
 def coaches(context) -> pd.DataFrame:
     df = context.resources.db_io_manager.upsert_input(context)
@@ -43,33 +42,21 @@ def teams(context) -> pd.DataFrame:
     df = context.resources.db_io_manager.upsert_input(context)
     return df
 
-
-@asset(group_name="squads", compute_kind="pandas")
-def squads_df(seasons, teams) -> pd.DataFrame:
-    season_ids = list(seasons['id'].unique())
+@asset( group_name="squads", compute_kind="pandas", io_manager_key="db_io_manager")
+def squads(context, teams: pd.DataFrame) -> pd.DataFrame:
+    season_id = 21646
+    teams = teams[teams['short_code'].notna()]
     team_ids = list(teams['id'].unique())
-    combinations = list(product(season_ids, team_ids))
     squads = []
-    for season_id, team_id in combinations:
+    for team_id in team_ids:
         players_url = f"{base_url}/squads/seasons/{season_id}/teams/{team_id}"
         response_players = api_call(players_url)
         try:
             squads.append(response_players.json()['data'])
         except Exception as e:
             pass
-    squads_records = set()
-    data_size = len(squads)
-    for i in range(data_size):
-        data_sz = len(squads[i])
-        for item in range(data_sz):
-            squads_records.add(tuple(squads[i][item].values()))
-    squads_fields = tuple(squads[0][0].keys())
-    df = pd.DataFrame.from_records(list(squads_records), columns=squads_fields)
-    return df
-
-
-@asset( group_name="squads", compute_kind="pandas", io_manager_key="db_io_manager")
-def squads(context, squads_df: pd.DataFrame) -> pd.DataFrame:
+    flattened = flatten_list(squads)
+    squads_df = pd.DataFrame(flattened)
     existing_df = context.resources.db_io_manager.load_input(context)
     df = upsert(squads_df, existing_df)
     return df

@@ -1,18 +1,18 @@
 with types as (
 
-    select * from {{ source('src_postgres', 'types') }}
+    select * from {{ ref('raw_types') }}
 
 ),
 
 player_stats as (
 
-    select * from {{ source('src_postgres', 'player_stats') }}
+    select * from {{ ref('raw_player_stats') }}
 
 ),
 
 player_stats_detailed as (
 
-    select * from {{ source('src_postgres', 'player_stats_detailed') }}
+    select * from {{ ref('raw_player_stats_detailed') }}
 
 ),
 

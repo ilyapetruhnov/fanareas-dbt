@@ -1,48 +1,48 @@
 with players as (
 
-    select * from {{ source('src_postgres', 'players') }}
+    select * from {{ ref('raw_players') }}
 
 ),
 
 continents as (
 
-    select * from {{ source('src_postgres', 'continents') }}
+    select * from {{ ref('raw_continents') }}
 
 ),
 
 countries as (
 
-    select * from {{ source('src_postgres', 'countries') }}
+    select * from {{ ref('raw_countries') }}
 
 ),
 
 cities as (
 
-    select * from {{ source('src_postgres', 'cities') }}
+    select * from {{ ref('raw_cities') }}
 
 ),
 
 types as (
 
-    select * from {{ source('src_postgres', 'types') }}
+    select * from {{ ref('raw_types') }}
 
 ),
 
 squads as (
 
-    select * from {{ source('src_postgres', 'squads') }}
+    select * from {{ ref('raw_squads') }}
 
 ),
 
 seasons as (
 
-    select * from {{ source('src_postgres', 'seasons') }}
+    select * from {{ ref('raw_seasons') }}
 
 ),
 
 teams as (
 
-    select * from {{ source('src_postgres', 'teams') }}
+    select * from {{ ref('raw_teams') }}
 
 ),
 

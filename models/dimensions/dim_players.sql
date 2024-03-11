@@ -1,3 +1,9 @@
+truncate dim_players;
+
+with dim_player_stats as (
+    select * from {{ ref('dim_player_stats') }}
+),
+
 do $$
 begin
     for cur_season in 2004..2022 loop
