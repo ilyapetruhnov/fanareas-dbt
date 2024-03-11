@@ -79,7 +79,7 @@ def fetch_data(url):
 def upsert(new_df: pd.DataFrame, existing_df: pd.DataFrame) -> pd.DataFrame:
     # Perform upsert (merge) based on the 'id' column
     existing_ids = existing_df['id'].unique()
-    df = new_df[['id'].isin(existing_ids)] # tilde
+    df = new_df[~new_df['id'].isin(existing_ids)]
     return df
 
 @op
