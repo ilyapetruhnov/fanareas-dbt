@@ -31,12 +31,12 @@ def referees(context) -> pd.DataFrame:
 
 @asset(group_name="core", compute_kind="pandas", io_manager_key="db_io_manager")
 def countries() -> pd.DataFrame:
-    df = fetch_data(f"{core_url}/countries")
+    df = fetch_data(f"{core_url}/countries?filters=populate")
     return df
 
 @asset(group_name="core", compute_kind="pandas", io_manager_key="db_io_manager")
 def regions() -> pd.DataFrame:
-    df = fetch_data(f"{core_url}/regions")
+    df = fetch_data(f"{core_url}/regions?filters=populate")
     return df
 
 @asset(group_name="core", compute_kind="pandas", io_manager_key="db_io_manager")
@@ -46,11 +46,10 @@ def cities() -> pd.DataFrame:
 
 @asset(group_name="core", compute_kind="pandas", io_manager_key="db_io_manager")
 def continents() -> pd.DataFrame:
-    df = fetch_data(f"{core_url}/continents")
+    df = fetch_data(f"{core_url}/continents?filters=populate")
     return df
 
 @asset( group_name="core", compute_kind="pandas", io_manager_key="db_io_manager")
-def types(context) -> pd.DataFrame:
-    existing_df = context.resources.db_io_manager.load_input(context)
-    types_df = fetch_data(f"{core_url}/continents")
-    return upsert(existing_df, types_df)
+def types() -> pd.DataFrame:
+    df = fetch_data(f"{core_url}/types?filters=populate")
+    return df
