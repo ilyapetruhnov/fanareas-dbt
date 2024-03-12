@@ -1,26 +1,29 @@
-do $$
-truncate dim_players
-begin
-    for cur_season in 2004..2022 loop
-INSERT INTO
-  dim_players
-WITH
-  last_season AS (
+{{
+    config(
+        materialized='incremental',
+        unique_key=['player_id', 'current_season'],
+        incremental_strategy='insert_overwrite',
+        on_schema_change = 'fail'
+    )
+}}
+with
+  last_season as (
     SELECT
       *
     FROM
       dim_players
     WHERE
-      current_season = cur_season
-  ),
+      current_season = 2022
+ ),
   this_season AS (
     SELECT
       *
     FROM
       {{ ref('dim_player_stats') }}
     WHERE
-      season = cur_season + 1
-  )
+      season = 2023
+  ),
+  final AS (
 SELECT
   COALESCE(ts.player_id, ls.player_id) AS player_id,
   COALESCE(ts.firstname, ls.firstname) AS firstname,
@@ -96,7 +99,7 @@ SELECT
   COALESCE(ts.season, ls.current_season + 1) AS current_season
 FROM
   last_season ls
-  FULL OUTER JOIN this_season ts ON ls.player_id = ts.player_id;
-    end loop;
-end; $$
+  FULL OUTER JOIN this_season ts ON ls.player_id = ts.player_id
+)
 
+select * from final
