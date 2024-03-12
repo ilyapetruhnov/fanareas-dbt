@@ -7,7 +7,7 @@ stg_player_stats as (
 
 ),
 
-with agg_player_stats as (
+agg_player_stats as (
 select
         stg_player_stats.player_id,
         stg_player_stats.team_id,
