@@ -7,8 +7,9 @@ query = top_players_query
 query_teams = top_teams_query
 season = random.randint(2008,2023)
 top_n = 10
+top_n_by_team = 5
 metric_list = ['goals','assists','yellow_cards','penalties']
-teams_metric_list = ['goals','assists','yellow_cards','penalties','minutes_played','red_cards']
+teams_metric_list = ['goals','assists','yellow_cards','penalties','minutes_played','red_cards','own_goals']
 
 @asset(group_name="facts")
 def publish_all_facts():
@@ -26,7 +27,7 @@ def publish_one_fact():
 
 @asset(group_name="facts")
 def publish_one_fact_by_team():
-    facts_obj = Facts(query_teams, season, top_n, teams_metric_list)
+    facts_obj = Facts(query_teams, season, top_n_by_team, teams_metric_list)
     metric = random.choice(metric_list)
     facts_obj.post_facts(metric, by_team=True)
     return True

@@ -42,21 +42,19 @@ top_teams_query = """
                 SELECT
                         player_id,
                         fullname,
-                        array_to_string(team, '/') as team,
-                        t.season_name,
-                        t.assists as assists,
-                        t.goals as goals,
-                        t.red_cards as red_cards,
-                        t.yellow_cards as yellow_cards,
-                        t.minutes_played as minutes_played,
-                        t.penalties as penalties
+                        team,
+                        season_name,
+                        assists,
+                        goals,
+                        red_cards,
+                        yellow_cards,
+                        minutes_played,
+                        penalties,
+                        own_goals
                         FROM
-                        dim_players
-                        CROSS JOIN UNNEST (season_stats) AS t
+                        dim_player_team_stats
                         WHERE
-                        current_season = 2023
-                        AND
-                        t.season = {}
+                        season = {}
                 ),
                 vw1 as (
                 select *
@@ -66,16 +64,17 @@ top_teams_query = """
                             , row_number() over (partition by team ORDER BY yellow_cards desc nulls last) as yellow_cards_rn
                             , row_number() over (partition by team ORDER BY penalties desc nulls last)    as penalties_rn
                             , row_number() over (partition by team ORDER BY minutes_played desc nulls last)    as minutes_played_rn
+                            , row_number() over (partition by team ORDER BY own_goals desc nulls last)    as own_goals_rn
                         from vw
                         )
                 select *
                 from vw1
                 where
-                team not LIKE '%/%'
-                AND (goals_rn <= 5
+                goals_rn <= 5
                 or minutes_played_rn <= 5
                 or assists_rn <= 5
                 or red_cards_rn <= 5
                 or yellow_cards_rn <= 5
-                or penalties_rn <=5)
+                or penalties_rn <=5
+                or own_goals_rn <=5
     """
