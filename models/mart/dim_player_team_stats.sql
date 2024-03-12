@@ -1,0 +1,113 @@
+with stg_players as (
+    select * from {{ ref('stg_players') }}
+),
+
+stg_player_stats as (
+    select * from {{ ref('stg_player_stats') }}
+
+),
+
+with agg_player_stats as (
+select
+        stg_player_stats.player_id,
+        stg_player_stats.team_id,
+        stg_player_stats.season_id,
+        stg_player_stats.player_statistic_id,
+        max(jersey_number) as jersey_number,
+        max(total) filter (where type = 'Captain') as captain,
+        max(total) filter (where type = 'Yellowcards') as yellow_cards,
+        max(total) filter (where type = 'Redcards') as red_cards,
+        max(total) filter (where type = 'Yellowred Cards') as yellow_red_cards,
+        max(total) filter (where type = 'Minutes Played') as minutes_played,
+        max(total) filter (where type = 'Appearances') as appearances,
+        max(total) filter (where type = 'Assists') as assists,
+        max(total) filter (where type = 'Lineups') as lineups,
+        max(total) filter (where type = 'Goals') as goals,
+        max(home) as home,
+        max(away) as away,
+        max(penalties) as penalties,
+        max(total) filter (where type = 'Own Goals') as own_goals,
+        max(total) filter (where type = 'Goals Conceded') as goals_conceded
+    from stg_player_stats
+    where player_id = 846
+    group by stg_player_stats.player_id,
+             stg_player_stats.team_id,
+            stg_player_stats.season_id,
+            stg_player_stats.player_statistic_id
+),
+
+joined as (
+    select
+        agg_player_stats.player_id,
+        player_statistic_id,
+        firstname,
+        lastname,
+        fullname,
+        date_of_birth,
+        continent,
+        nationality,
+        agg_player_stats.team_id as team_id,
+        team,
+        cast(substr(season, 1, 4) as int) as season,
+        season as season_name,
+        position,
+        height,
+        weight,
+        jersey_number,
+        captain,
+        yellow_cards,
+        red_cards,
+        yellow_red_cards,
+        minutes_played,
+        appearances,
+        assists,
+        lineups,
+        goals,
+        home,
+        away,
+        penalties,
+        own_goals,
+        goals_conceded
+    from agg_player_stats
+    join stg_players
+    on stg_players.season_id = agg_player_stats.season_id
+    and stg_players.team_id = agg_player_stats.team_id
+    and stg_players.player_id = agg_player_stats.player_id
+),
+
+final as (
+
+SELECT
+    player_id,
+    season,
+    team,
+    max(season_name) as season_name,
+    max(firstname) as firstname,
+    max(lastname)  as lastname,
+    max(fullname)  as fullname,
+    max(date_of_birth)  as date_of_birth,
+    max(continent) as continent,
+    max(nationality) as nationality,
+    max(position) as position,
+    max(cast(jersey_number as int)) as jersey_number,
+    max(height) as height,
+    max(weight) as weight,
+    sum(minutes_played) as minutes_played,
+    sum(captain) as captain,
+    sum(yellow_cards) as yellow_cards,
+    sum(home) as home_yellow_cards,
+    sum(away) as away_yellow_cards,
+    sum(red_cards) as red_cards,
+    sum(yellow_red_cards) as yellow_red_cards,
+    sum(appearances) as appearances,
+    sum(assists) as assists,
+    sum(lineups) as lineups,
+    sum(goals) as goals,
+    sum(penalties) as penalties,
+    sum(own_goals) as own_goals,
+    sum(goals_conceded) as goals_conceded
+FROM joined
+group by player_id, season, team, player_statistic_id
+)
+
+select * from final

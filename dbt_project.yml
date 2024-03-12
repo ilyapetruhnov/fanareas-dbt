@@ -23,6 +23,6 @@ models:
   fanareas:
       materialized: table
       staging:
-        materialized: view
+        materialized: table
       mart:
         materialized: table
