@@ -2,7 +2,7 @@
     config(
         materialized='incremental',
         unique_key=['player_id', 'current_season'],
-        incremental_strategy='insert_overwrite',
+        incremental_strategy='delete+insert',
         on_schema_change = 'sync_all_columns'
     )
 }}
