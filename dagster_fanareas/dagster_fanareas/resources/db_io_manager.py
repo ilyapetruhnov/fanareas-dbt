@@ -37,7 +37,7 @@ class DbIOManager(IOManager):
         elif isinstance(obj, pd.DataFrame) and obj.empty == False:
             # write df to table
             if context.asset_key.path[-1] in overwrite_tables:
-                obj.set_index('id').to_sql(name=context.asset_key.path[-1], con=self._con, if_exists="overwrite")
+                obj.set_index('id').to_sql(name=context.asset_key.path[-1], con=self._con, if_exists="replace")
             else:
                 obj.set_index('id').to_sql(name=context.asset_key.path[-1], con=self._con, if_exists="append")
         else:
