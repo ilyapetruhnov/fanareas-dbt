@@ -29,7 +29,6 @@ select
         max(total) filter (where type = 'Own Goals') as own_goals,
         max(total) filter (where type = 'Goals Conceded') as goals_conceded
     from stg_player_stats
-    where player_id = 846
     group by stg_player_stats.player_id,
              stg_player_stats.team_id,
             stg_player_stats.season_id,
