@@ -25,6 +25,8 @@ post_news_job = define_asset_job(name="trigger_post_news", selection="post_news"
 
 post_facts_job = define_asset_job(name="trigger_post_facts", selection="publish_one_fact")
 
+post_facts_by_team_job = define_asset_job(name="trigger_post_facts_by_team", selection="publish_one_fact_by_team")
+
 # templates_job = define_asset_job("templates_job", AssetSelection.groups("templates"))
 
 news_schedule = ScheduleDefinition(job=post_news_job, cron_schedule="0 0,2,4,6,8,10,12,14,16,18,20,22 * * *")
@@ -34,17 +36,21 @@ guess_the_player_quiz_schedule = ScheduleDefinition(job=guess_the_player_quiz_jo
 
 facts_schedule = ScheduleDefinition(job=post_facts_job, cron_schedule="0 8,13,18 * * *")
 
+facts_by_team_schedule = ScheduleDefinition(job=post_facts_by_team_job, cron_schedule="0 14,19 * * *")
+
 defs = Definitions(
     assets=[*all_assets],
     jobs = [guess_the_player_quiz_job,
             transfers_quiz_job,
             post_news_job,
-            post_facts_job
+            post_facts_job,
+            post_facts_by_team_job
             ],
     schedules=[news_schedule,
                transfers_quiz_schedule,
                guess_the_player_quiz_schedule,
-               facts_schedule
+               facts_schedule,
+               facts_by_team_schedule
                ],
     resources={
         "dbt": DbtCliResource(project_dir=os.fspath(dbt_project_dir)),
