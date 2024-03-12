@@ -65,6 +65,7 @@ top_teams_query = """
                             , row_number() over (partition by team ORDER BY red_cards desc nulls last)    as red_cards_rn
                             , row_number() over (partition by team ORDER BY yellow_cards desc nulls last) as yellow_cards_rn
                             , row_number() over (partition by team ORDER BY penalties desc nulls last)    as penalties_rn
+                            , row_number() over (partition by team ORDER BY minutes_played desc nulls last)    as minutes_played_rn
                         from vw
                         )
                 select *
