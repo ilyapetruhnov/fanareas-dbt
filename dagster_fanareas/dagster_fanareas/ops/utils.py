@@ -83,7 +83,7 @@ def upsert(new_df: pd.DataFrame, existing_df: pd.DataFrame) -> pd.DataFrame:
     existing_df.update(new_df, overwrite=True)
     existing_df.reset_index(inplace=True)
     new_df.reset_index(inplace=True)
-    df = existing_df.append(new_df[~new_df['id'].isin(existing_df['id'])], ignore_index=True)
+    df = pd.concat(existing_df, new_df[~new_df['id'].isin(existing_df['id'])], ignore_index=True)
     return df
 
 @op
