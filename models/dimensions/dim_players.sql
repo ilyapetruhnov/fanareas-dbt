@@ -3,7 +3,7 @@
         materialized='incremental',
         unique_key=['player_id', 'current_season'],
         incremental_strategy='insert_overwrite',
-        on_schema_change = 'fail'
+        on_schema_change = 'sync_all_columns'
     )
 }}
 with

@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: dim_players
+    columns:
+      - name: player_id
+        tests:
+          - not_null
+      - name: current_season
+        tests:
+          - not_null
+      # - name: status
+      #   tests:
+      #     - accepted_values:
+      #         values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
