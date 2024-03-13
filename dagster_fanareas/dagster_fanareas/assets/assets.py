@@ -97,31 +97,6 @@ def players(context) -> pd.DataFrame:
     df = context.resources.db_io_manager.upsert_input(context)
     return df
 
-# @asset( group_name="player_stats", compute_kind="pandas")
-# def player_stats_dict(context, players: pd.DataFrame) -> dict:
-#     player_ids = list(players['id'].unique())
-#     player_stats = []
-#     player_stats_detailed = []
-#     context.log.info(len(player_ids))
-#     for player_id in player_ids:
-#         url = f"{base_url}/statistics/seasons/players/{player_id}"
-#         response = api_call(url)
-#         try:
-#             player_stats.append([i for i in response.json()['data']])
-#             player_stats_detailed.append([i['details'] for i in response.json()['data']])
-#         except Exception as e:
-#             pass
-#         limit = response.json()['rate_limit']['remaining']
-#         context.log.info(limit)
-#         if limit == 1:
-#             seconds_until_reset = response.json()['rate_limit']['resets_in_seconds']
-#             context.log.info(seconds_until_reset)
-#             time.sleep(seconds_until_reset+1)
-#         else:
-#             continue
-#     return {'stats': player_stats, 'detailed_stats': player_stats_detailed}
-
-
 @asset( group_name="player_stats", compute_kind="pandas")
 def player_stats_dict(context, players: pd.DataFrame) -> dict:
     dim_players = context.resources.db_io_manager.load_table(table_name = 'dim_players')
@@ -180,6 +155,7 @@ def player_stats_detailed(context, player_stats_dict: dict) -> pd.DataFrame:
 
 @asset( group_name="team_stats", compute_kind="pandas")
 def team_stats_dict(context, teams: pd.DataFrame) -> dict:
+    teams = teams[teams['short_code'].notnull()]
     team_ids = list(teams['id'].unique())
     context.log.info(team_ids)
     team_stats = []
@@ -209,13 +185,9 @@ def team_stats(context, team_stats_dict: dict) -> pd.DataFrame:
     df = pd.DataFrame(result)
     context.log.info(df.head())
     df = df.drop('details', axis=1)
-    context.log.info(len(df))
-
-    # dataset_name = context.asset_key.path[-1]
-    # existing_df = context.resources.db_io_manager.load_input(context)
-
-
-    # df = upsert(dataset_name, existing_df, new_df = df)
+    existing_df = context.resources.db_io_manager.load_input(context)
+    context.log.info(df.head())
+    df = upsert(df, existing_df)
     return df
 
 
@@ -226,9 +198,10 @@ def team_stats_detailed(context, team_stats_dict: dict) -> pd.DataFrame:
     context.log.info(df.head())
     cols = [i.replace('.','_').replace('-','_') for i in df.columns]
     df.columns = cols
-    dataset_name = context.asset_key.path[-1]
+    # dataset_name = context.asset_key.path[-1]
     existing_df = context.resources.db_io_manager.load_input(context)
-    df = upsert(dataset_name, existing_df, new_df = df)
+    context.log.info(df.head())
+    df = upsert(df, existing_df)
     return df
 
 
