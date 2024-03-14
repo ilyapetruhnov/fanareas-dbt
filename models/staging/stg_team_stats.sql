@@ -25,7 +25,7 @@ team_stats_detailed as (
 team_stats_seasons as (
 
     select 
-        id as team_stats_id,
+        team_stats.id as team_stats_id,
         team_id,
         seasons.name as season_name
     from team_stats
