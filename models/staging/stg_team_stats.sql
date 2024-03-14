@@ -43,7 +43,7 @@ select
     *
 from team_stats_detailed
 left join types on team_stats_detailed.type_id = types.id
-left join team_stats_seasons on team_stats_detailed.team_statistic_id = team_stats_seasons.id
+left join team_stats_seasons on team_stats_detailed.team_statistic_id = team_stats_seasons.team_stats_id
 )
 
 select * from final
