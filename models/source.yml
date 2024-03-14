@@ -21,8 +21,8 @@ sources:
       - name: seasons
       - name: squads
       - name: standigs
-      - name: teams_stats
-      - name: teams_stats_detailed
+      - name: team_stats
+      - name: team_stats_detailed
       - name: teams
       - name: topscorers
       - name: types
