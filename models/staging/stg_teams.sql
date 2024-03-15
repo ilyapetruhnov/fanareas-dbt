@@ -13,6 +13,7 @@ venues as (
 teams as (
 
     select * from {{ ref('raw_teams') }}
+    where short_code is not NULL
 
 ),
 
