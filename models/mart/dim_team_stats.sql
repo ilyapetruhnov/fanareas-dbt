@@ -10,67 +10,67 @@ teams as (
 
 vw as (
     select 
-                 team_stats_id as id
-                 , team_stats.season_name as season
-                 , team_stats.team_id   as team_id
-                 , teams.team           as team
-                 , team_stats.type           as type
-                 , value_all_count
-                 , value_all_percentage
-                 , value_home_count
-                 , value_home_percentage
-                 , value_away_count
-                 , value_away_percentage
-                 , value_0_15_count
-                 , value_0_15_percentage
-                 , value_15_30_count
-                 , value_15_30_percentage
-                 , value_30_45_count
-                 , value_30_45_percentage
-                 , value_45_60_count
-                 , value_45_60_percentage
-                 , value_60_75_count
-                 , value_60_75_percentage
-                 , value_75_90_count
-                 , value_75_90_percentage
-                 , value_all_average
-                 , value_all_first
-                 , value_home_average
-                 , value_home_first
-                 , value_away_average
-                 , value_away_first
-                 , value_count
-                 , value_average
-                 , value_player_id
-                 , value_player_name
-                 , value_coach
-                 , value_coach_average
-                 , value_home_overall_percentage
-                 , value_away_overall_percentage
-                 , value_over_0_5_matches_count
-                 , value_over_0_5_matches_percentage
-                 , value_over_0_5_team_count
-                 , value_over_0_5_team_percentage
-                 , value_over_1_5_matches_count
-                 , value_over_1_5_matches_percentage
-                 , value_over_1_5_team_count
-                 , value_over_1_5_team_percentage
-                 , value_over_2_5_matches_count
-                 , value_over_2_5_matches_percentage
-                 , value_over_2_5_team_count
-                 , value_over_2_5_team_percentage
-                 , value_over_3_5_matches_count
-                 , value_over_3_5_matches_percentage
-                 , value_over_3_5_team_count
-                 , value_over_3_5_team_percentage
-                 , value_over_4_5_matches_count
-                 , value_over_4_5_matches_percentage
-                 , value_over_4_5_team_count
-                 , value_over_4_5_team_percentage
-                 , value_over_5_5_matches_count
-                 , value_over_5_5_matches_percentage
-                 , value_over_5_5_team_count
-                 , value_over_5_5_team_percentage
+        team_stats_id as id
+        , team_stats.season_name as season
+        , team_stats.team_id   as team_id
+        , teams.team           as team
+        , team_stats.type           as type
+        , value_all_count
+        , value_all_percentage
+        , value_home_count
+        , value_home_percentage
+        , value_away_count
+        , value_away_percentage
+        , value_0_15_count
+        , value_0_15_percentage
+        , value_15_30_count
+        , value_15_30_percentage
+        , value_30_45_count
+        , value_30_45_percentage
+        , value_45_60_count
+        , value_45_60_percentage
+        , value_60_75_count
+        , value_60_75_percentage
+        , value_75_90_count
+        , value_75_90_percentage
+        , value_all_average
+        , value_all_first
+        , value_home_average
+        , value_home_first
+        , value_away_average
+        , value_away_first
+        , value_count
+        , value_average
+        , value_player_id
+        , value_player_name
+        , value_coach
+        , value_coach_average
+        , value_home_overall_percentage
+        , value_away_overall_percentage
+        , value_over_0_5_matches_count
+        , value_over_0_5_matches_percentage
+        , value_over_0_5_team_count
+        , value_over_0_5_team_percentage
+        , value_over_1_5_matches_count
+        , value_over_1_5_matches_percentage
+        , value_over_1_5_team_count
+        , value_over_1_5_team_percentage
+        , value_over_2_5_matches_count
+        , value_over_2_5_matches_percentage
+        , value_over_2_5_team_count
+        , value_over_2_5_team_percentage
+        , value_over_3_5_matches_count
+        , value_over_3_5_matches_percentage
+        , value_over_3_5_team_count
+        , value_over_3_5_team_percentage
+        , value_over_4_5_matches_count
+        , value_over_4_5_matches_percentage
+        , value_over_4_5_team_count
+        , value_over_4_5_team_percentage
+        , value_over_5_5_matches_count
+        , value_over_5_5_matches_percentage
+        , value_over_5_5_team_count
+        , value_over_5_5_team_percentage
     from team_stats
     join teams 
     on team_stats.team_id = teams.team_id
@@ -78,7 +78,7 @@ vw as (
 
 final as (
     select
-        team_stats_id,
+        id,
         max(season) as season,
         team_id,
         max(team) as team,
@@ -124,7 +124,7 @@ final as (
         max(value_coach) filter (where type = 'Yellowcards') as coach_yellowcards
     from vw
     group by
-        team_stats_id,
+        id,
         season,
         team_id
 )
