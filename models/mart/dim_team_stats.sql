@@ -1,12 +1,20 @@
-with vw as (
-    select team_stats_detailed.id as id
-                 , team_statistic_id
-                 , team_stats.season_id as season_id
-                 , seasons.name         as season
+with team_stats as (
+    select * from {{ ref('stg_team_stats') }}
+
+),
+
+teams as (
+    select * from {{ ref('stg_teams') }}
+
+),
+
+vw as (
+    select 
+                 team_stats_id as id
+                 , team_stats.season_name as season
                  , team_stats.team_id   as team_id
-                 , teams.name           as team
-                 , types.name           as type
-                 , type_id
+                 , teams.team           as team
+                 , team.type           as type
                  , value_all_count
                  , value_all_percentage
                  , value_home_count
@@ -63,20 +71,14 @@ with vw as (
                  , value_over_5_5_matches_percentage
                  , value_over_5_5_team_count
                  , value_over_5_5_team_percentage
-            from raw_team_stats_detailed team_stats_detailed
-            join raw_types types 
-            on raw_team_stats_detailed.type_id = raw_types.id
-            left join raw_team_stats team_stats
-            on raw_team_stats_detailed.team_statistic_id = raw_team_stats.id
-            join raw_seasons seasons
-            on season_id = raw_seasons.id
-            join raw_teams teams on team_id = raw_teams.id
-            ),
+    from team_stats
+    join teams 
+    on team_stats.team_id = teams.team_id
+    ),
 
 final as (
     select
         team_statistic_id,
-        season_id,
         max(season) as season,
         team_id,
         max(team) as team,
