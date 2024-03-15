@@ -14,7 +14,7 @@ vw as (
                  , team_stats.season_name as season
                  , team_stats.team_id   as team_id
                  , teams.team           as team
-                 , team.type           as type
+                 , teams.type           as type
                  , value_all_count
                  , value_all_percentage
                  , value_home_count
