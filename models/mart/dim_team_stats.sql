@@ -79,7 +79,7 @@ vw as (
 final as (
     select
         id,
-        max(season) as season,
+        season,
         team_id,
         max(team) as team,
         max(value_all_count) filter (where type = 'Goals') as goals_all_count,
