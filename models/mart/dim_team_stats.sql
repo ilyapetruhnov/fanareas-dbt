@@ -78,7 +78,7 @@ vw as (
 
 final as (
     select
-        team_statistic_id,
+        team_stats_id,
         max(season) as season,
         team_id,
         max(team) as team,
@@ -124,8 +124,8 @@ final as (
         max(value_coach) filter (where type = 'Yellowcards') as coach_yellowcards
     from vw
     group by
-        team_statistic_id,
-        season_id,
+        team_stats_id,
+        season,
         team_id
 )
 
