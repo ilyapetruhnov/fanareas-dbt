@@ -29,7 +29,7 @@ team_stats_seasons as (
         team_id,
         seasons.name as season_name
     from team_stats
-    left join seasons on seasons.id = team_stats.season_id
+    join seasons on seasons.id = team_stats.season_id
 
 ),
 
