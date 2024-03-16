@@ -21,7 +21,6 @@ final as (
 
     select
         teams.id as team_id,
-        teams.country_id,
         teams.name as team,
         teams.short_code as short_code,
         teams.founded as founded,
