@@ -20,7 +20,7 @@ sources:
       - name: rouds
       - name: seasons
       - name: squads
-      - name: standigs
+      - name: standings
       - name: team_stats
       - name: team_stats_detailed
       - name: teams
