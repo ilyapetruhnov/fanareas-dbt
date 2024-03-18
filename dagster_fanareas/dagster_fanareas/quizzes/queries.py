@@ -199,3 +199,57 @@ query_player_height=f"""
         fullname[1] as fullname
         from vw
         """
+
+query_team_stats = """with vw as (
+select
+team
+,season
+,team_lost_count as losses_cnt
+,team_wins_count as wins_cnt
+,team_draws_count as draws_cnt
+,goals_all_count as goals_cnt
+,goals_conceded_all_count as goals_conceded_cnt
+,goals_all_count - goals_conceded_all_count as goal_difference_cnt
+,yellowcards_count as yellow_cards_cnt
+,redcards_count as red_cards_cnt
+,cleansheets_count as clean_sheets_cnt
+,corners_count as corners_cnt
+, dense_rank() over (partition by season ORDER BY team_lost_count desc nulls last) as losses_rn
+, dense_rank() over (partition by season ORDER BY team_wins_count desc nulls last) as wins_rn
+, dense_rank() over (partition by season ORDER BY team_draws_count desc nulls last) as draws_rn
+, dense_rank() over (partition by season ORDER BY goals_all_count desc nulls last) as goals_rn
+, dense_rank() over (partition by season ORDER BY goals_conceded_all_count desc nulls last) as goals_conceded_rn
+, dense_rank() over (partition by season ORDER BY (goals_all_count - goals_conceded_all_count) desc nulls last) as goal_difference_rn
+, dense_rank() over (partition by season ORDER BY yellowcards_count desc nulls last) as yellow_cards_rn
+, dense_rank() over (partition by season ORDER BY redcards_count desc nulls last) as red_cards_rn
+, dense_rank() over (partition by season ORDER BY cleansheets_count desc nulls last) as clean_sheets_rn
+, dense_rank() over (partition by season ORDER BY corners_count desc nulls last) as corners_rn
+from dim_team_stats
+)
+select
+    team
+    ,season
+     ,losses_cnt
+     ,losses_rn
+     ,wins_cnt
+     ,wins_rn
+     ,draws_cnt
+     ,draws_rn
+     ,goals_cnt
+     ,goals_rn
+     ,goals_conceded_cnt
+     ,goals_conceded_rn
+     ,goal_difference_cnt
+     ,goal_difference_rn
+     ,yellow_cards_cnt
+     ,yellow_cards_rn
+     ,red_cards_cnt
+     ,red_cards_rn
+     ,clean_sheets_cnt
+     ,clean_sheets_rn
+     ,corners_cnt
+     ,corners_rn
+from vw
+"""
+
+statement_team_stats = "Which team had the most {} in the {} season?"

@@ -17,6 +17,13 @@ class Quizzes:
                     "questions": questions}
             
         return json_data
+    
+    def format_metric(self, metric: str) -> str:
+        if metric == 'penalties':
+            result = 'penalty goals'
+        else:
+            result = metric.replace('_',' ')
+        return result
 
     def generate_df(self, query: str) -> pd.DataFrame:
         engine = create_db_session()
@@ -34,11 +41,11 @@ class Quizzes:
             correct_idx = random.randint(0, 3)
             correct_row = sample_df.iloc[correct_idx]
             correct_vals = [correct_row[i] for i in cols]
-            question = statement.format(*correct_vals)
+            question_statement = statement.format(*correct_vals)
             options = list(sample_df['fullname'])
             correct_response = correct_row['fullname']
             question = {
-            "description": question,
+            "description": question_statement,
             "quizQuestionOptions": options,
             "correctAnswer": correct_response
                         }
@@ -58,6 +65,43 @@ class Quizzes:
             "correctAnswer": correct_response
                         }
             q_lst.append(question)
+        return q_lst
+    
+    def generate_team_questions(self, query: str, statement: str,  dimension: str):
+        df = self.generate_df(query)
+        seasons = list(df['season'].unique())[2:]
+        metrics = [
+            'losses', 'wins', 'draws', 
+            'goals', 'goals_conceded', 
+            'yellow_cards', 'red_cards',
+            'clean_sheets', 'corners'
+                    ]
+        q_lst = []
+        counter = 0
+        # check out dagster project linkedin
+        while counter < 10:
+            dim = random.choice(metrics)
+            season = random.choice(seasons)
+            formatted_dim = self.format_metric(dim)
+            correct_vals = (formatted_dim, season)
+            dimension = f'{dim}_rn'
+            sample_df = df[(df['season'] == season) & (df[dimension]<=4)]
+            correct_row = sample_df[sample_df[dimension]==1]
+            if len(correct_row) > 1:
+                pass
+            else:
+                counter+=1
+                options = list(sample_df['team'])
+                
+                correct_response = correct_row['team'].iloc[0]
+                
+                question_statement = statement.format(*correct_vals)
+                question = {
+                    "description": question_statement,
+                    "quizQuestionOptions": options,
+                    "correctAnswer": correct_response
+                                }
+                q_lst.append(question)
         return q_lst
     
 
