@@ -4,17 +4,19 @@ from dagster_fanareas.ops.utils import post_json, create_db_session
 from dagster_fanareas.quizzes.queries import *
 
 class Quizzes:
-    def __init__(self, title: str, description: str, quiz_type: int) -> None:
+    def __init__(self, title: str, description: str, quiz_type: int, is_demo: bool) -> None:
         self.title = title
         self.description = description
         self.quiz_type = quiz_type
+        self.is_demo = is_demo
         self.url = "https://fanareas.com/api/quizzes/createQuizz"
 
     def quiz_template(self, questions):
         json_data = {"title": self.title,
                     "type": self.quiz_type,
                     "description": self.description,
-                    "questions": questions}
+                    "questions": questions,
+                    "isDemo": self.is_demo}
             
         return json_data
     
@@ -104,6 +106,149 @@ class Quizzes:
                 q_lst.append(question)
         return q_lst
     
+    def generate_player_shirt_number_question(self):
+        df = self.generate_df(query_player_shirt_number)
+        sample_df = df.sample(4)
+        team = sample_df['team'].iloc[0]
+        jersey_number = sample_df['jersey_number'].iloc[0]
+        correct_response = sample_df['fullname'].iloc[0]
+        options = list(sample_df['fullname'])
+        statement = f"Which player currently plays for {team} under {jersey_number} jersey number?"
+        question = {
+        "description": statement,
+        "quizQuestionOptions": options,
+        "correctAnswer": correct_response
+                    }
+        return question
+
+    def generate_player_2_clubs_question(self):
+
+        df = self.generate_df(query_player_2_clubs_played)
+        sample_df = df.drop_duplicates('player_id').sample(n=4)
+        club1 = sample_df['transfer_from_team'].iloc[0]
+        club2 = sample_df['team'].iloc[0]
+        options = list(sample_df['fullname'])
+        correct_response = sample_df.iloc[0]['fullname']
+        statement = f"Which player played for {club1} and {club2} in his career?"
+        question = {
+        "description": statement,
+        "quizQuestionOptions": options,
+        "correctAnswer": correct_response
+                    }
+        return question
+
+    def generate_team_stats_question(self):
+        df = self.generate_df(query_team_stats)
+        seasons = list(df['season'].unique())
+        metrics = [
+            'losses', 'wins', 'draws', 
+            'goals', 'goals_conceded', 
+            'yellow_cards', 'red_cards',
+            'clean_sheets', 'corners'
+                    ]
+        # check out dagster project linkedin
+        dim = random.choice(metrics)
+        season = random.choice(seasons)
+        formatted_dim = self.format_metric(dim)
+        correct_vals = (formatted_dim, season)
+        dimension = f'{dim}_rn'
+        sample_df = df[df['season'] == season].drop_duplicates(subset=['season',dimension], keep='first').sort_values(dimension)[['team','season',dimension]].head(4)
+
+        correct_row = sample_df[sample_df[dimension] == 1]
+        statement_team_stats = "Which team had the most {} in the {} season?"
+
+        options = list(sample_df['team'])
+        
+        correct_response = correct_row['team'].iloc[0]
+        
+        question_statement = statement_team_stats.format(*correct_vals)
+        question = {
+            "description": question_statement,
+            "quizQuestionOptions": options,
+            "correctAnswer": correct_response
+                        }
+        return question
+
+    def generate_venue_question(self):
+        df = self.generate_df(query_capacity_venue)
+        sample_df = df[~df['team'].isin(['Brentford','Swansea City','Tottenham Hotspur'])].sample(4)[['team','venue']]
+        correct_response = sample_df.iloc[0]['venue']
+        correct_team = sample_df.iloc[0]['team']
+        statement = f"What is the home venue of {correct_team}?"
+        options = list(sample_df['team'])
+        question = {
+            "description": statement,
+            "quizQuestionOptions": options,
+            "correctAnswer": correct_response
+                        }
+        return question
+    
+    def generate_founded_question(self):
+        df = self.generate_df(query_capacity_venue)
+        sample_df = df.sample(4).sort_values('founded_rn')
+        correct_response = sample_df.iloc[0]['team']
+        statement = f"Which team was founded first?"
+        options = list(sample_df['team'])
+        question = {
+            "description": statement,
+            "quizQuestionOptions": options,
+            "correctAnswer": correct_response
+                        }
+        return question
+    
+    def generate_capacity_question(self):
+        df = self.generate_df(query_capacity_venue)
+        df['venue_city'] = df['venue'] + ' ' + df['city']
+        sample_df = df.sample(4).sort_values('capacity_rn')
+        correct_response = sample_df.iloc[0]['venue_city']
+        statement = f"Which stadium has higher capacity?"
+        options = list(sample_df['venue_city'])
+        question = {
+            "description": statement,
+            "quizQuestionOptions": options,
+            "correctAnswer": correct_response
+                        }
+        return question
+    
+    def generate_fewest_points_question(self):
+        df = self.generate_df(query_standings)
+        sample_df = df.head(4)
+        correct_response = sample_df.iloc[0]['team']
+        statement = f"Which team finished the 2007/2008 season with 11 points?"
+        options = list(sample_df['team'])
+        question = {
+            "description": statement,
+            "quizQuestionOptions": options,
+            "correctAnswer": correct_response
+                        }
+        return question
+    
+    def generate_most_points_question(self):
+        df = self.generate_df(query_standings)
+        sample_df = df.head(20).sort_values('points', ascending=False)
+        correct_response = sample_df.iloc[0]['team']
+        statement = f"Which team finished the 2017/2018 season with 100 points (English Premier League record)?"
+        options = list(sample_df['team'].unique)[:4]
+        question = {
+            "description": statement,
+            "quizQuestionOptions": options,
+            "correctAnswer": correct_response
+                        }
+        return question
+    
+    def generate_relegations_question(self):
+        df = self.generate_df(query_relegations)
+        sample_df = df.sample(1)
+        correct_response = sample_df.iloc[0]['team_promoted']
+        season = sample_df.iloc[0]['season']
+        options = sample_df.iloc[0]['options']
+        statement = f"Which team did not relegate in the {season} season?"
+        question = {
+            "description": statement,
+            "quizQuestionOptions": options,
+            "correctAnswer": correct_response
+                        }
+        return question
 
     def mixed_quiz_questions(self, quizzes:list):
         random.shuffle(quizzes)

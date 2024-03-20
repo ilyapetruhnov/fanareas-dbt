@@ -225,6 +225,7 @@ team
 , dense_rank() over (partition by season ORDER BY cleansheets_count desc nulls last) as clean_sheets_rn
 , dense_rank() over (partition by season ORDER BY corners_count desc nulls last) as corners_rn
 from dim_team_stats
+where season != '2023/2024'
 )
 select
     team
@@ -253,3 +254,41 @@ from vw
 """
 
 statement_team_stats = "Which team had the most {} in the {} season?"
+
+query_capacity_venue = """select *,
+dense_rank() over (order by capacity desc) as capacity_rn,
+dense_rank() over (order by founded asc) as founded_rn
+from stg_teams"""
+
+
+query_standings = """
+select * from stg_standings
+where season != '2023/2024' 
+order by points
+"""
+
+
+query_relegations = """
+with vw as (select season,
+                   array_agg(team) as teams
+            from stg_standings
+            ---where season != '2023/2024'
+            group by season),
+    vw1 as (
+select season,
+       teams,
+       lag(teams, 1) over (order by season) as prev_teams,
+       lead(teams, 1) over (order by season) as next_teams
+from vw),
+vw2 as (
+select *,
+array(select unnest(teams) except select unnest(prev_teams)) as teams_promoted,
+array(select unnest(prev_teams) except select unnest(teams)) as teams_relegated
+from vw1)
+select season,
+       teams_promoted[1] as team_promoted,
+       (teams_promoted[1] || teams_relegated) as options
+from vw2
+;
+
+"""

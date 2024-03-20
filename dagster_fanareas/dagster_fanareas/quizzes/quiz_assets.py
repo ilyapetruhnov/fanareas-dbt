@@ -67,3 +67,27 @@ def transfers_quiz() -> bool:
     quiz_obj.post_quiz(mixed_quiz_questions)
 
     return True
+
+@asset(group_name="quizzes")
+def demo_quiz() -> bool:
+    title = "English Premier League"
+    description = "Answer 10 questions about Premier League"
+    quiz_type = -1
+    is_demo = True
+    quiz_obj = Quizzes(title, description, quiz_type, is_demo)
+    combined_q_list = []
+    combined_q_list.append(quiz_obj.generate_player_shirt_number_question())
+    combined_q_list.append(quiz_obj.generate_player_2_clubs_question())
+    combined_q_list.append(quiz_obj.generate_team_stats_question())
+    combined_q_list.append(quiz_obj.generate_team_stats_question())
+    combined_q_list.append(quiz_obj.generate_venue_question())
+    combined_q_list.append(quiz_obj.generate_founded_question())
+    combined_q_list.append(quiz_obj.generate_capacity_question())
+    combined_q_list.append(quiz_obj.generate_fewest_points_question())
+    combined_q_list.append(quiz_obj.generate_most_points_question())
+    combined_q_list.append(quiz_obj.generate_relegations_question())
+
+    mixed_quiz_questions = quiz_obj.mixed_quiz_questions(combined_q_list)
+    quiz_obj.post_quiz(mixed_quiz_questions)
+
+    return True
