@@ -228,7 +228,7 @@ class Quizzes:
         sample_df = df.head(20).sort_values('points', ascending=False)
         correct_response = sample_df.iloc[0]['team']
         statement = f"Which team finished the 2017/2018 season with 100 points (English Premier League record)?"
-        options = list(sample_df['team'].unique)[:4]
+        options = list(sample_df['team'].unique())[:4]
         question = {
             "description": statement,
             "quizQuestionOptions": options,
