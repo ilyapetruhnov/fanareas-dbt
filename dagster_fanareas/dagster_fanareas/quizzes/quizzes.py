@@ -113,6 +113,7 @@ class Quizzes:
         jersey_number = sample_df['jersey_number'].iloc[0]
         correct_response = sample_df['fullname'].iloc[0]
         options = list(sample_df['fullname'])
+        random.shuffle(options)
         statement = f"Which player currently plays for {team} under {jersey_number} jersey number?"
         question = {
         "description": statement,
@@ -128,6 +129,7 @@ class Quizzes:
         club1 = sample_df['transfer_from_team'].iloc[0]
         club2 = sample_df['team'].iloc[0]
         options = list(sample_df['fullname'])
+        random.shuffle(options)
         correct_response = sample_df.iloc[0]['fullname']
         statement = f"Which player played for {club1} and {club2} in his career?"
         question = {
@@ -175,7 +177,8 @@ class Quizzes:
         correct_response = sample_df.iloc[0]['venue']
         correct_team = sample_df.iloc[0]['team']
         statement = f"What is the home venue of {correct_team}?"
-        options = list(sample_df['team'])
+        options = list(sample_df['venue'])
+        random.shuffle(options)
         question = {
             "description": statement,
             "quizQuestionOptions": options,
@@ -189,6 +192,7 @@ class Quizzes:
         correct_response = sample_df.iloc[0]['team']
         statement = f"Which team was founded first?"
         options = list(sample_df['team'])
+        random.shuffle(options)
         question = {
             "description": statement,
             "quizQuestionOptions": options,
@@ -203,6 +207,7 @@ class Quizzes:
         correct_response = sample_df.iloc[0]['venue_city']
         statement = f"Which stadium has higher capacity?"
         options = list(sample_df['venue_city'])
+        random.shuffle(options)
         question = {
             "description": statement,
             "quizQuestionOptions": options,
@@ -216,6 +221,7 @@ class Quizzes:
         correct_response = sample_df.iloc[0]['team']
         statement = f"Which team finished the 2007/2008 season with 11 points?"
         options = list(sample_df['team'])
+        random.shuffle(options)
         question = {
             "description": statement,
             "quizQuestionOptions": options,
@@ -225,10 +231,11 @@ class Quizzes:
     
     def generate_most_points_question(self):
         df = self.generate_df(query_standings)
-        sample_df = df.head(20).sort_values('points', ascending=False)
+        sample_df = df.sort_values('points', ascending=False).head(30)
         correct_response = sample_df.iloc[0]['team']
         statement = f"Which team finished the 2017/2018 season with 100 points (English Premier League record)?"
         options = list(sample_df['team'].unique())[:4]
+        random.shuffle(options)
         question = {
             "description": statement,
             "quizQuestionOptions": options,
@@ -242,6 +249,7 @@ class Quizzes:
         correct_response = sample_df.iloc[0]['team_promoted']
         season = sample_df.iloc[0]['season']
         options = sample_df.iloc[0]['options']
+        random.shuffle(options)
         statement = f"Which team did not relegate in the {season} season?"
         question = {
             "description": statement,

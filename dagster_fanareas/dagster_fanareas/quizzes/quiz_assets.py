@@ -8,7 +8,8 @@ def guess_the_player_quiz() -> bool:
     title = "Guess the player"
     description = "Guess 10 football players from the Premier League"
     quiz_type = 0
-    quiz_obj = Quizzes(title, description, quiz_type)
+    is_demo = False
+    quiz_obj = Quizzes(title, description, quiz_type, is_demo)
 
     quiz_player_shirt_number = quiz_obj.generate_quiz_questions(query_player_shirt_number, 
                                                                 statement_player_shirt_number, 
@@ -48,7 +49,8 @@ def transfers_quiz() -> bool:
     title = "Daily transfers"
     description = "Answer 10 questions about Premier League transfers"
     quiz_type = 1
-    quiz_obj = Quizzes(title, description, quiz_type)
+    is_demo = False
+    quiz_obj = Quizzes(title, description, quiz_type, is_demo)
     quiz_player_transferred_from_to = quiz_obj.generate_quiz_questions(query_player_transferred_from_to, 
                                                                        statement_player_transferred_from_to, 
                                                                        ('transfer_from_team', 

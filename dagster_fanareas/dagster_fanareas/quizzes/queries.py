@@ -225,7 +225,7 @@ team
 , dense_rank() over (partition by season ORDER BY cleansheets_count desc nulls last) as clean_sheets_rn
 , dense_rank() over (partition by season ORDER BY corners_count desc nulls last) as corners_rn
 from dim_team_stats
-where season != '2023/2024'
+where season not in ('2023/2024', '2018/2019','2019/2020')
 )
 select
     team
