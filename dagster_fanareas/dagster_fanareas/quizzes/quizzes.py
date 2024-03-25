@@ -35,7 +35,6 @@ class Quizzes:
     def generate_question(self, query: str, statement: str, team_name: str, cols: tuple) -> list:
         df = self.generate_df(query)
         
-        
         sample_df = df.sample(n=4)
         correct_idx = random.randint(0, 3)
         correct_row = sample_df.iloc[correct_idx]

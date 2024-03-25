@@ -289,7 +289,7 @@ query_team_player_club_transferred_from = """
             AND team_id = {}
 """
 
-statement_team_player_club_transferred_from = "From which team did {} transfer before joining {}?"
+statement_team_player_club_transferred_from = "From which team did {1} transfer before joining {0}?"
 
 
 query_player_transferred_from_to="""
