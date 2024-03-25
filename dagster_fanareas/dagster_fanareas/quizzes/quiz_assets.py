@@ -24,7 +24,7 @@ def guess_team_player_quiz() -> bool:
     is_demo = False
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
 
-    quiz_team_player_age_team = quiz_obj.generate_quiz_questions(query_team_player_age.format(team_id), 
+    quiz_team_player_age_team = quiz_obj.generate_question(query_team_player_age.format(team_id), 
                                                             statement_player_age_team,
                                                              (team_name, 
                                                             'team', 
@@ -39,13 +39,13 @@ def guess_team_player_quiz() -> bool:
                                                          'team',
                                                         'jersey_number')
         )
-        quiz_team_player_club_transferred_from = quiz_obj.generate_quiz_questions(query_team_player_club_transferred_from.format(team_id), 
+        quiz_team_player_club_transferred_from = quiz_obj.generate_question(query_team_player_club_transferred_from.format(team_id), 
                                                                   statement_team_player_club_transferred_from, 
                                                                  ('fullname', 
                                                                  team_name)
         )
 
-        quiz_team_player_age_nationality = quiz_obj.generate_quiz_questions(query_team_player_age_nationality.format(team_id), 
+        quiz_team_player_age_nationality = quiz_obj.generate_question(query_team_player_age_nationality.format(team_id), 
                                                                    statement_team_player_age_nationality,
                                                                     (team_name, 
                                                                    'birth_year', 
