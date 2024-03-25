@@ -3,6 +3,7 @@ query_player_shirt_number="""
         firstname,
         lastname,
         fullname,
+        array_to_string(team_id, '/') as team_id,
         array_to_string(team, '/') as team,
         array_to_string(jersey_number, '/') as jersey_number,
         t.season
@@ -14,7 +15,28 @@ query_player_shirt_number="""
         and array_length(t.team,1) = 1
         and is_active = true
         """
+
 statement_player_shirt_number = "Which player currently plays for {} under {} jersey number?"
+
+
+query_team_player_shirt_number="""
+with vw as (SELECT firstname,
+                   lastname,
+                   fullname,
+                   cast(array_to_string(team_id, '/') as int)       as team_id,
+                   array_to_string(team, '/')          as team,
+                   array_to_string(jersey_number, '/') as jersey_number,
+                   t.season
+            FROM dim_players
+                     CROSS JOIN UNNEST(season_stats) AS t
+            WHERE t.season = 2023
+              and array_length(t.team, 1) = 1
+              and is_active = true)
+select * from vw
+where team_id = {}"""
+
+statement_team_player_shirt_number = "Which {} player currently plays under {} jersey number?"
+
 
 query_player_age_nationality="""
         with vw as (
@@ -53,6 +75,48 @@ query_player_age_nationality="""
 
 statement_player_age_nationality = "Which Premier League player was born in {} and is a citizen of {}?"
 
+
+query_team_player_age_nationality = """
+        with vw as (
+        SELECT
+        firstname,
+        lastname,
+        fullname,
+        nationality,
+        date_of_birth,
+        cast(array_to_string(team_id, '/') as int)       as team_id,
+        array_to_string(team, '/') as team,
+        t.season,
+        lead(nationality, 1) over (order by nationality, date_of_birth) as next_nationality,
+        lead(date_of_birth, 1) over (order by nationality, date_of_birth) as next_date_of_birth
+        FROM
+        dim_players
+        CROSS JOIN UNNEST (season_stats) AS t
+        WHERE
+        t.season = 2023
+        and date_of_birth is not null
+        and array_length(t.team,1) = 1
+        and is_active = true),
+        window_vw as (
+        select
+        fullname,
+        nationality,
+        next_nationality,
+        team_id,
+        cast(date_part('year', cast(date_of_birth as date)) as int) as birth_year,
+        cast(date_part('year', cast(next_date_of_birth as date)) as int) as next_birth_year
+        from vw)
+        select * 
+        from window_vw
+        where
+        (next_nationality != nationality
+        or next_birth_year != birth_year)
+        and team_id = {}
+"""
+
+statement_team_player_age_nationality = "Which {} player was born in {} and is a citizen of {}?"
+
+
 query_player_age_team="""
             with vw as (
             SELECT
@@ -88,6 +152,49 @@ query_player_age_team="""
             or next_birth_year != birth_year
             """
 statement_player_age_team = "Which player currently plays for {} and was born in {}?"
+
+
+query_team_player_age = """
+            with vw as (
+            SELECT
+            firstname,
+            lastname,
+            fullname,
+            nationality,
+            date_of_birth,
+            cast(array_to_string(team_id, '/') as int)       as team_id,
+            array_to_string(team, '/') as team,
+            t.season,
+            lead(array_to_string(team, '/'), 1) over (order by array_to_string(team, '/'), date_of_birth) as next_team,
+            lead(date_of_birth, 1) over (order by array_to_string(team, '/'), date_of_birth) as next_date_of_birth
+            FROM
+            dim_players
+            CROSS JOIN UNNEST (season_stats) AS t
+            WHERE
+            t.season = 2023
+            and date_of_birth is not null
+            and array_length(t.team,1) = 1
+            and is_active = true),
+            window_vw as (
+            select
+            fullname,
+            team_id,
+            team,
+            next_team,
+            cast(date_part('year', cast(date_of_birth as date)) as int) as birth_year,
+            cast(date_part('year', cast(next_date_of_birth as date)) as int) as next_birth_year
+            from vw)
+            select fullname, team_id, team, birth_year
+            from window_vw
+            where
+            (next_team != team
+            or next_birth_year != birth_year)
+            and team_id = {}
+"""
+
+statement_team_player_age_team = "Which {} player was born in {}?"
+
+
 
 query_player_2_clubs_played="""
             WITH vw as (
@@ -133,6 +240,57 @@ query_player_2_clubs_played="""
                 )
         """
 statement_player_2_clubs_played = "Which player played for {} and {} in his career?"
+
+
+query_team_player_club_transferred_from = """
+            WITH vw as (
+            SELECT
+            player_id,
+            firstname,
+            lastname,
+            fullname,
+            cast(array_to_string(team_id, '/') as int)       as team_id,
+            lag(array_to_string(team, '/')) over
+                (partition by player_id order by t.season) transfer_from_team,
+            array_to_string(team, '/') as team,
+            array_to_string(jersey_number, '/') as jersey_number,
+            team as team_arr,
+            t.season as season,
+            t.season_name
+            FROM
+            dim_players
+            CROSS JOIN UNNEST (season_stats) AS t
+            WHERE
+            current_season = 2023
+            AND array_length(team, 1) = 1
+            ), window_vw as (
+            SELECT
+            *
+            ,lead(transfer_from_team, 1) over (order by team, transfer_from_team, season_name) as next_transfer_from_team
+            ,lead(team, 1) over (order by team, transfer_from_team, season_name) as next_team
+            ,lead(season_name, 1) over (order by team, transfer_from_team, season_name) as next_season_name
+            from vw)
+            SELECT
+                player_id,
+                fullname,
+                team_id,
+                transfer_from_team,
+                team,
+                season,
+                season_name
+                from window_vw
+                        where
+                        team != transfer_from_team
+                        AND
+                (next_transfer_from_team != transfer_from_team
+                or next_team != team
+                or next_season_name != season_name
+                )
+            AND team_id = {}
+"""
+
+statement_team_player_club_transferred_from = "From which team did {} transfer before joining {}?"
+
 
 query_player_transferred_from_to="""
             WITH vw as (
@@ -272,7 +430,7 @@ query_relegations = """
 with vw as (select season,
                    array_agg(team) as teams
             from stg_standings
-            ---where season != '2023/2024'
+            where season not in ('2023/2024', '2005/2006')
             group by season),
     vw1 as (
 select season,
@@ -282,13 +440,11 @@ select season,
 from vw),
 vw2 as (
 select *,
-array(select unnest(teams) except select unnest(prev_teams)) as teams_promoted,
-array(select unnest(prev_teams) except select unnest(teams)) as teams_relegated
+array(select unnest(next_teams) except select unnest(teams)) as teams_promoted,
+array(select unnest(teams) except select unnest(next_teams)) as teams_relegated
 from vw1)
 select season,
        teams_promoted[1] as team_promoted,
        (teams_promoted[1] || teams_relegated) as options
 from vw2
-;
-
 """

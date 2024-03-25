@@ -2,6 +2,7 @@ import pandas as pd
 import random
 from dagster_fanareas.ops.utils import post_json, create_db_session
 from dagster_fanareas.quizzes.queries import *
+import requests
 
 class Quizzes:
     def __init__(self, title: str, description: str, quiz_type: int, is_demo: bool) -> None:
@@ -30,6 +31,24 @@ class Quizzes:
     def generate_df(self, query: str) -> pd.DataFrame:
         engine = create_db_session()
         return pd.read_sql(query, con=engine)
+
+    def generate_question(self, query: str, statement: str, team_name: str, cols: tuple) -> list:
+        df = self.generate_df(query)
+        
+        
+        sample_df = df.sample(n=4)
+        correct_idx = random.randint(0, 3)
+        correct_row = sample_df.iloc[correct_idx]
+        correct_vals = [correct_row[i] for i in cols]
+        question_statement = statement.format(team_name, *correct_vals)
+        options = list(sample_df['fullname'])
+        correct_response = correct_row['fullname']
+        question = {
+        "description": question_statement,
+        "quizQuestionOptions": options,
+        "correctAnswer": correct_response
+                    }
+        return question
 
     def generate_quiz_questions(self, query: str, statement: str, cols: tuple) -> list:
         df = self.generate_df(query)
@@ -108,7 +127,8 @@ class Quizzes:
     
     def generate_player_shirt_number_question(self):
         df = self.generate_df(query_player_shirt_number)
-        sample_df = df.sample(4)
+        teamid = requests.get('https://fanareas.com/api/teams/generateId').json()
+        sample_df = df[df['team_id']==teamid].sample(4)
         team = sample_df['team'].iloc[0]
         jersey_number = sample_df['jersey_number'].iloc[0]
         correct_response = sample_df['fullname'].iloc[0]
@@ -202,7 +222,7 @@ class Quizzes:
     
     def generate_capacity_question(self):
         df = self.generate_df(query_capacity_venue)
-        df['venue_city'] = df['venue'] + ' ' + df['city']
+        df['venue_city'] = df['venue'] + ' ' + '('+df['city']+')'
         sample_df = df.sample(4).sort_values('capacity_rn')
         correct_response = sample_df.iloc[0]['venue_city']
         statement = f"Which stadium has higher capacity?"
@@ -262,7 +282,6 @@ class Quizzes:
         random.shuffle(quizzes)
         result_list = quizzes[:10]
         return result_list
-
 
     def post_quiz(self, questions):
         json_data = self.quiz_template(questions)
