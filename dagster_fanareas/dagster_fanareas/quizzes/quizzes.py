@@ -127,7 +127,7 @@ class Quizzes:
     def generate_player_shirt_number_question(self):
         df = self.generate_df(query_player_shirt_number)
         teamid = requests.get('https://fanareas.com/api/teams/generateId').json()
-        sample_df = df[df['team_id']==teamid].sample(4)
+        sample_df = df[df['team_id']==str(teamid)].sample(4)
         team = sample_df['team'].iloc[0]
         jersey_number = sample_df['jersey_number'].iloc[0]
         correct_response = sample_df['fullname'].iloc[0]
