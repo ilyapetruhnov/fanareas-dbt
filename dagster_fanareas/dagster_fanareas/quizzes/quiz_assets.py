@@ -33,16 +33,20 @@ def guess_team_player_quiz() -> bool:
 
     combined_q_list = []
     for i in range(3):
-        quiz_team_player_shirt_number = quiz_obj.generate_question(query_team_player_shirt_number.format(team_id), 
+        quiz_team_player_shirt_number = quiz_obj.generate_question(
+            query_team_player_shirt_number.format(team_id), 
                                                     statement_team_player_shirt_number, 
                                                     team_name, 
                                                     ('team',
                                                     'jersey_number')
         )
-        quiz_team_player_club_transferred_from = quiz_obj.generate_question(query_team_player_club_transferred_from.format(team_id), 
-                                                    statement_team_player_club_transferred_from,
-                                                    team_name,
-                                                    ('fullname')
+        quiz_team_player_club_transferred_from = quiz_obj.generate_question(
+            query_team_player_club_transferred_from.format(team_id), 
+                                                            statement_team_player_club_transferred_from,
+                                                            team_name,
+                                                            ('transfer_from_team',
+                                                            'season_name')
+    
         )
 
         quiz_team_player_age_nationality = quiz_obj.generate_question(query_team_player_age_nationality.format(team_id), 
@@ -89,12 +93,7 @@ def guess_the_player_quiz() -> bool:
     quiz_player_age_team = quiz_obj.generate_quiz_questions(query_player_age_team, 
                                                             statement_player_age_team,
                                                             ('team', 'birth_year')
-    )
-
-    # quiz_player_height = quiz_obj.generate_simple_questions(query_player_height, 
-    #                                                       statement_player_height,
-    #                                                       dimension = 'height',
-    #                                                       )
+    )                                                  
 
     combined_q_list = quiz_player_shirt_number + quiz_player_2_clubs_played + quiz_player_age_nationality + quiz_player_age_team
 

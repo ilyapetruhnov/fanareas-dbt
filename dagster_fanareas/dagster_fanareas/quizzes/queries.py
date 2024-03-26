@@ -35,7 +35,7 @@ with vw as (SELECT firstname,
 select * from vw
 where team_id = {}"""
 
-statement_team_player_shirt_number = "Which {} player currently plays under {} jersey number?"
+statement_team_player_shirt_number = "Which {0} player currently plays under {2} jersey number?"
 
 
 query_player_age_nationality="""
@@ -114,7 +114,7 @@ query_team_player_age_nationality = """
         and team_id = {}
 """
 
-statement_team_player_age_nationality = "Which {} player was born in {} and is a citizen of {}?"
+statement_team_player_age_nationality = "Which {0} player was born in {1} and is a citizen of {2}?"
 
 
 query_player_age_team="""
@@ -151,7 +151,7 @@ query_player_age_team="""
             next_team != team
             or next_birth_year != birth_year
             """
-statement_player_age_team = "Which player currently plays for {} and was born in {}?"
+statement_player_age_team = "Which player currently plays for {0} and was born in {2}?"
 
 
 query_team_player_age = """
@@ -192,7 +192,7 @@ query_team_player_age = """
             and team_id = {}
 """
 
-statement_team_player_age_team = "Which {} player was born in {}?"
+statement_team_player_age_team = "Which {0} player was born in {2}?"
 
 
 
@@ -289,7 +289,7 @@ query_team_player_club_transferred_from = """
             AND team_id = {}
 """
 
-statement_team_player_club_transferred_from = "From which team did {1} transfer before joining {0}?"
+statement_team_player_club_transferred_from = "Which player played for {1} before joining {0} in {2} season?"
 
 
 query_player_transferred_from_to="""
