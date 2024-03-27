@@ -338,7 +338,7 @@ query_player_transferred_from_to="""
 statement_player_transferred_from_to = "Which player had a transfer from {} to {} in the {} season?"
 
 
-statement_player_height = "Guess the tallest player from the following players"
+
 
 query_player_height=f"""
         with vw as (
@@ -357,6 +357,37 @@ query_player_height=f"""
         fullname[1] as fullname
         from vw
         """
+
+statement_player_height = "Guess the tallest player from the following players"
+
+
+query_team_player_position = """
+with vw as (
+SELECT
+fullname,
+        cast(array_to_string(team_id, '/') as int) as teamid,
+        array_to_string(team, '/') as team_name,
+        array_to_string(jersey_number, '/') as jersey_number,
+        t.*
+        FROM
+        dim_players
+        CROSS JOIN UNNEST (season_stats) AS t
+        WHERE
+        t.season = 2023
+        and array_length(t.team,1) = 1
+        ),
+vw1 as (
+SELECT position, season, array_agg(fullname ORDER BY random()) as players
+FROM vw
+where teamid = {}
+and position is not null
+group by position, season)
+select position, season, players[1] as fullname from vw1
+"""
+
+statement_team_player_position = "Which {0} player currently plays at {1} position?"
+
+
 
 query_team_stats = """with vw as (
 select
