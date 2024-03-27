@@ -17,7 +17,8 @@ class Quizzes:
                     "type": self.quiz_type,
                     "description": self.description,
                     "questions": questions,
-                    "isDemo": self.is_demo}
+                    "isDemo": self.is_demo,
+                    }
             
         return json_data
     
@@ -31,6 +32,14 @@ class Quizzes:
     def generate_df(self, query: str) -> pd.DataFrame:
         engine = create_db_session()
         return pd.read_sql(query, con=engine)
+    
+    def get_team_name_and_id() -> dict:
+        engine = create_db_session()
+        team_id = requests.get('https://fanareas.com/api/teams/generateId').json()
+        team_qr = """select name from teams where id = {}""".format(team_id)
+        df = pd.read_sql(team_qr, con=engine)
+        team_name = df['name'].iloc[0]
+        return {'team_name': team_name, 'team_id': team_id}
 
     def generate_question(self, query: str, statement: str, team_name: str, cols: tuple) -> list:
         df = self.generate_df(query)

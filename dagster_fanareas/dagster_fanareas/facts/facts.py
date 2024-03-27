@@ -2,6 +2,7 @@ import pandas as pd
 import random
 from dagster_fanareas.ops.utils import post_json, create_db_session
 from sqlalchemy import text
+import requests
 
 class Facts:
     def __init__(self, query_str: str, season: int, top_n: int, metric_list: list) -> None:
@@ -34,6 +35,14 @@ class Facts:
         engine = create_db_session()
         query = self.generate_query(self.query_str)
         return pd.read_sql(text(query), con=engine)
+    
+    def get_team_name_and_id() -> dict:
+        engine = create_db_session()
+        team_id = requests.get('https://fanareas.com/api/teams/generateId').json()
+        team_qr = """select name from teams where id = {}""".format(team_id)
+        df = pd.read_sql(team_qr, con=engine)
+        team_name = df['name'].iloc[0]
+        return {'team_name': team_name, 'team_id': team_id}
 
     def top_n_facts_assembler(self, metric: str, by_team=False) -> dict:
         df = self.generate_df()
@@ -43,8 +52,8 @@ class Facts:
         season_name = df['season_name'].iloc[0]
         quiz_type = 0
         if by_team:
-            teams = list(df['team'].unique())
-            selected_team = random.choice(teams)
+            team_obj = self.get_team_name_and_id() 
+            selected_team = team_obj['team_name']
             team_filter = (df['team']==selected_team)
             df = df[ metric_filter & team_filter][col_list].sort_values(metric, ascending=False)
             df = df[df[metric]>0]
