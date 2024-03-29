@@ -17,7 +17,7 @@ all_assets = load_assets_from_modules([assets, dbt, core_assets, facts, fact_ass
 
 
 
-guess_the_player_quiz_job = define_asset_job(name="trigger_guess_the_player_quiz", selection="guess_the_player_quiz")
+guess_the_player_quiz_job = define_asset_job(name="guess_team_player_quiz", selection="guess_team_player_quiz")
 transfers_quiz_job = define_asset_job(name="trigger_transfers_quiz", selection="transfers_quiz")
 
 
