@@ -6,6 +6,7 @@ from dagster_fanareas.quizzes import quiz_assets
 from dagster_fanareas.facts import facts, fact_assets
 
 from .constants import dbt_project_dir, POSTGRES_CONFIG
+from .schedules import dbt_schedule
 # from .schedules import schedules
 from dagster_fanareas.resources.db_io_manager import db_io_manager
 
@@ -50,7 +51,8 @@ defs = Definitions(
                transfers_quiz_schedule,
                guess_the_player_quiz_schedule,
                facts_schedule,
-               facts_by_team_schedule
+               facts_by_team_schedule,
+               dbt_schedule
                ],
     resources={
         "dbt": DbtCliResource(project_dir=os.fspath(dbt_project_dir)),

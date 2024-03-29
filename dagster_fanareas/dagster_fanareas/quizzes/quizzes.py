@@ -50,6 +50,7 @@ class Quizzes:
         correct_vals = [correct_row[i] for i in cols]
         question_statement = statement.format(team_name, *correct_vals)
         options = list(sample_df['fullname'])
+        random.shuffle(options)
         correct_response = correct_row['fullname']
         question = {
         "description": question_statement,
