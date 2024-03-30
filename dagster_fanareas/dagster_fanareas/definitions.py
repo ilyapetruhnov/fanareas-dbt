@@ -16,8 +16,8 @@ from dagster_fanareas.resources.db_io_manager import db_io_manager
 all_assets = load_assets_from_modules([assets, dbt, core_assets, facts, fact_assets, quiz_assets])
 
 dbt_selection = build_dbt_asset_selection(
-    [fanareas_dbt_assets],
-    dbt_select="tag:daily"
+    [fanareas_dbt_assets]
+    # dbt_select="tag:daily"
 )
 
 # postgres_instance = db_io_manager.configured(POSTGRES_CONFIG)
