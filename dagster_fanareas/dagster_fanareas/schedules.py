@@ -2,9 +2,9 @@
 To add a daily schedule that materializes your dbt assets, uncomment the following lines.
 """
 
-from dagster_dbt import build_schedule_from_dbt_selection
+# from dagster_dbt import build_schedule_from_dbt_selection
 
-from dagster_fanareas.assets.dbt import fanareas_dbt_assets
+# from dagster_fanareas.assets.dbt import fanareas_dbt_assets
 
 
 # dbt_schedule = [

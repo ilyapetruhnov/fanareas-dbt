@@ -9,7 +9,7 @@ from dagster_fanareas.quizzes import quiz_assets
 from dagster_fanareas.facts import facts, fact_assets
 
 from .constants import dbt_project_dir, POSTGRES_CONFIG
-from .schedules import dbt_schedule
+# from .schedules import dbt_schedule
 # from .schedules import schedules
 from dagster_fanareas.resources.db_io_manager import db_io_manager
 
