@@ -27,6 +27,14 @@ class Facts:
         else:
             result = metric.replace('_',' ')
         return result
+    
+    def get_team_name_and_id(self) -> dict:
+        engine = create_db_session()
+        team_id = requests.get('https://fanareas.com/api/teams/generateId').json()
+        team_qr = """select name from teams where id = {}""".format(team_id)
+        df = pd.read_sql(team_qr, con=engine)
+        team_name = df['name'].iloc[0]
+        return {'team_name': team_name, 'team_id': team_id}
 
     def generate_query(self, query_str) -> str:
         return query_str.format(self.season)
@@ -35,14 +43,6 @@ class Facts:
         engine = create_db_session()
         query = self.generate_query(self.query_str)
         return pd.read_sql(text(query), con=engine)
-    
-    def get_team_name_and_id() -> dict:
-        engine = create_db_session()
-        team_id = requests.get('https://fanareas.com/api/teams/generateId').json()
-        team_qr = """select name from teams where id = {}""".format(team_id)
-        df = pd.read_sql(team_qr, con=engine)
-        team_name = df['name'].iloc[0]
-        return {'team_name': team_name, 'team_id': team_id}
 
     def top_n_facts_assembler(self, metric: str, by_team=False) -> dict:
         df = self.generate_df()
