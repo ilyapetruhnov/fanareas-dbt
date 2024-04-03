@@ -73,7 +73,7 @@ class Quizzes:
         df = self.generate_df(query)
         sample_df = df.groupby(metric)['fullname'].apply(list).reset_index().sample(n=4)
         sample_df['fullname'] = sample_df['fullname'].apply(lambda x: random.choice(x))
-        correct_idx = random.randint(0, 3)
+        correct_idx = 0
         correct_row = sample_df.iloc[correct_idx]
         correct_metric = correct_row[metric]
         correct_response = correct_row['fullname']
