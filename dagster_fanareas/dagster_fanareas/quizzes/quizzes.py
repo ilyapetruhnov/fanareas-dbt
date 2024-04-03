@@ -32,7 +32,7 @@ class Quizzes:
     def format_metric(self, metric: str) -> str:
         if metric == 'penalties':
             result = 'penalty goals'
-        if metric == 'goals_assists':
+        if metric == 'goal_assists':
             result = 'points(goals + assists)'
         else:
             result = metric.replace('_',' ')
