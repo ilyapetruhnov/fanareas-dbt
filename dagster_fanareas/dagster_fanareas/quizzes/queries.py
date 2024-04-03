@@ -509,6 +509,7 @@ select
         )
 select *
         , dense_rank() over (partition by season ORDER BY goals desc nulls last) as goals_rn
+        , dense_rank() over (partition by season ORDER BY goal_assists desc nulls last) as assists_rn
         , dense_rank() over (partition by season ORDER BY goal_assists desc nulls last) as goal_assists_rn
         , dense_rank() over (partition by season ORDER BY appearances desc nulls last) as appearances_rn
         , dense_rank() over (partition by season ORDER BY yellow_cards desc nulls last) as yellow_cards_rn
