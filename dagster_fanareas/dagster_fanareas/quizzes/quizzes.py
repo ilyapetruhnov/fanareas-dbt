@@ -12,12 +12,19 @@ class Quizzes:
         self.is_demo = is_demo
         self.url = "https://fanareas.com/api/quizzes/createQuizz"
 
-    def quiz_template(self, questions):
+    def quiz_template(self, questions, team_name, entityId, entityType):
         json_data = {"title": self.title,
                     "type": self.quiz_type,
                     "description": self.description,
                     "questions": questions,
                     "isDemo": self.is_demo,
+                    "quizzTags": [
+                            {
+                                "entityId": entityId,
+                                "entityName": team_name,
+                                "entityType":  entityType
+                            }
+                                ]
                     }
             
         return json_data
@@ -355,6 +362,6 @@ class Quizzes:
         result_list = quizzes[:10]
         return result_list
 
-    def post_quiz(self, questions):
-        json_data = self.quiz_template(questions)
+    def post_quiz(self, questions, team_name, entityId, entityType):
+        json_data = self.quiz_template(questions, team_name, entityId, entityType)
         return post_json(json_data, self.url)
