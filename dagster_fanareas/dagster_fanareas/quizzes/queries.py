@@ -479,3 +479,71 @@ select season,
        (teams_promoted[1] || teams_relegated) as options
 from vw2
 """
+
+query_team_player_season_stats = """
+with vw as (
+select
+        fullname
+        ,cast(array_to_string(t.team_id, '/') as int) as teamid
+        ,array_to_string(team, '/') as team_name
+        ,t.captain as captain
+        ,t.goals as goals
+        ,t.assists
+        ,t.goals + t.assists as goal_assists
+        ,t.own_goals
+        ,t.season
+        ,t.season_name
+        ,t.penalties
+        ,t.appearances
+        ,t.yellow_cards
+        ,t.lineups
+        ,current_season
+        ,is_active
+        FROM
+        dim_players
+        CROSS JOIN UNNEST (season_stats) AS t
+        WHERE
+        current_season = 2023
+        and
+        array_length(t.team,1) = 1
+        )
+select *
+        , dense_rank() over (partition by season ORDER BY goals desc nulls last) as goals_rn
+        , dense_rank() over (partition by season ORDER BY goal_assists desc nulls last) as goal_assists_rn
+        , dense_rank() over (partition by season ORDER BY appearances desc nulls last) as appearances_rn
+        , dense_rank() over (partition by season ORDER BY yellow_cards desc nulls last) as yellow_cards_rn
+        , dense_rank() over (partition by season ORDER BY penalties desc nulls last) as penalties_rn
+from vw
+where teamid = {0}
+and
+season = {1}"""
+
+
+query_team_player_season_dims = """
+with vw as (
+            SELECT
+            firstname,
+            lastname,
+            fullname,
+            nationality,
+            date_of_birth,
+            ((current_date - cast(date_of_birth as date))/365) as age,
+            cast(array_to_string(team_id, '/') as int)       as teamid,
+            array_to_string(team, '/') as team,
+            array_to_string(jersey_number, '/') as jersey_number,
+            t.season,
+            t.position,
+            is_active
+            FROM
+            dim_players
+            CROSS JOIN UNNEST (season_stats) AS t
+            WHERE
+            current_season = 2023
+            and date_of_birth is not null
+            and array_length(t.team,1) = 1
+            )
+            select *
+            from vw
+                where teamid = {0}
+                and
+                season = {1}"""

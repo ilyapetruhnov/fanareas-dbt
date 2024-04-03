@@ -25,6 +25,8 @@ class Quizzes:
     def format_metric(self, metric: str) -> str:
         if metric == 'penalties':
             result = 'penalty goals'
+        if metric == 'goals_assists':
+            result = 'points(goals + assists)'
         else:
             result = metric.replace('_',' ')
         return result
@@ -41,7 +43,7 @@ class Quizzes:
         team_name = df['name'].iloc[0]
         return {'team_name': team_name, 'team_id': team_id}
 
-    def generate_question(self, query: str, statement: str, team_name: str, cols: tuple) -> list:
+    def generate_question(self, query: str, statement: str, team_name: str, cols: tuple) -> dict:
         df = self.generate_df(query)
         
         sample_df = df.sample(n=4)
@@ -58,6 +60,67 @@ class Quizzes:
         "correctAnswer": correct_response
                     }
         return question
+    
+
+    def generate_player_metric_question(self, query: str, metric: str, season_name: str) -> dict:
+        df = self.generate_df(query)
+        sample_df = df.groupby(metric)['fullname'].apply(list).reset_index().sample(n=4)
+        sample_df['fullname'] = sample_df['fullname'].apply(lambda x: random.choice(x))
+        correct_idx = random.randint(0, 3)
+        correct_row = sample_df.iloc[correct_idx]
+        correct_metric = correct_row[metric]
+        correct_response = correct_row['fullname']
+
+        if metric == 'nationality':
+            question_statement = "Which player is a citizen of {0}".format(correct_metric)
+        elif metric == 'position':
+            question_statement = "Which player played at {0} position in the {1} season?".format(correct_metric, season_name)
+        elif metric == 'jersey_number':
+            question_statement = "Which player played under {0} jersey number in the {1} season?".format(correct_metric, season_name)
+
+        options = list(sample_df['fullname'])
+        random.shuffle(options)
+        question = {
+        "description": question_statement,
+        "quizQuestionOptions": options,
+        "correctAnswer": correct_response
+                        }
+        return question
+    
+
+    def generate_player_age_question(self, query: str, team_name: str, season_name: str) -> dict:
+        df = self.generate_df(query)
+        sample_df = df.groupby('age')['fullname'].apply(list).reset_index().sort_values('age', ascending=False).head(4)
+        sample_df['fullname'] = sample_df['fullname'].apply(lambda x: random.choice(x))
+        correct_row = sample_df.iloc[0]
+        correct_response = correct_row['fullname']
+        question_statement = "Who was the oldest player in {0} squad in the {1} season?".format(team_name, season_name)
+        options = list(sample_df['fullname'])
+        random.shuffle(options)
+        question = {
+        "description": question_statement,
+        "quizQuestionOptions": options,
+        "correctAnswer": correct_response
+                        }
+        return question
+
+
+    def generate_player_stats_question(self, query: str, season_name:str, metric: str) -> dict:
+        df = self.generate_df(query)
+        grouped_df = df.groupby(f'{metric}_rn')['fullname'].apply(list).reset_index()
+
+        correct_response = grouped_df[grouped_df[f'{metric}_rn']==1]['fullname'][0][0]
+        options = [i[0] for i in grouped_df.fullname][:4]
+        random.shuffle(options)
+        formatted_metric = self.format_metric(metric)
+        question_statement = "Which player had more {} in the {} season?".format(formatted_metric, season_name)
+        question = {
+        "description": question_statement,
+        "quizQuestionOptions": options,
+        "correctAnswer": correct_response
+                    }
+        return question
+
 
     def generate_quiz_questions(self, query: str, statement: str, cols: tuple) -> list:
         df = self.generate_df(query)

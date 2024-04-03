@@ -4,6 +4,7 @@ from dagster_fanareas.quizzes.queries import *
 from dagster_fanareas.ops.utils import create_db_session
 import pandas as pd
 import requests
+import random
 
 def get_team_name_and_id() -> dict:
     engine = create_db_session()
@@ -18,89 +19,42 @@ def guess_team_player_quiz() -> bool:
     generated_team = get_team_name_and_id()
     team_name = generated_team['team_name']
     team_id = generated_team['team_id']
-    title = f"Guess {team_name} player"
-    description = f"Guess 10 {team_name} players"
+    season_list = [i for i in range(2012, 2023)]
+    season = random.choice(season_list)
+    season_name = f"{season}/{season+1}"
+    player_metrics = ['goals','yellow_cards','appearances','assists','goal_assists','penalties']
+    player_dim_metrics = ['nationality','position','jersey_number']
+    random.shuffle(player_metrics)
+    title = f"Guess {team_name} player in {season_name} season"
+    description = f"Guess 10 {team_name} players in {season_name} season"
     quiz_type = 0
     is_demo = False
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
     combined_q_list = []
 
-    for i in range(2):
-        quiz_team_player_age_team = quiz_obj.generate_question(query_team_player_age.format(team_id), 
-                                                    statement_player_age_team,
-                                                    team_name,
-                                                    ('team', 
-                                                    'birth_year')
+    quiz_age = quiz_obj.generate_player_age_question(
+        query = query_team_player_season_dims, 
+        team_name = team_name, 
+        season_name = season_name
         )
-        combined_q_list.append(quiz_team_player_age_team)
-        quiz_team_player_shirt_number = quiz_obj.generate_question(
-            query_team_player_shirt_number.format(team_id), 
-                                                    statement_team_player_shirt_number, 
-                                                    team_name, 
-                                                    ('team',
-                                                    'jersey_number')
+    combined_q_list.append(quiz_age)
+
+    for metric in player_dim_metrics:
+        quiz_team_player_dims = quiz_obj.generate_player_metric_question(
+            query = query_team_player_season_dims.format(team_id, season),
+            metric = metric, 
+            season_name=season_name,
         )
-        combined_q_list.append(quiz_team_player_shirt_number)
-        quiz_team_player_club_transferred_from = quiz_obj.generate_question(
-            query_team_player_club_transferred_from.format(team_id), 
-                                                            statement_team_player_club_transferred_from,
-                                                            team_name,
-                                                            ('transfer_from_team',
-                                                            'season_name')
+        combined_q_list.append(quiz_team_player_dims)
+    
+    
+    for metric in player_metrics:
+        quiz_team_player_stats = quiz_obj.generate_player_stats_question(
+            query = query_team_player_season_stats.format(team_id, season), 
+            season_name=season_name,
+            metric = metric,
         )
-        combined_q_list.append(quiz_team_player_club_transferred_from)
-        quiz_team_player_age_nationality = quiz_obj.generate_question(query_team_player_age_nationality.format(team_id), 
-                                                    statement_team_player_age_nationality,
-                                                    team_name, 
-                                                    ('birth_year', 
-                                                    'nationality')
-        )
-        combined_q_list.append(quiz_team_player_age_nationality)
-
-        quiz_team_player_position = quiz_obj.generate_question(query_team_player_position.format(team_id), 
-                                                    statement_team_player_position,
-                                                    team_name,
-                                                    ('position',
-                                                    'season')
-        )
-        combined_q_list.append(quiz_team_player_position)
-        
-
-    mixed_quiz_questions = quiz_obj.mixed_quiz_questions(combined_q_list)
-    quiz_obj.post_quiz(mixed_quiz_questions)
-
-    return True
-
-
-@asset(group_name="quizzes")
-def guess_the_player_quiz() -> bool:
-    title = "Guess the player"
-    description = "Guess 10 football players from the Premier League"
-    quiz_type = 0
-    is_demo = False
-    quiz_obj = Quizzes(title, description, quiz_type, is_demo)
-
-    quiz_player_shirt_number = quiz_obj.generate_quiz_questions(query_player_shirt_number, 
-                                                                statement_player_shirt_number, 
-                                                                ('team', 'jersey_number')
-    )
-
-    quiz_player_2_clubs_played = quiz_obj.generate_quiz_questions(query_player_2_clubs_played, 
-                                                                  statement_player_2_clubs_played, 
-                                                                 ('team', 'transfer_from_team')
-    )
-
-    quiz_player_age_nationality = quiz_obj.generate_quiz_questions(query_player_age_nationality, 
-                                                                   statement_player_age_nationality,
-                                                                   ('birth_year', 'nationality')
-    )
-
-    quiz_player_age_team = quiz_obj.generate_quiz_questions(query_player_age_team, 
-                                                            statement_player_age_team,
-                                                            ('team', 'birth_year')
-    )                                                  
-
-    combined_q_list = quiz_player_shirt_number + quiz_player_2_clubs_played + quiz_player_age_nationality + quiz_player_age_team
+        combined_q_list.append(quiz_team_player_stats)
 
     mixed_quiz_questions = quiz_obj.mixed_quiz_questions(combined_q_list)
     quiz_obj.post_quiz(mixed_quiz_questions)
