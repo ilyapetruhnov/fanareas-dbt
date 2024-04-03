@@ -79,7 +79,7 @@ class Quizzes:
         correct_response = correct_row['fullname']
 
         if metric == 'nationality':
-            question_statement = "Which player is a citizen of {0}".format(correct_metric)
+            question_statement = "Which player is a citizen of {0}?".format(correct_metric)
         elif metric == 'position':
             question_statement = "Which player played at {0} position in the {1} season?".format(correct_metric, season_name)
         elif metric == 'jersey_number':
