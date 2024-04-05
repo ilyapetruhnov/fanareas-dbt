@@ -57,7 +57,14 @@ def guess_team_player_quiz() -> bool:
         combined_q_list.append(quiz_team_player_stats)
 
     mixed_quiz_questions = quiz_obj.mixed_quiz_questions(combined_q_list)
-    quiz_obj.post_quiz(questions=mixed_quiz_questions, team_name=team_name, entityId=team_id, entityType=1)
+    quiz_obj.post_quiz(questions=mixed_quiz_questions,
+                       team_name=team_name,
+                       season_name=season_name,
+                       entityIdTeam=team_id,
+                       entityIdSeason=21646,
+                       entityTypeTeam=1, 
+                       entityTypeSeason=2
+                       )
 
     return True
 

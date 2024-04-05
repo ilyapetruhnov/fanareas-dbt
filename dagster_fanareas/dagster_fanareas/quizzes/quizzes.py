@@ -12,7 +12,7 @@ class Quizzes:
         self.is_demo = is_demo
         self.url = "https://fanareas.com/api/quizzes/createQuizz"
 
-    def quiz_template(self, questions, team_name, entityId, entityType):
+    def quiz_template(self, questions, team_name, season_name, entityIdTeam, entityIdSeason, entityTypeTeam, entityTypeSeason):
         json_data = {"title": self.title,
                     "type": self.quiz_type,
                     "description": self.description,
@@ -20,9 +20,14 @@ class Quizzes:
                     "isDemo": self.is_demo,
                     "quizzTags": [
                             {
-                                "entityId": entityId,
+                                "entityId": entityIdTeam,
                                 "entityName": team_name,
-                                "entityType":  entityType
+                                "entityType":  entityTypeTeam
+                            },
+                            {
+                                "entityId": entityIdSeason,
+                                "entityName": season_name,
+                                "entityType":  entityTypeSeason
                             }
                                 ]
                     }
@@ -33,7 +38,7 @@ class Quizzes:
         if metric == 'penalties':
             result = 'penalty goals'
         if metric == 'goal_assists':
-            result = 'points(goals + assists)'
+            result = 'goals + assists'
         else:
             result = metric.replace('_',' ')
         return result
@@ -362,6 +367,6 @@ class Quizzes:
         result_list = quizzes[:10]
         return result_list
 
-    def post_quiz(self, questions, team_name, entityId, entityType):
-        json_data = self.quiz_template(questions, team_name, entityId, entityType)
+    def post_quiz(self, questions, team_name, season_name, entityIdTeam, entityIdSeason, entityTypeTeam, entityTypeSeason):
+        json_data = self.quiz_template(questions, team_name, season_name, entityIdTeam, entityIdSeason, entityTypeTeam, entityTypeSeason)
         return post_json(json_data, self.url)
