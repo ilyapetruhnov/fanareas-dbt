@@ -18,9 +18,11 @@ def get_team_name_and_id() -> dict:
 def guess_team_player_quiz() -> bool:
     generated_team = get_team_name_and_id()
     team_name = generated_team['team_name']
-    team_id = generated_team['team_id']
+    # team_id = generated_team['team_id']
+    team_id = 8
     season_list = [i for i in range(2012, 2023)]
-    season = random.choice(season_list)
+    # season = random.choice(season_list)
+    season = 2020
     season_name = f"{season}/{season+1}"
     player_metrics = ['goals','yellow_cards','appearances','assists','goal_assists','penalties']
     player_dim_metrics = ['nationality','position','jersey_number']
