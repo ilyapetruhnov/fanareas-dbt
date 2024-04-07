@@ -160,7 +160,7 @@ class Quizzes:
         if correct_df.empty == True:
             return None
         else:
-            correct_response = correct_df['fullname'][0][0]
+            correct_response = correct_df['fullname'].iloc[0]
             options_df = df[df[metric] <= n].sample(3)
             options = [i[0] for i in options_df.fullname]
             random.shuffle(options)
