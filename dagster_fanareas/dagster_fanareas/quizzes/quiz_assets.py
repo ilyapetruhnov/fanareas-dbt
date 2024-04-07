@@ -49,7 +49,6 @@ def guess_team_player_quiz() -> bool:
 
     quiz_sent_off = quiz_obj.generate_player_sent_off_question(
         query = query_team_player_season_dims.format(team_id, season), 
-        team_name = team_name, 
         season_name = season_name
         )
     quiz_obj.collect_questions(quiz_sent_off)
