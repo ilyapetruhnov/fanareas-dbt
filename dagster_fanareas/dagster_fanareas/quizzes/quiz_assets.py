@@ -74,7 +74,7 @@ def guess_team_player_quiz() -> bool:
             n = 5,
             query = query_team_player_season_stats.format(team_id, season), 
             season_name=season_name,
-            metric_lst = player_metrics,
+            metric = metric,
         )
         quiz_obj.collect_questions(quiz_team_player_stats_n)
 
