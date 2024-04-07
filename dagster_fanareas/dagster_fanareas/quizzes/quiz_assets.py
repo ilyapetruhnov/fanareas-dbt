@@ -18,13 +18,11 @@ def get_team_name_and_id() -> dict:
 def guess_team_player_quiz() -> bool:
     generated_team = get_team_name_and_id()
     team_name = generated_team['team_name']
-    # team_id = generated_team['team_id']
-    team_id = 8
+    team_id = generated_team['team_id']
     season_list = [i for i in range(2012, 2023)]
-    # season = random.choice(season_list)
-    season = 2020
+    season = random.choice(season_list)
     season_name = f"{season}/{season+1}"
-    player_metrics = ['goals','yellow_cards','appearances','assists','goal_assists','penalties']
+    player_metrics = ['goals','yellow_cards','appearances','assists','goal_assists','substituets']
     player_dim_metrics = ['nationality','position','jersey_number']
     random.shuffle(player_metrics)
     title = f"Guess {team_name} player in {season_name} season"
@@ -32,14 +30,29 @@ def guess_team_player_quiz() -> bool:
     quiz_type = 0
     is_demo = False
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
-    combined_q_list = []
 
-    quiz_age = quiz_obj.generate_player_age_question(
+    quiz_oldest_player = quiz_obj.generate_player_age_question(
+        query = query_team_player_season_dims.format(team_id, season), 
+        team_name = team_name, 
+        season_name = season_name,
+        oldest = True
+        )
+    quiz_obj.collect_questions(quiz_oldest_player)
+
+    quiz_youngest_player = quiz_obj.generate_player_age_question(
+        query = query_team_player_season_dims.format(team_id, season), 
+        team_name = team_name, 
+        season_name = season_name,
+        oldest = False
+        )
+    quiz_obj.collect_questions(quiz_youngest_player)
+
+    quiz_sent_off = quiz_obj.generate_player_sent_off_question(
         query = query_team_player_season_dims.format(team_id, season), 
         team_name = team_name, 
         season_name = season_name
         )
-    combined_q_list.append(quiz_age)
+    quiz_obj.collect_questions(quiz_sent_off)
 
     for metric in player_dim_metrics:
         quiz_team_player_dims = quiz_obj.generate_player_metric_question(
@@ -47,7 +60,7 @@ def guess_team_player_quiz() -> bool:
             metric = metric, 
             season_name=season_name,
         )
-        combined_q_list.append(quiz_team_player_dims)
+        quiz_obj.collect_questions(quiz_team_player_dims)
     
     
     for metric in player_metrics:
@@ -56,9 +69,17 @@ def guess_team_player_quiz() -> bool:
             season_name=season_name,
             metric = metric,
         )
-        combined_q_list.append(quiz_team_player_stats)
+        quiz_obj.collect_questions(quiz_team_player_stats)
 
-    mixed_quiz_questions = quiz_obj.mixed_quiz_questions(combined_q_list)
+        quiz_team_player_stats_n = quiz_obj.generate_player_more_than_n_question(
+            n = 5,
+            query = query_team_player_season_stats.format(team_id, season), 
+            season_name=season_name,
+            metric_lst = player_metrics,
+        )
+        quiz_obj.collect_questions(quiz_team_player_stats_n)
+
+    mixed_quiz_questions = quiz_obj.mix_quiz_questions()
     quiz_obj.post_quiz(questions=mixed_quiz_questions,
                        team_name=team_name,
                        season_name=season_name,
@@ -84,17 +105,15 @@ def transfers_quiz() -> bool:
                                                                        'team', 
                                                                        'season')
     )
+    quiz_obj.collect_questions(quiz_player_transferred_from_to)
     quiz_player_2_clubs_played = quiz_obj.generate_quiz_questions(query_player_2_clubs_played, 
                                                                   statement_player_2_clubs_played, 
                                                                  ('team', 
                                                                   'transfer_from_team')
     )
-
-    combined_q_list = quiz_player_2_clubs_played + quiz_player_transferred_from_to
-
-    mixed_quiz_questions = quiz_obj.mixed_quiz_questions(combined_q_list)
+    quiz_obj.collect_questions(quiz_player_2_clubs_played)
+    mixed_quiz_questions = quiz_obj.mix_quiz_questions()
     quiz_obj.post_quiz(mixed_quiz_questions)
-
     return True
 
 @asset(group_name="quizzes")
@@ -104,19 +123,18 @@ def demo_quiz() -> bool:
     quiz_type = -1
     is_demo = True
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
-    combined_q_list = []
-    combined_q_list.append(quiz_obj.generate_player_shirt_number_question())
-    combined_q_list.append(quiz_obj.generate_player_2_clubs_question())
-    combined_q_list.append(quiz_obj.generate_team_stats_question())
-    combined_q_list.append(quiz_obj.generate_team_stats_question())
-    combined_q_list.append(quiz_obj.generate_venue_question())
-    combined_q_list.append(quiz_obj.generate_founded_question())
-    combined_q_list.append(quiz_obj.generate_capacity_question())
-    combined_q_list.append(quiz_obj.generate_fewest_points_question())
-    combined_q_list.append(quiz_obj.generate_most_points_question())
-    combined_q_list.append(quiz_obj.generate_relegations_question())
+    quiz_obj.collect_questions(quiz_obj.generate_player_shirt_number_question())
+    quiz_obj.collect_questions(quiz_obj.generate_player_2_clubs_question())
+    quiz_obj.collect_questions(quiz_obj.generate_team_stats_question())
+    quiz_obj.collect_questions(quiz_obj.generate_team_stats_question())
+    quiz_obj.collect_questions(quiz_obj.generate_venue_question())
+    quiz_obj.collect_questions(quiz_obj.generate_founded_question())
+    quiz_obj.collect_questions(quiz_obj.generate_capacity_question())
+    quiz_obj.collect_questions(quiz_obj.generate_fewest_points_question())
+    quiz_obj.collect_questions(quiz_obj.generate_most_points_question())
+    quiz_obj.collect_questions(quiz_obj.generate_relegations_question())
 
-    mixed_quiz_questions = quiz_obj.mixed_quiz_questions(combined_q_list)
+    mixed_quiz_questions = quiz_obj.mix_quiz_questions()
     quiz_obj.post_quiz(mixed_quiz_questions)
 
     return True

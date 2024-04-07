@@ -11,6 +11,7 @@ class Quizzes:
         self.quiz_type = quiz_type
         self.is_demo = is_demo
         self.url = "https://fanareas.com/api/quizzes/createQuizz"
+        self.quiz_collection = []
 
     def quiz_template(self, questions, team_name, season_name, entityIdTeam, entityIdSeason, entityTypeTeam, entityTypeSeason):
         json_data = {"title": self.title,
@@ -33,6 +34,19 @@ class Quizzes:
                     }
             
         return json_data
+    
+    def question_template(self, question_statement, options, correct_response) -> dict:
+        result = {
+            "description": question_statement,
+            "quizQuestionOptions": options,
+            "correctAnswer": correct_response
+                }
+        return result
+    
+    def collect_questions(self, question):
+        if question is not None:
+            self.quiz_collection.append(question)
+        return True
     
     def format_metric(self, metric: str) -> str:
         if metric == 'penalties':
@@ -66,11 +80,7 @@ class Quizzes:
         options = list(sample_df['fullname'])
         random.shuffle(options)
         correct_response = correct_row['fullname']
-        question = {
-        "description": question_statement,
-        "quizQuestionOptions": options,
-        "correctAnswer": correct_response
-                    }
+        question = self.question_template(question_statement, options, correct_response)
         return question
     
 
@@ -92,28 +102,30 @@ class Quizzes:
 
         options = list(sample_df['fullname'])
         random.shuffle(options)
-        question = {
-        "description": question_statement,
-        "quizQuestionOptions": options,
-        "correctAnswer": correct_response
-                        }
+        question = self.question_template(question_statement, options, correct_response)
         return question
     
 
-    def generate_player_age_question(self, query: str, team_name: str, season_name: str) -> dict:
+    def generate_player_age_question(self, query: str, team_name: str, season_name: str, oldest=True) -> dict:
         df = self.generate_df(query)
-        sample_df = df.groupby('age')['fullname'].apply(list).reset_index().sort_values('age', ascending=False).head(4)
-        sample_df['fullname'] = sample_df['fullname'].apply(lambda x: random.choice(x))
-        correct_row = sample_df.iloc[0]
-        correct_response = correct_row['fullname']
-        question_statement = "Who was the oldest player in {0} squad in the {1} season?".format(team_name, season_name)
-        options = list(sample_df['fullname'])
-        random.shuffle(options)
-        question = {
-        "description": question_statement,
-        "quizQuestionOptions": options,
-        "correctAnswer": correct_response
-                        }
+        if oldest:
+            sample_df = df.groupby('age')['fullname'].apply(list).reset_index().sort_values('age', ascending=False).head(4)
+            sample_df['fullname'] = sample_df['fullname'].apply(lambda x: random.choice(x))
+            correct_row = sample_df.iloc[0]
+            correct_response = correct_row['fullname']
+            question_statement = "Who was the oldest player in {0} squad in the {1} season?".format(team_name, season_name)
+            options = list(sample_df['fullname'])
+            random.shuffle(options)
+            question = self.question_template(question_statement, options, correct_response)
+        else:
+            sample_df = df.groupby('age')['fullname'].apply(list).reset_index().sort_values('age', ascending=True).head(4)
+            sample_df['fullname'] = sample_df['fullname'].apply(lambda x: random.choice(x))
+            correct_row = sample_df.iloc[0]
+            correct_response = correct_row['fullname']
+            question_statement = "Who was the youngest player in {0} squad in the {1} season?".format(team_name, season_name)
+            options = list(sample_df['fullname'])
+            random.shuffle(options)
+            question = self.question_template(question_statement, options, correct_response)
         return question
 
 
@@ -126,12 +138,35 @@ class Quizzes:
         random.shuffle(options)
         formatted_metric = self.format_metric(metric)
         question_statement = "Which player had more {} in the {} season?".format(formatted_metric, season_name)
-        question = {
-        "description": question_statement,
-        "quizQuestionOptions": options,
-        "correctAnswer": correct_response
-                    }
+        question = self.question_template(question_statement, options, correct_response)
         return question
+    
+    def generate_player_sent_off_question(self, query: str, season_name:str) -> dict:
+        df = self.generate_df(query)
+
+        correct_df = df[df['red_cards']>0]
+        correct_response = correct_df['fullname'][0][0]
+        options_df = df[df['red_cards'].isnull()].sample(3)
+
+        options = [i[0] for i in options_df.fullname]
+        random.shuffle(options)
+        question_statement = "Which player has been sent off at least in one match in the {} season?".format(season_name)
+        question = self.question_template(question_statement, options, correct_response)
+        return question
+    
+    def generate_player_more_than_n_question(self, n: int, query: str, season_name: str, metric: str) -> dict:
+        df = self.generate_df(query)
+        correct_df = df[df[metric] > n]
+        if correct_df.empty == True:
+            return None
+        else:
+            correct_response = correct_df['fullname'][0][0]
+            options_df = df[df[metric] <= n].sample(3)
+            options = [i[0] for i in options_df.fullname]
+            random.shuffle(options)
+            question_statement = "Which player had more than {} {} in the {} season?".format(n, metric, season_name)
+            question = self.question_template(question_statement, options, correct_response)
+            return question
 
 
     def generate_quiz_questions(self, query: str, statement: str, cols: tuple) -> list:
@@ -149,11 +184,7 @@ class Quizzes:
             question_statement = statement.format(*correct_vals)
             options = list(sample_df['fullname'])
             correct_response = correct_row['fullname']
-            question = {
-            "description": question_statement,
-            "quizQuestionOptions": options,
-            "correctAnswer": correct_response
-                        }
+            question = self.question_template(question_statement, options, correct_response)
             q_lst.append(question)
         return q_lst
     
@@ -164,11 +195,7 @@ class Quizzes:
             sample_df = df.sample(n=4).sort_values(dimension)
             options = list(sample_df['fullname'])
             correct_response = sample_df.iloc[3]['fullname']
-            question = {
-            "description": statement,
-            "quizQuestionOptions": options,
-            "correctAnswer": correct_response
-                        }
+            question = self.question_template(statement, options, correct_response)
             q_lst.append(question)
         return q_lst
     
@@ -201,11 +228,7 @@ class Quizzes:
                 correct_response = correct_row['team'].iloc[0]
                 
                 question_statement = statement.format(*correct_vals)
-                question = {
-                    "description": question_statement,
-                    "quizQuestionOptions": options,
-                    "correctAnswer": correct_response
-                                }
+                question = self.question_template(question_statement, options, correct_response)
                 q_lst.append(question)
         return q_lst
     
@@ -219,11 +242,7 @@ class Quizzes:
         options = list(sample_df['fullname'])
         random.shuffle(options)
         statement = f"Which player currently plays for {team} under {jersey_number} jersey number?"
-        question = {
-        "description": statement,
-        "quizQuestionOptions": options,
-        "correctAnswer": correct_response
-                    }
+        question = self.question_template(statement, options, correct_response)
         return question
 
     def generate_player_2_clubs_question(self):
@@ -236,11 +255,7 @@ class Quizzes:
         random.shuffle(options)
         correct_response = sample_df.iloc[0]['fullname']
         statement = f"Which player played for {club1} and {club2} in his career?"
-        question = {
-        "description": statement,
-        "quizQuestionOptions": options,
-        "correctAnswer": correct_response
-                    }
+        question = self.question_template(statement, options, correct_response)
         return question
 
     def generate_team_stats_question(self):
@@ -268,11 +283,7 @@ class Quizzes:
         correct_response = correct_row['team'].iloc[0]
         
         question_statement = statement_team_stats.format(*correct_vals)
-        question = {
-            "description": question_statement,
-            "quizQuestionOptions": options,
-            "correctAnswer": correct_response
-                        }
+        question = self.question_template(question_statement, options, correct_response)
         return question
 
     def generate_venue_question(self):
@@ -283,11 +294,7 @@ class Quizzes:
         statement = f"What is the home venue of {correct_team}?"
         options = list(sample_df['venue'])
         random.shuffle(options)
-        question = {
-            "description": statement,
-            "quizQuestionOptions": options,
-            "correctAnswer": correct_response
-                        }
+        question = self.question_template(statement, options, correct_response)
         return question
     
     def generate_founded_question(self):
@@ -297,11 +304,7 @@ class Quizzes:
         statement = f"Which team was founded first?"
         options = list(sample_df['team'])
         random.shuffle(options)
-        question = {
-            "description": statement,
-            "quizQuestionOptions": options,
-            "correctAnswer": correct_response
-                        }
+        question = self.question_template(statement, options, correct_response)
         return question
     
     def generate_capacity_question(self):
@@ -312,11 +315,7 @@ class Quizzes:
         statement = f"Which stadium has higher capacity?"
         options = list(sample_df['venue_city'])
         random.shuffle(options)
-        question = {
-            "description": statement,
-            "quizQuestionOptions": options,
-            "correctAnswer": correct_response
-                        }
+        question = self.question_template(statement, options, correct_response)
         return question
     
     def generate_fewest_points_question(self):
@@ -326,11 +325,7 @@ class Quizzes:
         statement = f"Which team finished the 2007/2008 season with 11 points?"
         options = list(sample_df['team'])
         random.shuffle(options)
-        question = {
-            "description": statement,
-            "quizQuestionOptions": options,
-            "correctAnswer": correct_response
-                        }
+        question = self.question_template(statement, options, correct_response)
         return question
     
     def generate_most_points_question(self):
@@ -340,11 +335,7 @@ class Quizzes:
         statement = f"Which team finished the 2017/2018 season with 100 points (English Premier League record)?"
         options = list(sample_df['team'].unique())[:4]
         random.shuffle(options)
-        question = {
-            "description": statement,
-            "quizQuestionOptions": options,
-            "correctAnswer": correct_response
-                        }
+        question = self.question_template(statement, options, correct_response)
         return question
     
     def generate_relegations_question(self):
@@ -355,18 +346,20 @@ class Quizzes:
         options = sample_df.iloc[0]['options']
         random.shuffle(options)
         statement = f"Which team did not relegate in the {season} season?"
-        question = {
-            "description": statement,
-            "quizQuestionOptions": options,
-            "correctAnswer": correct_response
-                        }
+        question = self.question_template(statement, options, correct_response)
         return question
 
-    def mixed_quiz_questions(self, quizzes:list):
-        random.shuffle(quizzes)
-        result_list = quizzes[:10]
+    def mix_quiz_questions(self):
+        random.shuffle(self.quiz_collection)
+        result_list = self.quiz_collection[:10]
         return result_list
 
     def post_quiz(self, questions, team_name, season_name, entityIdTeam, entityIdSeason, entityTypeTeam, entityTypeSeason):
-        json_data = self.quiz_template(questions, team_name, season_name, entityIdTeam, entityIdSeason, entityTypeTeam, entityTypeSeason)
+        json_data = self.quiz_template(questions, 
+                                       team_name, 
+                                       season_name, 
+                                       entityIdTeam, 
+                                       entityIdSeason, 
+                                       entityTypeTeam, 
+                                       entityTypeSeason)
         return post_json(json_data, self.url)

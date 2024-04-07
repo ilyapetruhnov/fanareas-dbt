@@ -496,7 +496,9 @@ select
         ,t.penalties
         ,t.appearances
         ,t.yellow_cards
+        ,t.red_cards
         ,t.lineups
+        ,t.appearances - t.lineups as substituets
         ,current_season
         ,is_active
         FROM
@@ -512,7 +514,10 @@ select *
         , dense_rank() over (partition by season ORDER BY assists desc nulls last) as assists_rn
         , dense_rank() over (partition by season ORDER BY goal_assists desc nulls last) as goal_assists_rn
         , dense_rank() over (partition by season ORDER BY appearances desc nulls last) as appearances_rn
+        , dense_rank() over (partition by season ORDER BY lineups desc nulls last) as lineups_rn
         , dense_rank() over (partition by season ORDER BY yellow_cards desc nulls last) as yellow_cards_rn
+        , dense_rank() over (partition by season ORDER BY red_cards desc nulls last) as red_cards
+        , dense_rank() over (partition by season ORDER BY substituets desc nulls last) as substituets_rn
         , dense_rank() over (partition by season ORDER BY penalties desc nulls last) as penalties_rn
 from vw
 where teamid = {0}
