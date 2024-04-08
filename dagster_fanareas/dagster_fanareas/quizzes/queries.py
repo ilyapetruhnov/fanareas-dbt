@@ -550,7 +550,7 @@ with vw as (
             select *
             from vw
                 where 
-                position not like '%Coach%'
+                POSITION('Coach' IN t.position) = 0
                 and
                 teamid = {0}
                 and
