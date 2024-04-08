@@ -546,12 +546,11 @@ with vw as (
             current_season = 2023
             and date_of_birth is not null
             and array_length(t.team,1) = 1
+            and POSITION('Coach' IN t.position) = 0
             )
             select *
             from vw
-                where 
-                POSITION('Coach' IN t.position) = 0
-                and
+                where
                 teamid = {0}
                 and
                 season = {1}"""
