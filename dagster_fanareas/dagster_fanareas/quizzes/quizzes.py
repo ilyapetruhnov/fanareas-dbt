@@ -2,6 +2,7 @@ import pandas as pd
 import random
 from dagster_fanareas.ops.utils import post_json, create_db_session
 from dagster_fanareas.quizzes.queries import *
+from dagster_fanareas.quizzes.maps import top_n_metric_map
 import requests
 
 class Quizzes:
@@ -154,15 +155,17 @@ class Quizzes:
         question = self.question_template(question_statement, options, correct_response)
         return question
     
-    def generate_player_more_than_n_question(self, n: int, query: str, season_name: str, metric: str) -> dict:
+    def generate_player_more_than_n_question(self, query: str, season_name: str, metric: str) -> dict:
         df = self.generate_df(query)
+        n = top_n_metric_map[metric]
         correct_df = df[df[metric] > n]
         if correct_df.empty == True:
             return None
         else:
             correct_response = correct_df['fullname'].iloc[0]
             options_df = df[df[metric] <= n].sample(3)
-            options = [i[0] for i in options_df.fullname]
+            options = [i for i in options_df.fullname]
+            options.append(correct_response)
             random.shuffle(options)
             question_statement = "Which player had more than {} {} in the {} season?".format(n, metric, season_name)
             question = self.question_template(question_statement, options, correct_response)

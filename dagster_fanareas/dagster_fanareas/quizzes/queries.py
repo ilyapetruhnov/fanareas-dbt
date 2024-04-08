@@ -524,7 +524,6 @@ where teamid = {0}
 and
 season = {1}"""
 
-
 query_team_player_season_dims = """
 with vw as (
             SELECT
@@ -550,6 +549,9 @@ with vw as (
             )
             select *
             from vw
-                where teamid = {0}
+                where 
+                position not like '%Coach%'
+                and
+                teamid = {0}
                 and
                 season = {1}"""
