@@ -167,7 +167,8 @@ class Quizzes:
             options = [i for i in options_df.fullname]
             options.append(correct_response)
             random.shuffle(options)
-            question_statement = "Which player had more than {} {} in the {} season?".format(n, metric, season_name)
+            formatted_metric = self.format_metric(metric)
+            question_statement = "Which player had more than {} {} in the {} season?".format(n, formatted_metric, season_name)
             question = self.question_template(question_statement, options, correct_response)
             return question
 
