@@ -3,4 +3,4 @@ top_n_metric_map = {'goals': 10,
                     'appearances': 30,
                     'assists': 10,
                     'goal_assists': 15,
-                    'substituets': 10}
+                    'substitute_appearances': 10}
