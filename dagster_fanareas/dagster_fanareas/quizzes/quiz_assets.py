@@ -33,7 +33,7 @@ def guess_team_player_quiz() -> bool:
     season_list = [i for i in range(2012, 2023)]
     season = random.choice(season_list)
     season_name = f"{season}/{season+1}"
-    player_metrics = ['goals','yellow_cards','appearances','assists','goal_assists','substituets']
+    player_metrics = ['goals','yellow_cards','appearances','assists','goal_assists','substitute_appearances']
     player_dim_metrics = ['nationality','position','jersey_number']
     random.shuffle(player_metrics)
     title = f"Guess {team_name} player in {season_name} season"

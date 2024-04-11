@@ -52,6 +52,8 @@ class Quizzes:
     def format_metric(self, metric: str) -> str:
         if metric == 'penalties':
             result = 'penalty goals'
+        if metric ==  'substitute_appearances':
+            result = 'substitute appearances'
         if metric == 'goal_assists':
             result = 'goals + assists'
         else:
