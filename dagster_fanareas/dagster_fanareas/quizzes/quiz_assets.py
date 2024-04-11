@@ -14,11 +14,22 @@ def get_team_name_and_id() -> dict:
     team_name = df['name'].iloc[0]
     return {'team_name': team_name, 'team_id': team_id}
 
+def get_season_name_and_id() -> dict:
+    engine = create_db_session()
+    season_id = requests.get('https://fanareas.com/api/seasons/generateId').json()
+    season_qr = """select name from seasons where id = {}""".format(season_id)
+    df = pd.read_sql(season_qr, con=engine)
+    season_name = df['name'].iloc[0]
+    return {'season_name': season_name, 'season_id': season_id}
+
 @asset(group_name="quizzes")
 def guess_team_player_quiz() -> bool:
     generated_team = get_team_name_and_id()
     team_name = generated_team['team_name']
     team_id = generated_team['team_id']
+    generated_season = get_season_name_and_id()
+    season_name = generated_season['season_name']
+    season_id = generated_season['season_id']
     season_list = [i for i in range(2012, 2023)]
     season = random.choice(season_list)
     season_name = f"{season}/{season+1}"
@@ -82,7 +93,7 @@ def guess_team_player_quiz() -> bool:
                        team_name=team_name,
                        season_name=season_name,
                        entityIdTeam=team_id,
-                       entityIdSeason=21646,
+                       entityIdSeason=season_id,
                        entityTypeTeam=1, 
                        entityTypeSeason=2
                        )

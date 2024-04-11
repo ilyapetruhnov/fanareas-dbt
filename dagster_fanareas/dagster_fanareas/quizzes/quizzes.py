@@ -355,8 +355,9 @@ class Quizzes:
 
     def mix_quiz_questions(self):
         random.shuffle(self.quiz_collection)
-        result_list = self.quiz_collection[:10]
-        return result_list
+        # result_list = self.quiz_collection[:10]
+        # return result_list
+        return self.quiz_collection
 
     def post_quiz(self, questions, team_name, season_name, entityIdTeam, entityIdSeason, entityTypeTeam, entityTypeSeason):
         json_data = self.quiz_template(questions, 
