@@ -36,7 +36,7 @@ post_facts_job = define_asset_job(name="trigger_post_facts", selection="publish_
 
 post_facts_by_team_job = define_asset_job(name="trigger_post_facts_by_team", selection="publish_one_fact_by_team")
 
-# templates_job = define_asset_job("templates_job", AssetSelection.groups("templates"))
+ingest_job = define_asset_job("ingest_job", AssetSelection.groups("ingest"))
 
 dbt_job = define_asset_job("daily_dbt_assets", selection=dbt_selection)
 
@@ -70,6 +70,12 @@ daily_dbt_assets_schedule = ScheduleDefinition(
     cron_schedule="@daily"
 )
 
+daily_ingest_assets_schedule = ScheduleDefinition(
+    job=ingest_job,
+    cron_schedule="0 7 * * *"
+)
+
+
 defs = Definitions(
     assets=[*all_assets],
     jobs = [guess_the_player_quiz_job,
@@ -77,14 +83,16 @@ defs = Definitions(
             post_news_job,
             post_facts_job,
             post_facts_by_team_job,
-            dbt_job
+            dbt_job,
+            ingest_job
             ],
     schedules=[news_schedule,
                transfers_quiz_schedule,
                guess_the_player_quiz_schedule,
                facts_schedule,
                facts_by_team_schedule,
-               daily_dbt_assets_schedule
+               daily_dbt_assets_schedule,
+               daily_ingest_assets_schedule
                ],
     resources={
         "dbt": DbtCliResource(project_dir=os.fspath(dbt_project_dir)),

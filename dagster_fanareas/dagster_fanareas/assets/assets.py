@@ -5,18 +5,18 @@ from dagster_fanareas.constants import base_url
 from itertools import product
 import time
 
-@asset( group_name="transfers", compute_kind="pandas", io_manager_key="db_io_manager")
+@asset( group_name="ingest", compute_kind="pandas", io_manager_key="db_io_manager")
 def transfers(context) -> pd.DataFrame:
     df = context.resources.db_io_manager.upsert_input(context)
     return df
 
-@asset( group_name="seasons", compute_kind="pandas", io_manager_key="db_io_manager")
+@asset( group_name="ingest", compute_kind="pandas", io_manager_key="db_io_manager")
 def seasons(context) -> pd.DataFrame:
     df = context.resources.db_io_manager.upsert_input(context)
     return df
 
 
-@asset( group_name="standings", compute_kind="pandas", io_manager_key="db_io_manager")
+@asset( group_name="ingest", compute_kind="pandas", io_manager_key="db_io_manager")
 def standings(context) -> pd.DataFrame:
     df = context.resources.db_io_manager.upsert_input(context)
     return df
@@ -32,12 +32,12 @@ def fixtures(context, fixtures_df: pd.DataFrame) -> pd.DataFrame:
     existing_df = context.resources.db_io_manager.load_input(context)
     return upsert(existing_df, fixtures_df)
 
-@asset( group_name="coaches", compute_kind="pandas", io_manager_key="db_io_manager")
+@asset( group_name="ingest", compute_kind="pandas", io_manager_key="db_io_manager")
 def coaches(context) -> pd.DataFrame:
     df = context.resources.db_io_manager.upsert_input(context)
     return df
 
-@asset( group_name="teams", compute_kind="pandas", io_manager_key="db_io_manager")
+@asset( group_name="ingest", compute_kind="pandas", io_manager_key="db_io_manager")
 def teams(context) -> pd.DataFrame:
     df = context.resources.db_io_manager.upsert_input(context)
     return df
@@ -92,12 +92,12 @@ def topscorers(context, topscorers_df: pd.DataFrame) -> pd.DataFrame:
     context.log.info(topscorers_df.head())
     return upsert(existing_df, topscorers_df)
 
-@asset( group_name="players", compute_kind="pandas", io_manager_key="db_io_manager")
+@asset( group_name="ingest", compute_kind="pandas", io_manager_key="db_io_manager")
 def players(context) -> pd.DataFrame:
     df = context.resources.db_io_manager.upsert_input(context)
     return df
 
-@asset( group_name="player_stats", compute_kind="pandas")
+@asset( group_name="ingest", compute_kind="pandas")
 def player_stats_dict(context, players: pd.DataFrame) -> dict:
     dim_players = context.resources.db_io_manager.load_table(table_name = 'dim_players')
     non_active_player_ids = set(dim_players[(dim_players['current_season']==2023) & (dim_players['is_active']==False)]['player_id'].unique())
@@ -126,7 +126,7 @@ def player_stats_dict(context, players: pd.DataFrame) -> dict:
     return {'stats': player_stats, 'detailed_stats': player_stats_detailed}
 
 
-@asset( group_name="player_stats", compute_kind="pandas", io_manager_key="db_io_manager")
+@asset( group_name="ingest", compute_kind="pandas", io_manager_key="db_io_manager")
 def player_stats(context, player_stats_dict: dict) -> pd.DataFrame:
     player_stats = player_stats_dict['stats']
     result = flatten_list(player_stats)
@@ -137,7 +137,7 @@ def player_stats(context, player_stats_dict: dict) -> pd.DataFrame:
     df = upsert(df, existing_df)
     return df
 
-@asset( group_name="player_stats", compute_kind="pandas",io_manager_key="db_io_manager")
+@asset( group_name="ingest", compute_kind="pandas",io_manager_key="db_io_manager")
 def player_stats_detailed(context, player_stats_dict: dict) -> pd.DataFrame:
     player_stats_detailed = player_stats_dict['detailed_stats']
     result = flatten_list(player_stats_detailed)
