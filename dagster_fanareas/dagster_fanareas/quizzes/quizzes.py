@@ -150,6 +150,7 @@ class Quizzes:
         options_df = df[df['red_cards'].isnull()].sample(3)
 
         options = [i for i in options_df.fullname]
+        options.append(correct_response)
         random.shuffle(options)
         question_statement = "Which player has been sent off at least in one match in the {} season?".format(season_name)
         question = self.question_template(question_statement, options, correct_response)
