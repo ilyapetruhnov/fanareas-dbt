@@ -116,8 +116,8 @@ class Quizzes:
         else:
             correct_response = correct_df['fullname'].iloc[0]
             options_df = df[df['season_name']!=season_name].sample(3)
-            incorrect_options = [i for i in options_df['fullname']]
-            options = incorrect_options.append(correct_response)
+            options = [i for i in options_df['fullname']]
+            options.append(correct_response)
             random.shuffle(options)
             question_statement = "Which player joined {} in the {} season?".format(team_name, season_name)
             question = self.question_template(question_statement, options, correct_response)
