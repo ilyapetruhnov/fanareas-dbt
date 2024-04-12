@@ -31,6 +31,7 @@ def guess_team_player_quiz() -> bool:
     season_name = generated_season['season_name']
     season_id = generated_season['season_id']
     season = int(generated_season['season_name'][:4])
+    print(season)
     # season_list = [i for i in range(2012, 2023)]
     # season = random.choice(season_list)
     # season_name = f"{season}/{season+1}"
