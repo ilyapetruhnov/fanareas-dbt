@@ -108,6 +108,16 @@ class Quizzes:
         question = self.question_template(question_statement, options, correct_response)
         return question
     
+    def generate_player_joined_question(self, query: str, team_name: str, season_name: str) -> dict:
+        df = self.generate_df(query)
+        correct_response = df[df['season_name']==season_name]['fullname'].iloc[0]
+        options_df = df[df['season_name']!=season_name].sample(3)
+        incorrect_options = [i for i in options_df['fullname']]
+        options = incorrect_options.append(correct_response)
+        random.shuffle(options)
+        question_statement = "Which player joined {} in the {} season?".format(team_name, season_name)
+        question = self.question_template(question_statement, options, correct_response)
+        return question
 
     def generate_player_age_question(self, query: str, team_name: str, season_name: str, oldest=True) -> dict:
         df = self.generate_df(query)
@@ -140,7 +150,10 @@ class Quizzes:
         options = [i[0] for i in grouped_df.fullname][:4]
         random.shuffle(options)
         formatted_metric = self.format_metric(metric)
-        question_statement = "Which player had more {} in the {} season?".format(formatted_metric, season_name)
+        if metric == 'substitute_appearances':
+            question_statement = "Which player had the most appearances coming off the bench in the {} season?".format(season_name)
+        else:
+            question_statement = "Which player had more {} in the {} season?".format(formatted_metric, season_name)
         question = self.question_template(question_statement, options, correct_response)
         return question
     
@@ -171,7 +184,10 @@ class Quizzes:
             options.append(correct_response)
             random.shuffle(options)
             formatted_metric = self.format_metric(metric)
-            question_statement = "Which player had more than {} {} in the {} season?".format(n, formatted_metric, season_name)
+            if metric == 'substitute_appearances':
+                question_statement = "Which player had more than {} appearances coming off the bench in the {} season?".format(n, season_name)
+            else:
+                question_statement = "Which player had more than {} {} in the {} season?".format(n, formatted_metric, season_name)
             question = self.question_template(question_statement, options, correct_response)
             return question
 

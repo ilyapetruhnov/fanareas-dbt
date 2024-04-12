@@ -30,9 +30,10 @@ def guess_team_player_quiz() -> bool:
     generated_season = get_season_name_and_id()
     season_name = generated_season['season_name']
     season_id = generated_season['season_id']
-    season_list = [i for i in range(2012, 2023)]
-    season = random.choice(season_list)
-    season_name = f"{season}/{season+1}"
+    season = int(generated_season['season_name'][:4])
+    # season_list = [i for i in range(2012, 2023)]
+    # season = random.choice(season_list)
+    # season_name = f"{season}/{season+1}"
     player_metrics = ['goals','yellow_cards','appearances','assists','goal_assists','substitute_appearances']
     player_dim_metrics = ['nationality','position','jersey_number']
     random.shuffle(player_metrics)
@@ -41,6 +42,13 @@ def guess_team_player_quiz() -> bool:
     quiz_type = 0
     is_demo = False
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
+
+    quiz_player_joined = quiz_obj.generate_player_joined_question(
+        query = query_team_player_club_transferred_from.format(team_id), 
+        team_name = team_name, 
+        season_name = season_name
+        )
+    quiz_obj.collect_questions(quiz_player_joined)
 
     quiz_oldest_player = quiz_obj.generate_player_age_question(
         query = query_team_player_season_dims.format(team_id, season), 
@@ -89,13 +97,14 @@ def guess_team_player_quiz() -> bool:
         quiz_obj.collect_questions(quiz_team_player_stats_n)
 
     mixed_quiz_questions = quiz_obj.mix_quiz_questions()
-    quiz_obj.post_quiz(questions=mixed_quiz_questions,
-                       team_name=team_name,
-                       season_name=season_name,
-                       entityIdTeam=team_id,
-                       entityIdSeason=season_id,
-                       entityTypeTeam=1, 
-                       entityTypeSeason=2
+    quiz_obj.post_quiz(
+        questions=mixed_quiz_questions,
+        team_name=team_name,
+        season_name=season_name,
+        entityIdTeam=team_id,
+        entityIdSeason=season_id,
+        entityTypeTeam=1,
+        entityTypeSeason=2
                        )
 
     return True
