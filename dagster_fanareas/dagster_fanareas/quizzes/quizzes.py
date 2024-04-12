@@ -110,14 +110,18 @@ class Quizzes:
     
     def generate_player_joined_question(self, query: str, team_name: str, season_name: str) -> dict:
         df = self.generate_df(query)
-        correct_response = df[df['season_name']==season_name]['fullname'].iloc[0]
-        options_df = df[df['season_name']!=season_name].sample(3)
-        incorrect_options = [i for i in options_df['fullname']]
-        options = incorrect_options.append(correct_response)
-        random.shuffle(options)
-        question_statement = "Which player joined {} in the {} season?".format(team_name, season_name)
-        question = self.question_template(question_statement, options, correct_response)
-        return question
+        correct_df = df[df['season_name']==season_name]
+        if correct_df.empty == True:
+            return None
+        else:
+            correct_response = correct_df['fullname'].iloc[0]
+            options_df = df[df['season_name']!=season_name].sample(3)
+            incorrect_options = [i for i in options_df['fullname']]
+            options = incorrect_options.append(correct_response)
+            random.shuffle(options)
+            question_statement = "Which player joined {} in the {} season?".format(team_name, season_name)
+            question = self.question_template(question_statement, options, correct_response)
+            return question
 
     def generate_player_age_question(self, query: str, team_name: str, season_name: str, oldest=True) -> dict:
         df = self.generate_df(query)
