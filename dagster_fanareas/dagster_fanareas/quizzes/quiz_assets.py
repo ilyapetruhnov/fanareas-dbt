@@ -24,14 +24,18 @@ def get_season_name_and_id() -> dict:
 
 @asset(group_name="quizzes")
 def guess_team_player_quiz() -> bool:
-    generated_team = get_team_name_and_id()
-    team_name = generated_team['team_name']
-    team_id = generated_team['team_id']
-    generated_season = get_season_name_and_id()
-    season_name = generated_season['season_name']
-    season_id = generated_season['season_id']
-    season = int(generated_season['season_name'][:4])
-    print(season)
+    # generated_team = get_team_name_and_id()
+    # team_name = generated_team['team_name']
+    # team_id = generated_team['team_id']
+    team_name = 'Aston Villa'
+    team_id = 15
+    # generated_season = get_season_name_and_id()
+    # season_name = generated_season['season_name']
+    # season_id = generated_season['season_id']
+    season_id = 18378
+    season_name = '2021/2022'
+    # season = int(generated_season['season_name'][:4])
+    season = int(season_name[:4])
     # season_list = [i for i in range(2012, 2023)]
     # season = random.choice(season_list)
     # season_name = f"{season}/{season+1}"
