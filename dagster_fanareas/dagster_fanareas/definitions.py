@@ -62,7 +62,7 @@ facts_schedule = ScheduleDefinition(
 
 facts_by_team_schedule = ScheduleDefinition(
     job=post_facts_by_team_job, 
-    cron_schedule="0 14,19 * * *"
+    cron_schedule="0 19 * * *"
 )
 
 daily_dbt_assets_schedule = ScheduleDefinition(
