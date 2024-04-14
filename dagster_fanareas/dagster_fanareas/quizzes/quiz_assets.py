@@ -71,17 +71,23 @@ def guess_team_player_quiz() -> bool:
         )
     quiz_obj.collect_questions(quiz_youngest_player)
 
-    quiz_sent_off = quiz_obj.generate_player_sent_off_question(
+    quiz_sent_off_own_goal = quiz_obj.generate_player_sent_off_or_own_goal_question(
         query = query_team_player_season_stats.format(team_id, season), 
         season_name = season_name
         )
-    quiz_obj.collect_questions(quiz_sent_off)
+    quiz_obj.collect_questions(quiz_sent_off_own_goal)
+
+    quiz_team_player_stats_2_metrics = quiz_obj.generate_player_2_metrics_question(
+        query = query_team_player_season_stats.format(team_id, season), 
+        season_name = season_name
+        )
+    quiz_obj.collect_questions(quiz_team_player_stats_2_metrics)
 
     for metric in player_dim_metrics:
         quiz_team_player_dims = quiz_obj.generate_player_metric_question(
             query = query_team_player_season_dims.format(team_id, season),
             metric = metric, 
-            season_name=season_name,
+            season_name = season_name
         )
         quiz_obj.collect_questions(quiz_team_player_dims)
     
@@ -91,25 +97,34 @@ def guess_team_player_quiz() -> bool:
             query = query_team_player_season_stats.format(team_id, season), 
             season_name=season_name,
             metric = metric,
+            position = False
         )
         quiz_obj.collect_questions(quiz_team_player_stats)
+
+        quiz_team_player_position_stats = quiz_obj.generate_player_stats_question(
+            query = query_team_player_position_season_stats.format(team_id, season), 
+            season_name=season_name,
+            metric = metric,
+            position = True
+        )
+        quiz_obj.collect_questions(quiz_team_player_position_stats)
 
         quiz_team_player_stats_n = quiz_obj.generate_player_more_than_n_question(
             query = query_team_player_season_stats.format(team_id, season), 
             season_name=season_name,
-            metric = metric,
+            metric = metric
         )
         quiz_obj.collect_questions(quiz_team_player_stats_n)
 
     mixed_quiz_questions = quiz_obj.mix_quiz_questions()
     quiz_obj.post_quiz(
-        questions=mixed_quiz_questions,
-        team_name=team_name,
-        season_name=season_name,
-        entityIdTeam=team_id,
-        entityIdSeason=season_id,
-        entityTypeTeam=1,
-        entityTypeSeason=2
+        questions = mixed_quiz_questions,
+        team_name = team_name,
+        season_name = season_name,
+        entityIdTeam = team_id,
+        entityIdSeason = season_id,
+        entityTypeTeam = 1,
+        entityTypeSeason = 2
                        )
 
     return True

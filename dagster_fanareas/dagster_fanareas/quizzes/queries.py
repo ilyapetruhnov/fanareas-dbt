@@ -524,6 +524,54 @@ where teamid = {0}
 and
 season = {1}"""
 
+
+query_team_player_position_season_stats = """
+with vw as (
+select
+        fullname
+        ,cast(array_to_string(t.team_id, '/') as int) as teamid
+        ,array_to_string(team, '/') as team_name
+        ,t.position as position
+        ,t.captain as captain
+        ,t.goals as goals
+        ,t.assists
+        ,t.goals + t.assists as goal_assists
+        ,t.own_goals
+        ,t.season
+        ,t.season_name
+        ,t.penalties
+        ,t.appearances
+        ,t.yellow_cards
+        ,t.red_cards
+        ,t.lineups
+        ,t.appearances - t.lineups as substitute_appearances
+        ,current_season
+        ,is_active
+        FROM
+        dim_players
+        CROSS JOIN UNNEST (season_stats) AS t
+        WHERE
+        current_season = 2023
+        and
+        array_length(t.team,1) = 1
+        and POSITION('Coach' IN t.position) = 0
+        )
+select *
+        , dense_rank() over (partition by season ORDER BY goals desc nulls last) as goals_rn
+        , dense_rank() over (partition by season ORDER BY assists desc nulls last) as assists_rn
+        , dense_rank() over (partition by season ORDER BY goal_assists desc nulls last) as goal_assists_rn
+        , dense_rank() over (partition by season ORDER BY appearances desc nulls last) as appearances_rn
+        , dense_rank() over (partition by season ORDER BY lineups desc nulls last) as lineups_rn
+        , dense_rank() over (partition by season ORDER BY yellow_cards desc nulls last) as yellow_cards_rn
+        , dense_rank() over (partition by season ORDER BY red_cards desc nulls last) as red_cards_rn
+        , dense_rank() over (partition by season ORDER BY substitute_appearances desc nulls last) as substitute_appearances_rn
+        , dense_rank() over (partition by season ORDER BY penalties desc nulls last) as penalties_rn
+from vw
+where teamid = {0}
+and
+season = {1}"""
+
+
 query_team_player_season_dims = """
 with vw as (
             SELECT
