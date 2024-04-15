@@ -202,18 +202,17 @@ class Quizzes:
         question = self.question_template(question_statement, options, correct_response)
         return question
     
-    def generate_player_2_metrics_question(self, query: str, season_name:str) -> dict:
+    def generate_player_2_metrics_question(self, query: str, season_name: str, metric: str) -> dict:
         df = self.generate_df(query)
-        condition = random.choice([True,False])
-        if condition:
-            correct_df = df[~df['red_cards'].isnull()][['fullname','team', 'yellow_cards', 'red_cards']]
+        if metric == 'red_cards':
+            correct_df = df[~df['red_cards'].isnull()][['fullname','team_name', 'yellow_cards', 'red_cards']]
             yellow_cards = correct_df['yellow_cards'].iloc[0]
             red_cards = correct_df['red_cards'].iloc[0]
             correct_response = correct_df['fullname'].iloc[0]
             options_df = df[df['red_cards'].isnull()].sample(3)
             question_statement = "Which player had {} yellow cards and {} red cards in the {} season?".format(yellow_cards, red_cards, season_name)
         else:
-            correct_df = df[~df['goal_assists'].isnull()][['fullname','team', 'goals','assists','goal_assists']]
+            correct_df = df[~df['goal_assists'].isnull()][['fullname','team_name', 'goals','assists','goal_assists']]
             goals = correct_df['goals'].iloc[0]
             assists = correct_df['assists'].iloc[0]
             correct_response = correct_df['fullname'].iloc[0]
@@ -224,6 +223,8 @@ class Quizzes:
         random.shuffle(options)
         question = self.question_template(question_statement, options, correct_response)
         return question
+    
+
     
     def generate_player_more_than_n_question(self, query: str, season_name: str, metric: str) -> dict:
         df = self.generate_df(query)

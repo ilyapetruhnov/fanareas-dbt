@@ -77,11 +77,17 @@ def guess_team_player_quiz() -> bool:
         )
     quiz_obj.collect_questions(quiz_sent_off_own_goal)
 
-    quiz_team_player_stats_2_metrics = quiz_obj.generate_player_2_metrics_question(
-        query = query_team_player_season_stats.format(team_id, season), 
+    quiz_team_player_stats_red_cards = quiz_obj.generate_player_2_metrics_question(
+        query = query_team_player_season_stats.format(team_id, season, metric = 'red_cards'), 
         season_name = season_name
         )
-    quiz_obj.collect_questions(quiz_team_player_stats_2_metrics)
+    quiz_obj.collect_questions(quiz_team_player_stats_red_cards)
+
+    quiz_team_player_stats_goal_assists = quiz_obj.generate_player_2_metrics_question(
+        query = query_team_player_season_stats.format(team_id, season, metric = 'goal_assists'), 
+        season_name = season_name
+        )
+    quiz_obj.collect_questions(quiz_team_player_stats_goal_assists)
 
     for metric in player_dim_metrics:
         quiz_team_player_dims = quiz_obj.generate_player_metric_question(
