@@ -71,11 +71,19 @@ def guess_team_player_quiz() -> bool:
         )
     quiz_obj.collect_questions(quiz_youngest_player)
 
-    quiz_sent_off_own_goal = quiz_obj.generate_player_sent_off_or_own_goal_question(
+    quiz_sent_off = quiz_obj.generate_player_sent_off_question(
         query = query_team_player_season_stats.format(team_id, season), 
         season_name = season_name
         )
-    quiz_obj.collect_questions(quiz_sent_off_own_goal)
+    quiz_obj.collect_questions(quiz_sent_off)
+
+    quiz_own_goal = quiz_obj.generate_player_own_goal_question(
+        query = query_team_player_season_stats.format(team_id, season), 
+        season_name = season_name
+        )
+    quiz_obj.collect_questions(quiz_own_goal)
+
+    
 
     quiz_team_player_stats_red_cards = quiz_obj.generate_player_2_metrics_question(
         query = query_team_player_season_stats.format(team_id, season), 

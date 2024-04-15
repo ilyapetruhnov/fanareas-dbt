@@ -181,16 +181,12 @@ class Quizzes:
         question = self.question_template(question_statement, options, correct_response)
         return question
     
-    def generate_player_sent_off_or_own_goal_question(self, query: str, season_name:str) -> dict:
+    def generate_player_sent_off_question(self, query: str, season_name:str) -> dict:
         df = self.generate_df(query)
+        metric = 'red_cards'
         df = df[~df['appearances'].isnull()]
-        condition = random.choice([True,False])
-        if condition:
-            metric = 'red_cards'
-            question_statement = "Which player has been sent off at least in one match in the {} season?".format(season_name)
-        else:
-            metric = 'own_goals'
-            question_statement = "Which player scored an own goal in the {} season?".format(season_name)
+            
+        question_statement = "Which player has been sent off at least in one match in the {} season?".format(season_name)
 
         correct_df = df[df[metric]>0]
         correct_response = correct_df['fullname'].iloc[0]
@@ -203,6 +199,22 @@ class Quizzes:
         question = self.question_template(question_statement, options, correct_response)
         return question
     
+    def generate_player_own_goal_question(self, query: str, season_name:str) -> dict:
+        df = self.generate_df(query)
+        metric = 'own_goals'
+        df = df[~df['appearances'].isnull()]
+        question_statement = "Which player scored an own goal in the {} season?".format(season_name)
+        correct_df = df[df[metric]>0]
+        correct_response = correct_df['fullname'].iloc[0]
+
+        options_df = df[df[metric].isnull()].sample(3)
+
+        options = [i for i in options_df.fullname]
+        options.append(correct_response)
+        random.shuffle(options)
+        question = self.question_template(question_statement, options, correct_response)
+        return question
+
     def generate_player_2_metrics_question(self, query: str, season_name: str, metric: str) -> dict:
         df = self.generate_df(query)
         if metric == 'red_cards':
