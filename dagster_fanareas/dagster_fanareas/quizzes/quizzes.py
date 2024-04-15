@@ -152,20 +152,21 @@ class Quizzes:
     def generate_player_stats_question(self, query: str, season_name:str, metric: str, position = False) -> dict:
         df = self.generate_df(query)
         if position:
-            positions = df['position'].unique()
+            positions = [i for i in df['position'].unique()]
+            positions.remove('Goalkeeper')
             random.shuffle(positions)
             for player_position in positions:
                 if len(df[df['position']==player_position]) > 3 :
                     result_df = df[df['position']==player_position].sort_values(metric, ascending=False).head(4)
+                    correct_response = result_df.iloc[0]['fullname']
+                    options = [i for i in result_df.fullname]
+                    random.shuffle(options)
+                    formatted_metric = self.format_metric(metric)
+                    if metric == 'substitute_appearances':
+                        question_statement = "Which {} had the most appearances coming off the bench in the {} season?".format(player_position, season_name)
+                    else:
+                        question_statement = "Which {} had more {} in the {} season?".format(player_position, formatted_metric, season_name)
                     break
-            correct_response = result_df.iloc[0]['fullname']
-            options = [i for i in result_df.fullname]
-            random.shuffle(options)
-            formatted_metric = self.format_metric(metric)
-            if metric == 'substitute_appearances':
-                question_statement = "Which {} had the most appearances coming off the bench in the {} season?".format(player_position, season_name)
-            else:
-                question_statement = "Which {} had more {} in the {} season?".format(player_position, formatted_metric, season_name)
         else:
             grouped_df = df.groupby(f'{metric}_rn')['fullname'].apply(list).reset_index()
 
