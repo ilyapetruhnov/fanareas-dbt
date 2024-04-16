@@ -250,20 +250,26 @@ class Quizzes:
         df = self.generate_df(query)
         if metric == 'red_cards':
             correct_df = df[~df['red_cards'].isnull()][['fullname', 'team_name', 'yellow_cards', 'red_cards']]
-            yellow_cards = int(correct_df['yellow_cards'].iloc[0])
-            red_cards = int(correct_df['red_cards'].iloc[0])
-            correct_response = correct_df['fullname'].iloc[0]
-            options_df = df[df['red_cards'].isnull()].sample(3)
-            question_statement = "Which player had {} yellow cards and {} red cards in the {} season?".format(
-                yellow_cards, red_cards, season_name)
+            if len(correct_df)>3:
+                yellow_cards = int(correct_df['yellow_cards'].iloc[0])
+                red_cards = int(correct_df['red_cards'].iloc[0])
+                correct_response = correct_df['fullname'].iloc[0]
+                options_df = df[df['red_cards'].isnull()].sample(3)
+                question_statement = "Which player had {} yellow cards and {} red cards in the {} season?".format(
+                    yellow_cards, red_cards, season_name)
+            else:
+                return None
         else:
             correct_df = df[~df['goal_assists'].isnull()][['fullname', 'team_name', 'goals', 'assists', 'goal_assists']]
-            goals = int(correct_df['goals'].iloc[0])
-            assists = int(correct_df['assists'].iloc[0])
-            correct_response = correct_df['fullname'].iloc[0]
-            options_df = correct_df.iloc[1:].sample(3)
-            question_statement = "Which player had {} goals and {} assists in the {} season?".format(goals, assists,
-                                                                                                     season_name)
+            if len(correct_df)>3:
+                goals = int(correct_df['goals'].iloc[0])
+                assists = int(correct_df['assists'].iloc[0])
+                correct_response = correct_df['fullname'].iloc[0]
+                options_df = correct_df.iloc[1:].sample(3)
+                question_statement = "Which player had {} goals and {} assists in the {} season?".format(goals, assists,
+                                                                                                        season_name)
+            else:
+                return None
         options = [i for i in options_df.fullname]
         options.append(correct_response)
         random.shuffle(options)
