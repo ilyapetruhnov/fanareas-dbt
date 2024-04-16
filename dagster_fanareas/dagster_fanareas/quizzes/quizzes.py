@@ -15,8 +15,15 @@ class Quizzes:
         self.url = "https://fanareas.com/api/quizzes/createQuizz"
         self.quiz_collection = []
 
-    def quiz_template(self, questions, team_name, season_name, entityIdTeam, entityIdSeason, entityTypeTeam,
+    def quiz_template(self, 
+                      questions, 
+                      team_name, 
+                      season_name, 
+                      entityIdTeam, 
+                      entityIdSeason, 
+                      entityTypeTeam,
                       entityTypeSeason):
+        
         json_data = {"title": self.title,
                      "type": self.quiz_type,
                      "description": self.description,
@@ -201,15 +208,18 @@ class Quizzes:
             season_name)
 
         correct_df = df[df[metric] > 0]
-        correct_response = correct_df['fullname'].iloc[0]
+        if correct_df.empty:
+            return None
+        else:
+            correct_response = correct_df['fullname'].iloc[0]
 
-        options_df = df[df[metric].isnull()].sample(3)
+            options_df = df[df[metric].isnull()].sample(3)
 
-        options = [i for i in options_df.fullname]
-        options.append(correct_response)
-        random.shuffle(options)
-        question = self.question_template(question_statement, options, correct_response)
-        return question
+            options = [i for i in options_df.fullname]
+            options.append(correct_response)
+            random.shuffle(options)
+            question = self.question_template(question_statement, options, correct_response)
+            return question
 
     def generate_player_own_goal_question(self, query: str, season_name: str) -> dict:
         df = self.generate_df(query)
@@ -217,15 +227,18 @@ class Quizzes:
         df = df[~df['appearances'].isnull()]
         question_statement = "Which player scored an own goal in the {} season?".format(season_name)
         correct_df = df[df[metric] > 0]
-        correct_response = correct_df['fullname'].iloc[0]
+        if correct_df.empty:
+            return None
+        else:
+            correct_response = correct_df['fullname'].iloc[0]
 
-        options_df = df[df[metric].isnull()].sample(3)
+            options_df = df[df[metric].isnull()].sample(3)
 
-        options = [i for i in options_df.fullname]
-        options.append(correct_response)
-        random.shuffle(options)
-        question = self.question_template(question_statement, options, correct_response)
-        return question
+            options = [i for i in options_df.fullname]
+            options.append(correct_response)
+            random.shuffle(options)
+            question = self.question_template(question_statement, options, correct_response)
+            return question
 
     def generate_player_2_metrics_question(self, query: str, season_name: str, metric: str) -> dict:
         df = self.generate_df(query)
