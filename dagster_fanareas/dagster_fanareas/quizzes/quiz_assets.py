@@ -47,6 +47,8 @@ def guess_team_player_quiz() -> bool:
     quiz_type = 0
     is_demo = False
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
+    print(team_name, team_id)
+    print(season_name)
 
     quiz_player_joined = quiz_obj.generate_player_joined_question(
         query = query_team_player_club_transferred_from.format(team_id), 
