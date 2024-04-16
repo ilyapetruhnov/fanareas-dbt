@@ -163,39 +163,42 @@ class Quizzes:
             question = self.question_template(question_statement, options, correct_response)
         return question
 
-    def generate_player_stats_question(self, query: str, season_name: str, metric: str, position=False) -> dict:
+    def generate_player_position_stats_question(self, query: str, season_name: str, metric: str) -> dict:
         df = self.generate_df(query)
-        if position:
-            positions = [i for i in df['position'].unique()]
-            positions.remove('Goalkeeper')
-            random.shuffle(positions)
-            for player_position in positions:
-                if len(df[df['position'] == player_position]) > 3:
-                    result_df = df[df['position'] == player_position].sort_values(metric, ascending=False).head(4)
-                    correct_response = result_df.iloc[0]['fullname']
-                    options = [i for i in result_df.fullname]
-                    random.shuffle(options)
-                    formatted_metric = self.format_metric(metric)
-                    if metric == 'substitute_appearances':
-                        question_statement = "Which {} had the most appearances coming off the bench in the {} season?".format(
-                            player_position, season_name)
-                    else:
-                        question_statement = "Which {} had more {} in the {} season?".format(player_position,
-                                                                                             formatted_metric,
-                                                                                             season_name)
-                    break
-        else:
-            grouped_df = df.groupby(f'{metric}_rn')['fullname'].apply(list).reset_index()
+        positions = [i for i in df['position'].unique()]
+        positions.remove('Goalkeeper')
+        random.shuffle(positions)
+        for player_position in positions:
+            if len(df[df['position'] == player_position]) > 3:
+                result_df = df[df['position'] == player_position].sort_values(metric, ascending=False).head(4)
+                correct_response = result_df.iloc[0]['fullname']
+                options = [i for i in result_df.fullname]
+                random.shuffle(options)
+                formatted_metric = self.format_metric(metric)
+                if metric == 'substitute_appearances':
+                    question_statement = "Which {} player had the most appearances coming off the bench in the {} season?".format(
+                        player_position, season_name)
+                else:
+                    question_statement = "Which {} player had more {} in the {} season?".format(player_position,
+                                                                                         formatted_metric,
+                                                                                         season_name)
+                question = self.question_template(question_statement, options, correct_response)
+                break
+        return question
+    
+    def generate_player_stats_question(self, query: str, season_name: str, metric: str) -> dict:
+        df = self.generate_df(query)
+        grouped_df = df.groupby(f'{metric}_rn')['fullname'].apply(list).reset_index()
 
-            correct_response = grouped_df[grouped_df[f'{metric}_rn'] == 1]['fullname'][0][0]
-            options = [i[0] for i in grouped_df.fullname][:4]
-            random.shuffle(options)
-            formatted_metric = self.format_metric(metric)
-            if metric == 'substitute_appearances':
-                question_statement = "Which player had the most appearances coming off the bench in the {} season?".format(
-                    season_name)
-            else:
-                question_statement = "Which player had more {} in the {} season?".format(formatted_metric, season_name)
+        correct_response = grouped_df[grouped_df[f'{metric}_rn'] == 1]['fullname'][0][0]
+        options = [i[0] for i in grouped_df.fullname][:4]
+        random.shuffle(options)
+        formatted_metric = self.format_metric(metric)
+        if metric == 'substitute_appearances':
+            question_statement = "Which player had the most appearances coming off the bench in the {} season?".format(
+                season_name)
+        else:
+            question_statement = "Which player had more {} in the {} season?".format(formatted_metric, season_name)
         question = self.question_template(question_statement, options, correct_response)
         return question
 
@@ -244,16 +247,16 @@ class Quizzes:
         df = self.generate_df(query)
         if metric == 'red_cards':
             correct_df = df[~df['red_cards'].isnull()][['fullname', 'team_name', 'yellow_cards', 'red_cards']]
-            yellow_cards = correct_df['yellow_cards'].iloc[0]
-            red_cards = correct_df['red_cards'].iloc[0]
+            yellow_cards = int(correct_df['yellow_cards'].iloc[0])
+            red_cards = int(correct_df['red_cards'].iloc[0])
             correct_response = correct_df['fullname'].iloc[0]
             options_df = df[df['red_cards'].isnull()].sample(3)
             question_statement = "Which player had {} yellow cards and {} red cards in the {} season?".format(
                 yellow_cards, red_cards, season_name)
         else:
             correct_df = df[~df['goal_assists'].isnull()][['fullname', 'team_name', 'goals', 'assists', 'goal_assists']]
-            goals = correct_df['goals'].iloc[0]
-            assists = correct_df['assists'].iloc[0]
+            goals = int(correct_df['goals'].iloc[0])
+            assists = int(correct_df['assists'].iloc[0])
             correct_response = correct_df['fullname'].iloc[0]
             options_df = correct_df.iloc[1:].sample(3)
             question_statement = "Which player had {} goals and {} assists in the {} season?".format(goals, assists,

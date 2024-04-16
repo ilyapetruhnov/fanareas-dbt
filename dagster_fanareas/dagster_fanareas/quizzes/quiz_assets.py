@@ -112,16 +112,14 @@ def guess_team_player_quiz() -> bool:
         quiz_team_player_stats = quiz_obj.generate_player_stats_question(
             query = query_team_player_season_stats.format(team_id, season), 
             season_name=season_name,
-            metric = metric,
-            position = False
+            metric = metric
         )
         quiz_obj.collect_questions(quiz_team_player_stats)
 
-        quiz_team_player_position_stats = quiz_obj.generate_player_stats_question(
+        quiz_team_player_position_stats = quiz_obj.generate_player_position_stats_question(
             query = query_team_player_position_season_stats.format(team_id, season), 
             season_name=season_name,
-            metric = metric,
-            position = True
+            metric = metric
         )
         quiz_obj.collect_questions(quiz_team_player_position_stats)
 
