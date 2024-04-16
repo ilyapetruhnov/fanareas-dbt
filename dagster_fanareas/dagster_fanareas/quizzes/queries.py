@@ -555,6 +555,8 @@ select
         and
         array_length(t.team,1) = 1
         and POSITION('Coach' IN t.position) = 0
+        and t.position != 'Goalkeeper'
+        and t.appearances > 3
         )
 select *
         , dense_rank() over (partition by season ORDER BY goals desc nulls last) as goals_rn

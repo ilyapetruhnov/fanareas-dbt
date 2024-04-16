@@ -166,7 +166,6 @@ class Quizzes:
     def generate_player_position_stats_question(self, query: str, season_name: str, metric: str) -> dict:
         df = self.generate_df(query)
         positions = [i for i in df['position'].unique()]
-        positions.remove('Goalkeeper')
         random.shuffle(positions)
         for player_position in positions:
             if len(df[df['position'] == player_position]) > 3:
