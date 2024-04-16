@@ -181,13 +181,13 @@ class Quizzes:
                 if metric == 'substitute_appearances':
                     question_statement = "Which {} player had the most appearances coming off the bench in the {} season?".format(
                         player_position, season_name)
+                    return self.question_template(question_statement, options, correct_response)
                 else:
                     question_statement = "Which {} player had more {} in the {} season?".format(player_position,
                                                                                          formatted_metric,
                                                                                          season_name)
-                question = self.question_template(question_statement, options, correct_response)
-                break
-        return question
+                    return self.question_template(question_statement, options, correct_response)
+        return None
     
     def generate_player_stats_question(self, query: str, season_name: str, metric: str) -> dict:
         df = self.generate_df(query)
