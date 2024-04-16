@@ -101,26 +101,30 @@ class Quizzes:
 
     def generate_player_metric_question(self, query: str, metric: str, season_name: str) -> dict:
         df = self.generate_df(query)
-        sample_df = df.groupby(metric)['fullname'].apply(list).reset_index().sample(n=4)
-        sample_df['fullname'] = sample_df['fullname'].apply(lambda x: random.choice(x))
-        correct_idx = 0
-        correct_row = sample_df.iloc[correct_idx]
-        correct_metric = correct_row[metric]
-        correct_response = correct_row['fullname']
+        sample_df = df.groupby(metric)['fullname'].apply(list).reset_index()
+        if len(sample_df)>3:
+            sample_df = sample_df.sample(4)
+            sample_df['fullname'] = sample_df['fullname'].apply(lambda x: random.choice(x))
+            correct_idx = 0
+            correct_row = sample_df.iloc[correct_idx]
+            correct_metric = correct_row[metric]
+            correct_response = correct_row['fullname']
 
-        if metric == 'nationality':
-            question_statement = "Which player is a citizen of {0}?".format(correct_metric)
-        elif metric == 'position':
-            question_statement = "Which player played at {0} position in the {1} season?".format(correct_metric,
-                                                                                                 season_name)
-        elif metric == 'jersey_number':
-            question_statement = "Which player played under {0} jersey number in the {1} season?".format(correct_metric,
-                                                                                                         season_name)
+            if metric == 'nationality':
+                question_statement = "Which player is a citizen of {0}?".format(correct_metric)
+            elif metric == 'position':
+                question_statement = "Which player played at {0} position in the {1} season?".format(correct_metric,
+                                                                                                    season_name)
+            elif metric == 'jersey_number':
+                question_statement = "Which player played under {0} jersey number in the {1} season?".format(correct_metric,
+                                                                                                            season_name)
 
-        options = list(sample_df['fullname'])
-        random.shuffle(options)
-        question = self.question_template(question_statement, options, correct_response)
-        return question
+            options = list(sample_df['fullname'])
+            random.shuffle(options)
+            question = self.question_template(question_statement, options, correct_response)
+            return question
+        else:
+            return None
 
     def generate_player_joined_question(self, query: str, team_name: str, season_name: str) -> dict:
         df = self.generate_df(query)
