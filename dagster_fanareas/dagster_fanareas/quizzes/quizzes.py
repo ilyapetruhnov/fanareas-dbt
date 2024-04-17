@@ -111,7 +111,7 @@ class Quizzes:
             correct_response = correct_row['fullname']
 
             if metric == 'nationality':
-                question_statement = "Which player is a citizen of {0}?".format(correct_metric)
+                question_statement = "Who is a citizen of {0}?".format(correct_metric)
             elif metric == 'position':
                 question_statement = "Which player played at {0} position in the {1} season?".format(correct_metric,
                                                                                                     season_name)
@@ -198,10 +198,10 @@ class Quizzes:
         random.shuffle(options)
         formatted_metric = self.format_metric(metric)
         if metric == 'substitute_appearances':
-            question_statement = "Which player had the most appearances coming off the bench in the {} season?".format(
+            question_statement = "Who had the most appearances coming off the bench in the {} season?".format(
                 season_name)
         else:
-            question_statement = "Which player had more {} in the {} season?".format(formatted_metric, season_name)
+            question_statement = "Who had more {} in the {} season?".format(formatted_metric, season_name)
         question = self.question_template(question_statement, options, correct_response)
         return question
 
@@ -210,7 +210,7 @@ class Quizzes:
         metric = 'red_cards'
         df = df[~df['appearances'].isnull()]
 
-        question_statement = "Which player has been sent off at least in one match in the {} season?".format(
+        question_statement = "Who has been sent off at least in one match in the {} season?".format(
             season_name)
 
         correct_df = df[df[metric] > 0]
@@ -266,7 +266,7 @@ class Quizzes:
                 assists = int(correct_df['assists'].iloc[0])
                 correct_response = correct_df['fullname'].iloc[0]
                 options_df = correct_df.iloc[1:].sample(3)
-                question_statement = "Which player had {} goals and {} assists in the {} season?".format(goals, assists,
+                question_statement = "Who had {} goals and {} assists in the {} season?".format(goals, assists,
                                                                                                         season_name)
             else:
                 return None
@@ -293,7 +293,7 @@ class Quizzes:
                 question_statement = "Which player had more than {} appearances coming off the bench in the {} season?".format(
                     n, season_name)
             else:
-                question_statement = "Which player had more than {} {} in the {} season?".format(n, formatted_metric,
+                question_statement = "Who had more than {} {} in the {} season?".format(n, formatted_metric,
                                                                                                  season_name)
             question = self.question_template(question_statement, options, correct_response)
             return question
@@ -371,7 +371,7 @@ class Quizzes:
         correct_response = sample_df['fullname'].iloc[0]
         options = list(sample_df['fullname'])
         random.shuffle(options)
-        statement = f"Which player currently plays for {team} under {jersey_number} jersey number?"
+        statement = f"Who currently plays for {team} under {jersey_number} jersey number?"
         question = self.question_template(statement, options, correct_response)
         return question
 
