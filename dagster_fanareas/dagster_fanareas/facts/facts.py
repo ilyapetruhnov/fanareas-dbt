@@ -5,7 +5,8 @@ from sqlalchemy import text
 import requests
 
 class Facts:
-    def __init__(self, query_str: str, season: int, top_n: int, metric_list: list) -> None:
+    def __init__(self, query: str, season: int, top_n: int, metric_list: list) -> None:
+        self.query = query
         self.season = season
         self.top_n = top_n
         self.metric_list = metric_list
@@ -81,9 +82,9 @@ class Facts:
 
     def post_facts(self, metric: str, by_team=False) -> bool:
         if by_team:
-            json_data = self.top_n_facts_assembler(metric, by_team=True)
+            json_data = self.top_n_facts_assembler(self.query, metric, by_team=True)
         else:
-            json_data = self.top_n_facts_assembler(metric)
+            json_data = self.top_n_facts_assembler(self.query, metric)
         return post_json(json_data, self.url)
 
 
