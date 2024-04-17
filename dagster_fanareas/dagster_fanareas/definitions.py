@@ -36,6 +36,8 @@ post_facts_job = define_asset_job(name="trigger_post_facts", selection="publish_
 
 post_facts_by_team_job = define_asset_job(name="trigger_post_facts_by_team", selection="publish_one_fact_by_team")
 
+post_facts_player_season_job = define_asset_job(name = "trigger_post_facts_by_player_season", selection="publish_player_season_stats_fact")
+
 ingest_job = define_asset_job("ingest_job", AssetSelection.groups("ingest"))
 
 dbt_job = define_asset_job("daily_dbt_assets", selection=dbt_selection)
@@ -65,6 +67,11 @@ facts_by_team_schedule = ScheduleDefinition(
     cron_schedule="0 19 * * *"
 )
 
+facts_player_season_schedule = ScheduleDefinition(
+    job=post_facts_player_season_job, 
+    cron_schedule="0 8 * * *"
+)
+
 daily_dbt_assets_schedule = ScheduleDefinition(
     job=dbt_job,
     cron_schedule="@daily"
@@ -83,6 +90,7 @@ defs = Definitions(
             post_news_job,
             post_facts_job,
             post_facts_by_team_job,
+            post_facts_player_season_job,
             dbt_job,
             ingest_job
             ],
@@ -91,6 +99,7 @@ defs = Definitions(
                guess_the_player_quiz_schedule,
                facts_schedule,
                facts_by_team_schedule,
+               facts_player_season_schedule,
                daily_dbt_assets_schedule,
                daily_ingest_assets_schedule
                ],

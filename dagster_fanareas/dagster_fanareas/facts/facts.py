@@ -6,7 +6,6 @@ import requests
 
 class Facts:
     def __init__(self, query_str: str, season: int, top_n: int, metric_list: list) -> None:
-        self.query_str = query_str
         self.season = season
         self.top_n = top_n
         self.metric_list = metric_list
@@ -24,6 +23,8 @@ class Facts:
     def format_metric(self, metric: str) -> str:
         if metric == 'penalties':
             result = 'penalty goals'
+        if metric == 'goals_assists':
+            result = 'goals + assists'
         else:
             result = metric.replace('_',' ')
         return result
@@ -35,22 +36,24 @@ class Facts:
         df = pd.read_sql(team_qr, con=engine)
         team_name = df['name'].iloc[0]
         return {'team_name': team_name, 'team_id': team_id}
+    
+    @staticmethod 
+    def combine(x,y):
+        return f"goals: {int(x)}, assists: {int(y)}"
 
-    def generate_query(self, query_str) -> str:
-        return query_str.format(self.season)
-
-    def generate_df(self) -> pd.DataFrame:
+    def generate_df(self, query_str: str) -> pd.DataFrame:
         engine = create_db_session()
-        query = self.generate_query(self.query_str)
+        query = query_str.format(self.season)
         return pd.read_sql(text(query), con=engine)
 
-    def top_n_facts_assembler(self, metric: str, by_team=False) -> dict:
-        df = self.generate_df()
+    def top_n_facts_assembler(self, query, metric: str, by_team=False) -> dict:
+        df = self.generate_df(query)
         metric_filter = (df[f'{metric}_rn'] <= self.top_n)
         metric_formatted = self.format_metric(metric)
         col_list = ['fullname','team','season_name', metric]
         season_name = df['season_name'].iloc[0]
         quiz_type = 0
+        # df['goals_assists'] = df.apply(lambda x: self.combine(x['goals'],x['assists']),axis=1)
         if by_team:
             team_obj = self.get_team_name_and_id() 
             selected_team = team_obj['team_name']
@@ -74,6 +77,7 @@ class Facts:
             top_facts.append(d)
         facts = top_facts[:self.top_n]
         return self.fact_template(season_name, quiz_type, title, facts)
+
 
     def post_facts(self, metric: str, by_team=False) -> bool:
         if by_team:
