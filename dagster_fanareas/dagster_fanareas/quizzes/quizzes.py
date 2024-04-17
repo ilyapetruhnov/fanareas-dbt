@@ -137,7 +137,22 @@ class Quizzes:
             options = [i for i in options_df['fullname']]
             options.append(correct_response)
             random.shuffle(options)
-            question_statement = "Which player joined {} in the {} season?".format(team_name, season_name)
+            question_statement = "Who joined {} in the {} season?".format(team_name, season_name)
+            question = self.question_template(question_statement, options, correct_response)
+            return question
+    
+    def generate_player_departure_question(self, query: str, team_name: str, season_name: str) -> dict:
+        df = self.generate_df(query)
+        correct_df = df[df['season_name'] == season_name]
+        if correct_df.empty == True:
+            return None
+        else:
+            correct_response = correct_df['fullname'].iloc[0]
+            options_df = df[df['season_name'] != season_name].sample(3)
+            options = [i for i in options_df['fullname']]
+            options.append(correct_response)
+            random.shuffle(options)
+            question_statement = "Who left {} in the {} season?".format(team_name, season_name)
             question = self.question_template(question_statement, options, correct_response)
             return question
 
