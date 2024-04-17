@@ -605,7 +605,7 @@ with vw as (
                 and
                 season = {1}"""
 
-query_player_joined_club = """WITH vw as (SELECT player_id,
+query_player_joined_club = """            WITH vw as (SELECT player_id,
                                firstname,
                                lastname,
                                fullname,
@@ -638,24 +638,32 @@ query_player_joined_club = """WITH vw as (SELECT player_id,
             cast(transfer_from_team_id as int) as transfer_from_team_id,
             array_remove(team_arr, transfer_from_team) as transfer_to_team,
             array_remove(team_id_arr, cast(transfer_from_team_id as int)) as transfer_to_team_id
-            from vw)
-            SELECT
-            player_id,
-            firstname,
-            lastname,
-            fullname,
-            season,
-            season_name,
-            transfer_from_team,
-            transfer_from_team_id,
-            transfer_to_team[1] as transfer_to_team,
-            transfer_to_team_id[1] as transfer_to_team_id
-            from window_vw
-            where
-            transfer_from_team != team
-            AND
-            POSITION('/' IN transfer_from_team) = 0
-            and transfer_to_team_id = {0}"""
+            from vw),
+            vw1 as (SELECT player_id,
+                           firstname,
+                           lastname,
+                           fullname,
+                           season,
+                           season_name,
+                           transfer_from_team,
+                           transfer_from_team_id,
+                           transfer_to_team[1]    as transfer_to_team,
+                           transfer_to_team_id[1] as transfer_to_team_id
+                    from window_vw
+                    where transfer_from_team != team
+                    AND POSITION('/' IN transfer_from_team) = 0)
+            SELECT player_id,
+                   firstname,
+                   lastname,
+                   fullname,
+                   season,
+                   season_name,
+                   transfer_from_team,
+                   transfer_from_team_id,
+                   transfer_to_team,
+                   cast(transfer_to_team_id as int) as transfer_to_team_id
+            FROM vw1
+            WHERE transfer_to_team_id = {0}"""
 
 query_player_left_club = """WITH vw as (SELECT player_id,
                                firstname,
