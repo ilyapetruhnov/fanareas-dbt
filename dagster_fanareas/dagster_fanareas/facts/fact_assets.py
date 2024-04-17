@@ -27,13 +27,13 @@ def publish_one_fact():
 def publish_one_fact_by_team():
     facts_obj = Facts(top_teams_query, season, top_n_by_team, teams_metric_list)
     teams_metric_list.remove('penalties')
-    metric = random.choice(metric_list)
+    metric = random.choice(teams_metric_list)
     facts_obj.post_facts(metric, by_team=True)
     return True
 
 @asset(group_name="facts")
 def publish_player_season_stats_fact():
     facts_obj = Facts(top_team_stats_query, season, top_n_by_team, teams_metric_list)
-    metric = random.choice(metric_list)
+    metric = random.choice(teams_metric_list)
     facts_obj.post_facts(metric)
     return True
