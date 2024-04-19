@@ -55,7 +55,7 @@ def guess_team_player_quiz() -> bool:
         )
     quiz_obj.collect_questions(quiz_player_joined)
 
-    quiz_player_left = quiz_obj.generate_player_joined_question(
+    quiz_player_left = quiz_obj.generate_player_departure_question(
         query = query_player_left_club.format(team_id), 
         team_name = team_name, 
         season_name = season_name
