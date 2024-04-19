@@ -7,7 +7,7 @@ season = random.randint(2008,2023)
 top_n = 10
 top_n_by_team = 5
 metric_list = ['goals','assists','yellow_cards']
-teams_metric_list = ['goals','assists','goal_assists','yellow_cards','penalties']
+teams_metric_list = ['goals','assists','goals_assists','yellow_cards','penalties']
 
 @asset(group_name="facts")
 def publish_all_facts():
