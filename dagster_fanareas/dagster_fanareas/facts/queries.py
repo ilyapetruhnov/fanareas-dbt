@@ -102,12 +102,12 @@ top_team_stats_query = """
                 ),
                 vw1 as (
                 select *
-                            , row_number() over (ORDER BY assists desc nulls last)      as assists_rn
-                            , row_number() over (ORDER BY goals desc nulls last)        as goals_rn
-                            , row_number() over (ORDER BY goals_assists desc nulls last) as goals_assists_rn
-                            , row_number() over (ORDER BY yellow_cards desc nulls last) as yellow_cards_rn
-                            , row_number() over (ORDER BY penalties desc nulls last)    as penalties_rn
-                        from vw
+                , row_number() over (ORDER BY assists desc nulls last)      as assists_rn
+                , row_number() over (ORDER BY goals desc nulls last)        as goals_rn
+                , row_number() over (ORDER BY goals_assists desc nulls last) as goals_assists_rn
+                , row_number() over (ORDER BY yellow_cards desc nulls last) as yellow_cards_rn
+                , row_number() over (ORDER BY penalties desc nulls last)    as penalties_rn
+                from vw
                         )
                 select *
                 from vw1

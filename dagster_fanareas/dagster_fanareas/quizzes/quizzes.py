@@ -84,10 +84,9 @@ class Quizzes:
         df = pd.read_sql(team_qr, con=engine)
         team_name = df['name'].iloc[0]
         return {'team_name': team_name, 'team_id': team_id}
-
+    
     def generate_question(self, query: str, statement: str, team_name: str, cols: tuple) -> dict:
         df = self.generate_df(query)
-
         sample_df = df.sample(n=4)
         correct_idx = random.randint(0, 3)
         correct_row = sample_df.iloc[correct_idx]

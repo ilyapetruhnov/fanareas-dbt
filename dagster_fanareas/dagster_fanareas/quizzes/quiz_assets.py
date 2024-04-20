@@ -20,28 +20,22 @@ def get_season_name_and_id() -> dict:
     season_qr = """select name from seasons where id = {}""".format(season_id)
     df = pd.read_sql(season_qr, con=engine)
     season_name = df['name'].iloc[0]
-    return {'season_name': season_name, 'season_id': season_id}
-
-@asset(group_name="quizzes")
-def guess_team_player_quiz() -> bool:
-    generated_team = get_team_name_and_id()
-    team_name = generated_team['team_name']
-    team_id = generated_team['team_id']
-    # team_name = 'Aston Villa'
-    # team_id = 15
-    generated_season = get_season_name_and_id()
-    season_name = generated_season['season_name']
-    season_id = generated_season['season_id']
-    # season_id = 18378
-    # season_name = '2021/2022'
-    # season = int(generated_season['season_name'][:4])
     season = int(season_name[:4])
-    # season_list = [i for i in range(2012, 2023)]
-    # season = random.choice(season_list)
-    # season_name = f"{season}/{season+1}"
-    player_metrics = ['goals','yellow_cards','appearances','assists','goal_assists','substitute_appearances']
+    return {'season_name': season_name, 'season_id': season_id, 'season': season}
+
+def validate_team_season(team_id, season_id):
+    engine = create_db_session()
+    query = """select season_id from standings where participant_id = {}""".format(team_id)
+    standings_df = pd.read_sql(query, con=engine)
+    if season_id in standings_df['season_id'].unique():
+        return True
+    return False
+
+def post_guess_team_player_quiz(team_id, team_name, season, season_id, season_name) -> bool:
+    player_metrics = ['assists','substitute_appearances','goal_assists','yellow_cards','appearances','goals']
     player_dim_metrics = ['nationality','position','jersey_number']
     random.shuffle(player_metrics)
+    random.shuffle(player_dim_metrics)
     title = f"Guess {team_name} player in {season_name} season"
     description = f"Guess 10 {team_name} players in {season_name} season"
     quiz_type = 0
@@ -146,6 +140,25 @@ def guess_team_player_quiz() -> bool:
         entityTypeSeason = 2
                        )
 
+    return True
+
+@asset(group_name="quizzes")
+def guess_team_player_quiz() -> bool:
+    #team generation
+    generated_team = get_team_name_and_id()
+    team_name = generated_team['team_name']
+    team_id = generated_team['team_id']
+    #season generation
+    generated_season = get_season_name_and_id()
+    season_name = generated_season['season_name']
+    season_id = generated_season['season_id']
+    season = generated_season['season']
+
+    if validate_team_season(team_id, season_id):
+        post_guess_team_player_quiz(team_id, team_name, season, season_id, season_name)
+        return True
+    else:
+        guess_team_player_quiz()
     return True
 
 
