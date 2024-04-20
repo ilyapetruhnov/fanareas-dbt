@@ -29,7 +29,9 @@ class DbIOManager(IOManager):
 
     def handle_output(self, context, obj):
         overwrite_tables = ['player_stats','player_stats_detailed','team_stats','team_stats_detailed', 
-                            'raw_player_stats','raw_player_stats_detailed','raw_team_stats','raw_team_stats_detailed'
+                            'raw_player_stats','raw_player_stats_detailed','raw_team_stats','raw_team_stats_detailed',
+                            'stg_player_stats','stg_team_stats','stg_teams','stg_players','stg_standings',
+                            'dim_player_stats', 'dim_team_stats','dim_player_team_stats'
                             ]
         if isinstance(obj, pd.DataFrame) and obj.empty:
             pass
