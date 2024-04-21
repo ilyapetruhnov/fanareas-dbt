@@ -19,7 +19,7 @@ player_stats_detailed as (
 final as (
 
 select 
-    player_stats_detailed.id,
+    distinct player_stats_detailed.id,
     player_statistic_id,
     player_id,
     team_id,
