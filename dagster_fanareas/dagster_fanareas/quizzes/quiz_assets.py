@@ -56,18 +56,17 @@ def post_guess_team_player_quiz(team_id, team_name, season, season_id, season_na
         )
     quiz_obj.collect_questions(quiz_player_left)
 
-    quiz_oldest_player = quiz_obj.generate_player_age_question(
+    quiz_oldest_player = quiz_obj.generate_player_oldest_question(
         query = query_team_player_season_dims.format(team_id, season), 
         team_name = team_name, 
         season_name = season_name
         )
     quiz_obj.collect_questions(quiz_oldest_player)
 
-    quiz_youngest_player = quiz_obj.generate_player_age_question(
+    quiz_youngest_player = quiz_obj.generate_player_youngest_question(
         query = query_team_player_season_dims.format(team_id, season), 
         team_name = team_name, 
-        season_name = season_name,
-        oldest = False
+        season_name = season_name
         )
     quiz_obj.collect_questions(quiz_youngest_player)
 

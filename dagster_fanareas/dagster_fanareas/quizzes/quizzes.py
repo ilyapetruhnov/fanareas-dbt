@@ -155,30 +155,30 @@ class Quizzes:
             question = self.question_template(question_statement, options, correct_response)
             return question
 
-    def generate_player_age_question(self, query: str, team_name: str, season_name: str, oldest=True) -> dict:
+    def generate_player_oldest_question(self, query: str, team_name: str, season_name: str) -> dict:
         df = self.generate_df(query)
-        if oldest==True:
-            sample_df = df.groupby('age')['fullname'].apply(list).reset_index().sort_values('age',
-                                                                                            ascending=False).head(4)
-            sample_df['fullname'] = sample_df['fullname'].apply(lambda x: random.choice(x))
-            correct_row = sample_df.iloc[0]
-            correct_response = correct_row['fullname']
-            question_statement = "Who was the oldest player in {0} squad in the {1} season?".format(team_name,
-                                                                                                    season_name)
-            options = list(sample_df['fullname'])
-            random.shuffle(options)
-            question = self.question_template(question_statement, options, correct_response)
-        else:
-            sample_df = df.groupby('age')['fullname'].apply(list).reset_index().sort_values('age', ascending=True).head(
-                4)
-            sample_df['fullname'] = sample_df['fullname'].apply(lambda x: random.choice(x))
-            correct_row = sample_df.iloc[0]
-            correct_response = correct_row['fullname']
-            question_statement = "Who was the youngest player in {0} squad in the {1} season?".format(team_name,
-                                                                                                      season_name)
-            options = list(sample_df['fullname'])
-            random.shuffle(options)
-            question = self.question_template(question_statement, options, correct_response)
+        sample_df = df.groupby('age')['fullname'].apply(list).reset_index().sort_values('age', ascending=False).head(4)
+        sample_df['fullname'] = sample_df['fullname'].apply(lambda x: random.choice(x))
+        correct_row = sample_df.iloc[0]
+        correct_response = correct_row['fullname']
+        question_statement = "Who was the oldest player in {0} squad in the {1} season?".format(team_name,
+                                                                                                season_name)
+        options = list(sample_df['fullname'])
+        random.shuffle(options)
+        question = self.question_template(question_statement, options, correct_response)
+        return question
+    
+    def generate_player_youngest_question(self, query: str, team_name: str, season_name: str) -> dict:
+        df = self.generate_df(query)
+        sample_df = df.groupby('age')['fullname'].apply(list).reset_index().sort_values('age', ascending=True).head(4)
+        sample_df['fullname'] = sample_df['fullname'].apply(lambda x: random.choice(x))
+        correct_row = sample_df.iloc[0]
+        correct_response = correct_row['fullname']
+        question_statement = "Who was the youngest player in {0} squad in the {1} season?".format(team_name,
+                                                                                                  season_name)
+        options = list(sample_df['fullname'])
+        random.shuffle(options)
+        question = self.question_template(question_statement, options, correct_response)
         return question
     
     def generate_player_position_played_question(self, query: str, season_name: str) -> dict:
@@ -189,8 +189,9 @@ class Quizzes:
         correct_response = random.choice(correct_df['fullname'].unique())
         outer = df.merge(correct_df, how='outer', indicator=True)
         #perform anti-join
-        anti_join_df = outer[(outer._merge=='left_only')].drop('_merge', axis=1).sample(3)
-        options = [i for i in anti_join_df['fullname']]
+        anti_join_df = outer[(outer._merge=='left_only')].drop('_merge', axis=1)
+        sample_df = anti_join_df.sample(3)
+        options = [i for i in sample_df.fullname]
         options.append(correct_response)
         question_statement = "Who played at {} position in the {} season?".format(position, season_name)
         return self.question_template(question_statement, options, correct_response)
