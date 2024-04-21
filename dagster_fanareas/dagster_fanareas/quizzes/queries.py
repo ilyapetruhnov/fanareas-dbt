@@ -597,6 +597,7 @@ with vw as (
             and date_of_birth is not null
             and array_length(t.team,1) = 1
             and POSITION('Coach' IN t.position) = 0
+            and t.appearances > 3
             )
             select *
             from vw

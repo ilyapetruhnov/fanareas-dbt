@@ -23,7 +23,7 @@ def get_season_name_and_id() -> dict:
     season = int(season_name[:4])
     return {'season_name': season_name, 'season_id': season_id, 'season': season}
 
-def validate_team_season(team_id, season_id):
+def validate_team_season(team_id, season_id) -> bool:
     engine = create_db_session()
     query = """select season_id from standings where participant_id = {}""".format(team_id)
     standings_df = pd.read_sql(query, con=engine)
