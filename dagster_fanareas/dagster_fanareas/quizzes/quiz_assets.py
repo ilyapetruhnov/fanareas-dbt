@@ -59,8 +59,7 @@ def post_guess_team_player_quiz(team_id, team_name, season, season_id, season_na
     quiz_oldest_player = quiz_obj.generate_player_age_question(
         query = query_team_player_season_dims.format(team_id, season), 
         team_name = team_name, 
-        season_name = season_name,
-        oldest = True
+        season_name = season_name
         )
     quiz_obj.collect_questions(quiz_oldest_player)
 
@@ -98,6 +97,13 @@ def post_guess_team_player_quiz(team_id, team_name, season, season_id, season_na
         )
     quiz_obj.collect_questions(quiz_team_player_stats_goal_assists)
 
+    quiz_player_position_played = quiz_obj.generate_player_position_played_question(
+        query = query_team_player_position_season_stats.format(team_id, season), 
+        season_name = season_name
+        )
+    quiz_obj.collect_questions(quiz_player_position_played)
+
+
     for metric in player_dim_metrics:
         quiz_team_player_dims = quiz_obj.generate_player_metric_question(
             query = query_team_player_season_dims.format(team_id, season),
@@ -115,12 +121,12 @@ def post_guess_team_player_quiz(team_id, team_name, season, season_id, season_na
         )
         quiz_obj.collect_questions(quiz_team_player_stats)
 
-        quiz_team_player_position_stats = quiz_obj.generate_player_position_stats_question(
-            query = query_team_player_position_season_stats.format(team_id, season), 
-            season_name=season_name,
-            metric = metric
-        )
-        quiz_obj.collect_questions(quiz_team_player_position_stats)
+        # quiz_team_player_position_stats = quiz_obj.generate_player_position_stats_question(
+        #     query = query_team_player_position_season_stats.format(team_id, season), 
+        #     season_name=season_name,
+        #     metric = metric
+        # )
+        # quiz_obj.collect_questions(quiz_team_player_position_stats)
 
         quiz_team_player_stats_n = quiz_obj.generate_player_more_than_n_question(
             query = query_team_player_season_stats.format(team_id, season), 
