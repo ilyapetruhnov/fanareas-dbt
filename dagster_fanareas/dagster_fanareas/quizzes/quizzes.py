@@ -49,6 +49,7 @@ class Quizzes:
         if len(options) < 4:
             result = None
         else:
+            random.shuffle(options)
             result = {
                 "description": question_statement,
                 "quizQuestionOptions": options,
@@ -93,7 +94,6 @@ class Quizzes:
         correct_vals = [correct_row[i] for i in cols]
         question_statement = statement.format(team_name, *correct_vals)
         options = list(sample_df['fullname'])
-        random.shuffle(options)
         correct_response = correct_row['fullname']
         question = self.question_template(question_statement, options, correct_response)
         return question
@@ -119,7 +119,6 @@ class Quizzes:
                                                                                                             season_name)
 
             options = list(sample_df['fullname'])
-            random.shuffle(options)
             question = self.question_template(question_statement, options, correct_response)
             return question
         else:
@@ -135,7 +134,6 @@ class Quizzes:
             options_df = df[df['season_name'] != season_name].sample(3)
             options = [i for i in options_df['fullname']]
             options.append(correct_response)
-            random.shuffle(options)
             question_statement = "Who joined {} in the {} season?".format(team_name, season_name)
             question = self.question_template(question_statement, options, correct_response)
             return question
@@ -150,7 +148,6 @@ class Quizzes:
             options_df = df[df['season_name'] != season_name].sample(3)
             options = [i for i in options_df['fullname']]
             options.append(correct_response)
-            random.shuffle(options)
             question_statement = "Who left {} in the {} season?".format(team_name, season_name)
             question = self.question_template(question_statement, options, correct_response)
             return question
@@ -164,7 +161,6 @@ class Quizzes:
         question_statement = "Who was the oldest player in {0} squad in the {1} season?".format(team_name,
                                                                                                 season_name)
         options = list(sample_df['fullname'])
-        random.shuffle(options)
         question = self.question_template(question_statement, options, correct_response)
         return question
     
@@ -177,7 +173,6 @@ class Quizzes:
         question_statement = "Who was the youngest player in {0} squad in the {1} season?".format(team_name,
                                                                                                   season_name)
         options = list(sample_df['fullname'])
-        random.shuffle(options)
         question = self.question_template(question_statement, options, correct_response)
         return question
     
@@ -205,7 +200,6 @@ class Quizzes:
                 result_df = df[df['position'] == player_position].sort_values(metric, ascending=False).head(4)
                 correct_response = result_df.iloc[0]['fullname']
                 options = [i for i in result_df.fullname]
-                random.shuffle(options)
                 formatted_metric = self.format_metric(metric)
                 if metric == 'substitute_appearances':
                     question_statement = "Which {} player had the most appearances coming off the bench in the {} season?".format(
@@ -224,7 +218,6 @@ class Quizzes:
 
         correct_response = grouped_df[grouped_df[f'{metric}_rn'] == 1]['fullname'][0][0]
         options = [i[0] for i in grouped_df.fullname][:4]
-        random.shuffle(options)
         formatted_metric = self.format_metric(metric)
         if metric == 'substitute_appearances':
             question_statement = "Who had the most appearances coming off the bench in the {} season?".format(
@@ -252,7 +245,6 @@ class Quizzes:
 
             options = [i for i in options_df.fullname]
             options.append(correct_response)
-            random.shuffle(options)
             question = self.question_template(question_statement, options, correct_response)
             return question
 
@@ -271,7 +263,6 @@ class Quizzes:
 
             options = [i for i in options_df.fullname]
             options.append(correct_response)
-            random.shuffle(options)
             question = self.question_template(question_statement, options, correct_response)
             return question
 
@@ -301,7 +292,6 @@ class Quizzes:
                 return None
         options = [i for i in options_df.fullname]
         options.append(correct_response)
-        random.shuffle(options)
         question = self.question_template(question_statement, options, correct_response)
         return question
 
@@ -316,7 +306,6 @@ class Quizzes:
             options_df = df[df[metric] <= n].sample(3)
             options = [i for i in options_df.fullname]
             options.append(correct_response)
-            random.shuffle(options)
             formatted_metric = self.format_metric(metric)
             if metric == 'substitute_appearances':
                 question_statement = "Which player had more than {} appearances coming off the bench in the {} season?".format(
@@ -411,7 +400,6 @@ class Quizzes:
         club1 = sample_df['transfer_from_team'].iloc[0]
         club2 = sample_df['team'].iloc[0]
         options = list(sample_df['fullname'])
-        random.shuffle(options)
         correct_response = sample_df.iloc[0]['fullname']
         statement = f"Which player played for {club1} and {club2} in his career?"
         question = self.question_template(statement, options, correct_response)
@@ -455,7 +443,6 @@ class Quizzes:
         correct_team = sample_df.iloc[0]['team']
         statement = f"What is the home venue of {correct_team}?"
         options = list(sample_df['venue'])
-        random.shuffle(options)
         question = self.question_template(statement, options, correct_response)
         return question
 
@@ -465,7 +452,6 @@ class Quizzes:
         correct_response = sample_df.iloc[0]['team']
         statement = f"Which team was founded first?"
         options = list(sample_df['team'])
-        random.shuffle(options)
         question = self.question_template(statement, options, correct_response)
         return question
 
@@ -476,7 +462,6 @@ class Quizzes:
         correct_response = sample_df.iloc[0]['venue_city']
         statement = f"Which stadium has higher capacity?"
         options = list(sample_df['venue_city'])
-        random.shuffle(options)
         question = self.question_template(statement, options, correct_response)
         return question
 
@@ -486,7 +471,6 @@ class Quizzes:
         correct_response = sample_df.iloc[0]['team']
         statement = f"Which team finished the 2007/2008 season with 11 points?"
         options = list(sample_df['team'])
-        random.shuffle(options)
         question = self.question_template(statement, options, correct_response)
         return question
 
@@ -496,7 +480,6 @@ class Quizzes:
         correct_response = sample_df.iloc[0]['team']
         statement = f"Which team finished the 2017/2018 season with 100 points (English Premier League record)?"
         options = list(sample_df['team'].unique())[:4]
-        random.shuffle(options)
         question = self.question_template(statement, options, correct_response)
         return question
 
@@ -506,7 +489,6 @@ class Quizzes:
         correct_response = sample_df.iloc[0]['team_promoted']
         season = sample_df.iloc[0]['season']
         options = sample_df.iloc[0]['options']
-        random.shuffle(options)
         statement = f"Which team did not relegate in the {season} season?"
         question = self.question_template(statement, options, correct_response)
         return question
