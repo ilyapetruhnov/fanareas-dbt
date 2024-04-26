@@ -86,17 +86,17 @@ class Quizzes:
         team_name = df['name'].iloc[0]
         return {'team_name': team_name, 'team_id': team_id}
     
-    def generate_question(self, query: str, statement: str, team_name: str, cols: tuple) -> dict:
-        df = self.generate_df(query)
-        sample_df = df.sample(n=4)
-        correct_idx = random.randint(0, 3)
-        correct_row = sample_df.iloc[correct_idx]
-        correct_vals = [correct_row[i] for i in cols]
-        question_statement = statement.format(team_name, *correct_vals)
-        options = list(sample_df['fullname'])
-        correct_response = correct_row['fullname']
-        question = self.question_template(question_statement, options, correct_response)
-        return question
+    # def generate_question(self, query: str, statement: str, team_name: str, cols: tuple) -> dict:
+    #     df = self.generate_df(query)
+    #     sample_df = df.sample(n=4)
+    #     correct_idx = random.randint(0, 3)
+    #     correct_row = sample_df.iloc[correct_idx]
+    #     correct_vals = [correct_row[i] for i in cols]
+    #     question_statement = statement.format(team_name, *correct_vals)
+    #     options = list(sample_df['fullname'])
+    #     correct_response = correct_row['fullname']
+    #     question = self.question_template(question_statement, options, correct_response)
+    #     return question
 
     def generate_player_metric_question(self, query: str, metric: str, season_name: str) -> dict:
         df = self.generate_df(query)
@@ -151,26 +151,18 @@ class Quizzes:
             question_statement = "Who left {} in the {} season?".format(team_name, season_name)
             question = self.question_template(question_statement, options, correct_response)
             return question
-
-    def generate_player_oldest_question(self, query: str, team_name: str, season_name: str) -> dict:
+        
+    def generate_player_age_question(self, query: str, team_name: str, season_name: str, youngest: bool) -> dict:
         df = self.generate_df(query)
-        sample_df = df.groupby('age')['fullname'].apply(list).reset_index().sort_values('age', ascending=False).head(4)
+        sample_df = df.groupby('age')['fullname'].apply(list).reset_index().sort_values('age', ascending=youngest).head(4)
         sample_df['fullname'] = sample_df['fullname'].apply(lambda x: random.choice(x))
         correct_row = sample_df.iloc[0]
         correct_response = correct_row['fullname']
-        question_statement = "Who was the oldest player in {0} squad in the {1} season?".format(team_name,
-                                                                                                season_name)
-        options = list(sample_df['fullname'])
-        question = self.question_template(question_statement, options, correct_response)
-        return question
-    
-    def generate_player_youngest_question(self, query: str, team_name: str, season_name: str) -> dict:
-        df = self.generate_df(query)
-        sample_df = df.groupby('age')['fullname'].apply(list).reset_index().sort_values('age', ascending=True).head(4)
-        sample_df['fullname'] = sample_df['fullname'].apply(lambda x: random.choice(x))
-        correct_row = sample_df.iloc[0]
-        correct_response = correct_row['fullname']
-        question_statement = "Who was the youngest player in {0} squad in the {1} season?".format(team_name,
+        if youngest:
+            question_statement = "Who was the youngest player in {0} squad in the {1} season?".format(team_name,
+                                                                                                    season_name)
+        else:
+            question_statement = "Who was the oldest player in {0} squad in the {1} season?".format(team_name,
                                                                                                   season_name)
         options = list(sample_df['fullname'])
         question = self.question_template(question_statement, options, correct_response)

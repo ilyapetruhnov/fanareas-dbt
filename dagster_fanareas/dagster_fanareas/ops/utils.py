@@ -97,6 +97,16 @@ def flatten_list(nested_list):
     return flattened_list
 
 @op
+def get_dim_name_and_id(dim: str) -> dict:
+    engine = create_db_session()
+    url = f"https://fanareas.com/api/{dim}/generateId"
+    _id = requests.get(url).json()
+    query = f"""select name from {dim} where id = {_id}"""
+    df = pd.read_sql(query, con=engine)
+    name = df['name'].iloc[0]
+    return {'name': name, 'id': _id}
+
+@op
 def post_json(json_data, url):
     response = requests.post(url, json=json_data)
 
