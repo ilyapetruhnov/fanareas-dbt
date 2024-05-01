@@ -78,7 +78,7 @@ class Quizzes:
         engine = create_db_session()
         return pd.read_sql(query, con=engine)
 
-    def get_team_name_and_id() -> dict:
+    def get_team_name_and_id(self) -> dict:
         engine = create_db_session()
         team_id = requests.get('https://fanareas.com/api/teams/generateId').json()
         team_qr = """select name from teams where id = {}""".format(team_id)
