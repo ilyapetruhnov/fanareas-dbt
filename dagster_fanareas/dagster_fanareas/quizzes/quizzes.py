@@ -492,6 +492,16 @@ class Quizzes:
         # result_list = self.quiz_collection[:10]
         # return result_list
         return self.quiz_collection
+    
+    def post_demo_quiz(self, questions):
+        json_data = {"title": self.title,
+                     "type": self.quiz_type,
+                     "description": self.description,
+                     "questions": questions,
+                     "isDemo": self.is_demo
+                     }
+        return post_json(json_data, self.url)
+
 
     def post_quiz(self, questions, team_name, season_name, entityIdTeam, entityIdSeason, entityTypeTeam,
                   entityTypeSeason):

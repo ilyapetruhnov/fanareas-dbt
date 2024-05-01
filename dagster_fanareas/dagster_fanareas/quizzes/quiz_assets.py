@@ -66,6 +66,6 @@ def demo_quiz() -> bool:
     quiz_obj.collect_questions(quiz_obj.generate_relegations_question())
 
     mixed_quiz_questions = quiz_obj.mix_quiz_questions()
-    quiz_obj.post_quiz(mixed_quiz_questions)
+    quiz_obj.post_demo_quiz(mixed_quiz_questions)
 
     return True
