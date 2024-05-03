@@ -46,6 +46,7 @@ top_teams_query = """
                         season_name,
                         assists,
                         goals,
+                        goals + assists as goals_assists,
                         red_cards,
                         yellow_cards,
                         minutes_played,
@@ -60,6 +61,7 @@ top_teams_query = """
                 select *
                             , row_number() over (partition by team ORDER BY assists desc nulls last)      as assists_rn
                             , row_number() over (partition by team ORDER BY goals desc nulls last)        as goals_rn
+                            , row_number() over (partition by team ORDER BY goals_assists desc nulls last) as goals_assists_rn
                             , row_number() over (partition by team ORDER BY red_cards desc nulls last)    as red_cards_rn
                             , row_number() over (partition by team ORDER BY yellow_cards desc nulls last) as yellow_cards_rn
                             , row_number() over (partition by team ORDER BY penalties desc nulls last)    as penalties_rn
@@ -73,6 +75,7 @@ top_teams_query = """
                 goals_rn <= 5
                 or minutes_played_rn <= 5
                 or assists_rn <= 5
+                or goals_assists_rn <=5
                 or red_cards_rn <= 5
                 or yellow_cards_rn <= 5
                 or penalties_rn <=5

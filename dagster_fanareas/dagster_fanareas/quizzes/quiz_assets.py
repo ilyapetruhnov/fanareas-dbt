@@ -30,21 +30,15 @@ def transfers_quiz() -> bool:
     quiz_type = 1
     is_demo = False
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
-    quiz_player_transferred_from_to = quiz_obj.generate_quiz_questions(query_player_transferred_from_to, 
-                                                                       statement_player_transferred_from_to, 
-                                                                       ('transfer_from_team', 
-                                                                       'team', 
-                                                                       'season')
-    )
-    quiz_obj.collect_questions(quiz_player_transferred_from_to)
-    quiz_player_2_clubs_played = quiz_obj.generate_quiz_questions(query_player_2_clubs_played, 
-                                                                  statement_player_2_clubs_played, 
-                                                                 ('team', 
-                                                                  'transfer_from_team')
-    )
-    quiz_obj.collect_questions(quiz_player_2_clubs_played)
+    for i in range(4):
+        quiz_obj.collect_questions(quiz_obj.generate_player_transfer_question())
+        quiz_obj.collect_questions(quiz_obj.generate_player_transfer_question(clubs_played=True))
+
+        quiz_obj.collect_questions(quiz_obj.generate_player_left_joined_question())
+        quiz_obj.collect_questions(quiz_obj.generate_player_left_joined_question(joined=True))
+
     mixed_quiz_questions = quiz_obj.mix_quiz_questions()
-    quiz_obj.post_quiz(mixed_quiz_questions)
+    quiz_obj.post_quiz(questions = mixed_quiz_questions)
     return True
 
 @asset(group_name="quizzes")
@@ -66,6 +60,6 @@ def demo_quiz() -> bool:
     quiz_obj.collect_questions(quiz_obj.generate_relegations_question())
 
     mixed_quiz_questions = quiz_obj.mix_quiz_questions()
-    quiz_obj.post_demo_quiz(mixed_quiz_questions)
+    quiz_obj.post_quiz(questions = mixed_quiz_questions)
 
     return True

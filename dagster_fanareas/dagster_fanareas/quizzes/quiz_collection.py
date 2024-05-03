@@ -120,14 +120,15 @@ def post_guess_team_player_quiz(team_id, team_name, season, season_id, season_na
         quiz_obj.collect_questions(quiz_team_player_stats_n)
 
     mixed_quiz_questions = quiz_obj.mix_quiz_questions()
+    tags = quiz_obj.quiz_tags(team_name, 
+                              season_name, 
+                              entityIdTeam=team_id, 
+                              entityIdSeason=season_id, 
+                              entityTypeTeam=1,
+                            entityTypeSeason=2)
     quiz_obj.post_quiz(
         questions = mixed_quiz_questions,
-        team_name = team_name,
-        season_name = season_name,
-        entityIdTeam = team_id,
-        entityIdSeason = season_id,
-        entityTypeTeam = 1,
-        entityTypeSeason = 2
+        tags = tags
                        )
 
     return True

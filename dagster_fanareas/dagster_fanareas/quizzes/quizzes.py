@@ -1,9 +1,8 @@
 import pandas as pd
 import random
-from dagster_fanareas.ops.utils import post_json, create_db_session
+from dagster_fanareas.ops.utils import post_json, create_db_session, get_dim_name_and_id
 from dagster_fanareas.quizzes.queries import *
 from dagster_fanareas.quizzes.maps import top_n_metric_map
-import requests
 
 
 class Quizzes:
@@ -15,21 +14,14 @@ class Quizzes:
         self.url = "https://fanareas.com/api/quizzes/createQuizz"
         self.quiz_collection = []
 
-    def quiz_template(self, 
-                      questions, 
-                      team_name, 
-                      season_name, 
-                      entityIdTeam, 
-                      entityIdSeason, 
-                      entityTypeTeam,
-                      entityTypeSeason):
-        
-        json_data = {"title": self.title,
-                     "type": self.quiz_type,
-                     "description": self.description,
-                     "questions": questions,
-                     "isDemo": self.is_demo,
-                     "quizzTags": [
+    def quiz_tags(self, 
+                  team_name, 
+                  season_name, 
+                  entityIdTeam, 
+                  entityIdSeason, 
+                  entityTypeTeam,
+                  entityTypeSeason):
+        tags = [
                          {
                              "entityId": entityIdTeam,
                              "entityName": team_name,
@@ -41,6 +33,17 @@ class Quizzes:
                              "entityType": entityTypeSeason
                          }
                      ]
+        return tags
+    
+    def quiz_template(self, questions, tags = None):
+        
+        json_data = {
+            "title": self.title,
+            "type": self.quiz_type,
+            "description": self.description,
+            "questions": questions,
+            "isDemo": self.is_demo,
+            "quizzTags": tags
                      }
 
         return json_data
@@ -77,26 +80,6 @@ class Quizzes:
     def generate_df(self, query: str) -> pd.DataFrame:
         engine = create_db_session()
         return pd.read_sql(query, con=engine)
-
-    def get_team_name_and_id(self) -> dict:
-        engine = create_db_session()
-        team_id = requests.get('https://fanareas.com/api/teams/generateId').json()
-        team_qr = """select name from teams where id = {}""".format(team_id)
-        df = pd.read_sql(team_qr, con=engine)
-        team_name = df['name'].iloc[0]
-        return {'team_name': team_name, 'team_id': team_id}
-    
-    # def generate_question(self, query: str, statement: str, team_name: str, cols: tuple) -> dict:
-    #     df = self.generate_df(query)
-    #     sample_df = df.sample(n=4)
-    #     correct_idx = random.randint(0, 3)
-    #     correct_row = sample_df.iloc[correct_idx]
-    #     correct_vals = [correct_row[i] for i in cols]
-    #     question_statement = statement.format(team_name, *correct_vals)
-    #     options = list(sample_df['fullname'])
-    #     correct_response = correct_row['fullname']
-    #     question = self.question_template(question_statement, options, correct_response)
-    #     return question
 
     def generate_player_metric_question(self, query: str, metric: str, season_name: str) -> dict:
         df = self.generate_df(query)
@@ -151,6 +134,50 @@ class Quizzes:
             question_statement = "Who left {} in the {} season?".format(team_name, season_name)
             question = self.question_template(question_statement, options, correct_response)
             return question
+        
+    def generate_player_transfer_question(self, clubs_played=False) -> dict:
+        df = self.generate_df(query_transfers)
+        correct_df = df.sample(1)
+        correct_response = correct_df['fullname'].iloc[0]
+        season_name = correct_df['season_name'].iloc[0]
+        team_from = correct_df['transfer_from_team'].iloc[0]
+        team_to = correct_df['transfer_to_team'].iloc[0]
+
+        if clubs_played:
+            options_df = df[(df['transfer_from_team']!= team_from) & (df['transfer_to_team']!= team_from)].sample(3)
+            question_statement = "Who played for {} and {} in his career?".format(team_from, team_to)
+
+        else:
+            options_df = df.drop([correct_df.index[0]], axis=0).sample(3)
+            question_statement = "Which player left {} and joined {} in the {} season?".format(team_from, team_to, season_name)
+
+        options = [i for i in options_df['fullname']]
+        options.append(correct_response)
+        question = self.question_template(question_statement, options, correct_response)
+        return question
+    
+    def generate_player_left_joined_question(self, joined=False) -> dict:
+        df = self.generate_df(query_transfers)
+        seasons = df['season_name'].unique()
+        season = random.choice(seasons)
+        df = df[df['season_name']== season]
+        correct_df = df.sample(1)
+        correct_response = correct_df['fullname'].iloc[0]
+        season_name = correct_df['season_name'].iloc[0]
+        team_from = correct_df['transfer_from_team'].iloc[0]
+        team_to = correct_df['transfer_to_team'].iloc[0]
+        if joined:
+            question_statement = "Who joined {} in the {} season?".format(team_to, season_name)
+            options_df = df[df['transfer_to_team'] != team_to].sample(3)
+        else:
+            question_statement = "Who left {} in the {} season?".format(team_from, season_name)
+            options_df = df[df['transfer_from_team'] != team_from].sample(3)
+        
+        options = [i for i in options_df['fullname']]
+        options.append(correct_response)
+        question = self.question_template(question_statement, options, correct_response)
+        return question
+        
         
     def generate_player_age_question(self, query: str, team_name: str, season_name: str, youngest: bool) -> dict:
         df = self.generate_df(query)
@@ -374,12 +401,11 @@ class Quizzes:
 
     def generate_player_shirt_number_question(self):
         df = self.generate_df(query_player_shirt_number)
-        # generated_team = self.get_team_name_and_id()
-        # teamid = str(generated_team['team_id'])
-        teamid = '19'
-        # team = generated_team['team_name']
-        team = 'Arsenal'
-        sample_df = df[df['team_id'] == teamid]
+        #team generation
+        generated_team = get_dim_name_and_id('teams')
+        team = generated_team['name']
+        team_id = generated_team['id']
+        sample_df = df[df['team_id'] == team_id]
         sample_df = sample_df.sample(4)
         jersey_number = sample_df['jersey_number'].iloc[0]
         correct_response = sample_df['fullname'].iloc[0]
@@ -494,24 +520,8 @@ class Quizzes:
         # result_list = self.quiz_collection[:10]
         # return result_list
         return self.quiz_collection
-    
-    def post_demo_quiz(self, questions):
-        json_data = {"title": self.title,
-                     "type": self.quiz_type,
-                     "description": self.description,
-                     "questions": questions,
-                     "isDemo": self.is_demo
-                     }
-        return post_json(json_data, self.url)
 
 
-    def post_quiz(self, questions, team_name, season_name, entityIdTeam, entityIdSeason, entityTypeTeam,
-                  entityTypeSeason):
-        json_data = self.quiz_template(questions,
-                                       team_name,
-                                       season_name,
-                                       entityIdTeam,
-                                       entityIdSeason,
-                                       entityTypeTeam,
-                                       entityTypeSeason)
+    def post_quiz(self, questions, tags = None):
+        json_data = self.quiz_template(questions, tags)
         return post_json(json_data, self.url)
