@@ -164,10 +164,10 @@ class Quizzes:
         season = random.choice(seasons)
         generated_team = get_dim_name_and_id('teams')
         team_from = generated_team['name']
-        df = df[ (df['season_name']== season) & ( df['transfer_from_team']== team_from)]
-        if df.empty:
+        selected_df = df[ (df['season_name']== season) & ( df['transfer_from_team']== team_from)]
+        if selected_df.empty:
             return None
-        correct_df = df.sample(1)
+        correct_df = selected_df.sample(1)
         correct_response = correct_df['fullname'].iloc[0]
         season_name = correct_df['season_name'].iloc[0]
         team_from = correct_df['transfer_from_team'].iloc[0]
