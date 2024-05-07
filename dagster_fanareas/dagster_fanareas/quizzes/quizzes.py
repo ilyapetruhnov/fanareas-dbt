@@ -162,7 +162,11 @@ class Quizzes:
         df = self.generate_df(query_transfers)
         seasons = df['season_name'].unique()
         season = random.choice(seasons)
-        df = df[df['season_name']== season]
+        generated_team = get_dim_name_and_id('teams')
+        team_from = generated_team['name']
+        df = df[ (df['season_name']== season) & ( df['transfer_from_team']== team_from)]
+        if df.empty:
+            return None
         correct_df = df.sample(1)
         correct_response = correct_df['fullname'].iloc[0]
         season_name = correct_df['season_name'].iloc[0]
