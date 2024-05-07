@@ -137,10 +137,12 @@ class Quizzes:
         
     def generate_player_transfer_question(self, clubs_played=False) -> dict:
         df = self.generate_df(query_transfers)
-        correct_df = df.sample(1)
+        generated_team = get_dim_name_and_id('teams')
+        team_from = generated_team['name']
+        correct_df = df[df['transfer_from_team']==team_from].sample(1)
         correct_response = correct_df['fullname'].iloc[0]
         season_name = correct_df['season_name'].iloc[0]
-        team_from = correct_df['transfer_from_team'].iloc[0]
+
         team_to = correct_df['transfer_to_team'].iloc[0]
 
         if clubs_played:
@@ -201,10 +203,13 @@ class Quizzes:
         position = random.choice(positions)
         correct_df = df[df['position'] == position]
         correct_response = random.choice(correct_df['fullname'].unique())
-        outer = df.merge(correct_df, how='outer', indicator=True)
-        #perform anti-join
-        anti_join_df = outer[(outer._merge=='left_only')].drop('_merge', axis=1)
-        sample_df = anti_join_df.sample(3)
+
+        sample_df = df[df['position'] != position].sample(3)
+
+        # outer = df.merge(correct_df, how='outer', indicator=True)
+        # #perform anti-join
+        # anti_join_df = outer[(outer._merge=='left_only')].drop('_merge', axis=1)
+        # sample_df = anti_join_df.sample(3)
         options = [i for i in sample_df.fullname]
         options.append(correct_response)
         question_statement = "Who played at {} position in the {} season?".format(position, season_name)
