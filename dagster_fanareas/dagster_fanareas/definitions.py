@@ -49,7 +49,7 @@ news_schedule = ScheduleDefinition(
 
 transfers_quiz_schedule = ScheduleDefinition(
     job=transfers_quiz_job, 
-    cron_schedule="0 11 * * *"
+    cron_schedule="10 8 * * *"
 )
 
 guess_the_player_quiz_schedule = ScheduleDefinition(
@@ -74,7 +74,7 @@ facts_player_season_schedule = ScheduleDefinition(
 
 daily_dbt_assets_schedule = ScheduleDefinition(
     job=dbt_job,
-    cron_schedule="@daily"
+    cron_schedule="15 7 * * *"
 )
 
 daily_ingest_assets_schedule = ScheduleDefinition(
