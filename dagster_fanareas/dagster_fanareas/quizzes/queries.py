@@ -606,10 +606,12 @@ with vw as (
                 and
                 season = {1}"""
 
-query_player_joined_club = """            WITH vw as (SELECT player_id,
+query_player_joined_club = """WITH vw as (SELECT player_id,
                                firstname,
                                lastname,
                                fullname,
+                               lag(t.season) over
+                                   (partition by player_id order by t.season) previous_season,
                                lag(array_to_string(team, '/')) over
                                    (partition by player_id order by t.season) transfer_from_team,
                             lag(array_to_string(t.team_id, '/')) over
@@ -631,6 +633,7 @@ query_player_joined_club = """            WITH vw as (SELECT player_id,
             firstname,
             lastname,
             fullname,
+            (season - previous_season) as years_btw,
             team,
             team_id,
             season,
@@ -652,7 +655,10 @@ query_player_joined_club = """            WITH vw as (SELECT player_id,
                            transfer_to_team_id[1] as transfer_to_team_id
                     from window_vw
                     where transfer_from_team != team
-                    AND POSITION('/' IN transfer_from_team) = 0)
+                    AND 
+                    POSITION('/' IN transfer_from_team) = 0
+                    AND
+                    years_btw < 2)
             SELECT player_id,
                    firstname,
                    lastname,
@@ -670,6 +676,8 @@ query_player_left_club = """WITH vw as (SELECT player_id,
                                firstname,
                                lastname,
                                fullname,
+                            lag(t.season) over
+                                   (partition by player_id order by t.season) previous_season,
                                lag(array_to_string(team, '/')) over
                                    (partition by player_id order by t.season) transfer_from_team,
                             lag(array_to_string(t.team_id, '/')) over
@@ -693,6 +701,7 @@ query_player_left_club = """WITH vw as (SELECT player_id,
             fullname,
             team,
             team_id,
+            (season - previous_season) as years_btw,
             season,
             season_name,
             transfer_from_team,
@@ -716,12 +725,17 @@ query_player_left_club = """WITH vw as (SELECT player_id,
             transfer_from_team != team
             AND
             POSITION('/' IN transfer_from_team) = 0
-            and transfer_from_team_id = {0}"""
+            AND
+            years_btw < 2
+            and 
+            transfer_from_team_id = {0}"""
 
 query_transfers = """WITH vw as (SELECT player_id,
                                firstname,
                                lastname,
                                fullname,
+                               lag(t.season) over
+                                   (partition by player_id order by t.season) previous_season,
                                lag(array_to_string(team, '/')) over
                                    (partition by player_id order by t.season) transfer_from_team,
                             lag(array_to_string(t.team_id, '/')) over
@@ -745,6 +759,7 @@ query_transfers = """WITH vw as (SELECT player_id,
             fullname,
             team,
             team_id,
+            (season - previous_season) as years_btw,
             season,
             season_name,
             transfer_from_team,
@@ -764,7 +779,10 @@ query_transfers = """WITH vw as (SELECT player_id,
                            transfer_to_team_id[1] as transfer_to_team_id
                     from window_vw
                     where transfer_from_team != team
-                    AND POSITION('/' IN transfer_from_team) = 0)
+                    AND 
+                    POSITION('/' IN transfer_from_team) = 0
+                    AND
+                    years_btw < 2)
             SELECT player_id,
                    firstname,
                    lastname,
