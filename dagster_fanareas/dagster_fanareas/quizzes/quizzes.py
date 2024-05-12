@@ -159,25 +159,33 @@ class Quizzes:
         return question
     
     def generate_player_left_joined_question(self, joined=False) -> dict:
-        df = self.generate_df(query_transfers)
-        seasons = df['season_name'].unique()
-        season = random.choice(seasons)
         generated_team = get_dim_name_and_id('teams')
-        team_from = generated_team['name']
-        selected_df = df[ (df['season_name']== season) & ( df['transfer_from_team']== team_from)]
-        if selected_df.empty:
-            return None
-        correct_df = selected_df.sample(1)
-        correct_response = correct_df['fullname'].iloc[0]
-        season_name = correct_df['season_name'].iloc[0]
-        team_from = correct_df['transfer_from_team'].iloc[0]
-        team_to = correct_df['transfer_to_team'].iloc[0]
+        team = generated_team['name']
+        team_id = generated_team['id']
         if joined:
-            question_statement = "Who joined {} in the {} season?".format(team_to, season_name)
-            options_df = df[df['transfer_to_team'] != team_to].sample(3)
+            df = self.generate_df(query_player_joined_club.format(team_id))
+            seasons = df['season_name'].unique()
+            season = random.choice(seasons)
+            selected_df = df[ (df['season_name']== season) & ( df['transfer_to_team']== team)]
+            if selected_df.empty:
+                return None
+            correct_df = selected_df.sample(1)
+            correct_response = correct_df['fullname'].iloc[0]
+            season_name = correct_df['season_name'].iloc[0]
+            options_df = df[df['season_name'] != season_name].sample(3)
+            question_statement = "Who joined {} in the {} season?".format(team, season_name)
+
         else:
-            question_statement = "Who left {} in the {} season?".format(team_from, season_name)
-            options_df = df[df['transfer_from_team'] != team_from].sample(3)
+            df = self.generate_df(query_player_left_club.format(team_id))
+            seasons = df['season_name'].unique()
+            season = random.choice(seasons)
+            selected_df = df[ (df['season_name']== season) & ( df['transfer_from_team']== team)]
+            if selected_df.empty:
+                return None
+            correct_df = selected_df.sample(1)
+            correct_response = correct_df['fullname'].iloc[0]
+            options_df = df[df['season_name'] != season_name].sample(3)
+            question_statement = "Who left {} in the {} season?".format(team, season_name)
         
         options = [i for i in options_df['fullname']]
         options.append(correct_response)
