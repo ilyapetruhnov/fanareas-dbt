@@ -55,7 +55,7 @@ def small_demo_quiz() -> bool:
     quiz_obj.collect_questions(quiz_obj.generate_capacity_question())
     quiz_obj.collect_questions(quiz_obj.generate_fewest_points_question())
 
-    quiz_obj.collect_questions(quiz_obj.generate_relegations_question())
+    quiz_obj.collect_questions(quiz_obj.generate_player_shirt_number_question())
 
     mixed_quiz_questions = quiz_obj.mix_quiz_questions()
     quiz_obj.post_quiz(questions = mixed_quiz_questions)

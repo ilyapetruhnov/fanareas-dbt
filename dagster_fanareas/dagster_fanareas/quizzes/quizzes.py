@@ -440,9 +440,18 @@ class Quizzes:
         jersey_number = sample_df['jersey_number'].iloc[0]
         correct_response = sample_df['fullname'].iloc[0]
         options = list(sample_df['fullname'])
-        random.shuffle(options)
+
+        player_1 = sample_df.iloc[1]['player']
+        player_2 = sample_df.iloc[2]['player']
+        player_3 = sample_df.iloc[3]['player']
+
+        jersey_number_1 = sample_df.iloc[1]['jersey_number']
+        jersey_number_2 = sample_df.iloc[2]['jersey_number']
+        jersey_number_3 = sample_df.iloc[3]['jersey_number']
+
+        description = f"""{correct_response} has {jersey_number} jersey number / {player_1} has {jersey_number_1} jersey number / {player_2} has {jersey_number_2} jersey number / {player_3} has {jersey_number_3} jersey number"""
         statement = f"Who currently plays for {team} under {jersey_number} jersey number?"
-        question = self.question_template(statement, options, correct_response)
+        question = self.demo_question_template(statement, options, correct_response, description)
         return question
 
     def generate_player_2_clubs_question(self):
