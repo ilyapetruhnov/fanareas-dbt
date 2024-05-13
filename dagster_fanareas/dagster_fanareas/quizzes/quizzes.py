@@ -613,7 +613,6 @@ class Quizzes:
 
         options = [i for i in sample_df['player']]
         statement = f"Who played for {correct_team} in his career?"
-
         description = f"""{player_1} played for {team_1} / {player_2} played for {team_2} / {player_3} played for {team_3}"""
         question = self.demo_question_template(statement, options, correct_response, description)
         return question
