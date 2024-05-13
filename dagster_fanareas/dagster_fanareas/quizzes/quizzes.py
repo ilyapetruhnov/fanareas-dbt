@@ -434,7 +434,7 @@ class Quizzes:
         #team generation
         generated_team = get_dim_name_and_id('teams')
         team = generated_team['name']
-        team_id = generated_team['id']
+        team_id = str(generated_team['id'])
         sample_df = df[df['team_id'] == team_id]
         sample_df = sample_df.sample(4)
         jersey_number = sample_df['jersey_number'].iloc[0]
