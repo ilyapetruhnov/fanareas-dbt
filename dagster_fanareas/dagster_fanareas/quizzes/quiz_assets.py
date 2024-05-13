@@ -30,16 +30,38 @@ def transfers_quiz() -> bool:
     quiz_type = 1
     is_demo = False
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
-    for i in range(4):
-        quiz_obj.collect_questions(quiz_obj.generate_player_transfer_question())
-        quiz_obj.collect_questions(quiz_obj.generate_player_transfer_question(clubs_played=True))
-
-        quiz_obj.collect_questions(quiz_obj.generate_player_left_joined_question())
-        quiz_obj.collect_questions(quiz_obj.generate_player_left_joined_question(joined=True))
+    quiz_obj.collect_questions(quiz_obj.generate_player_transfer_question())
+    quiz_obj.collect_questions(quiz_obj.generate_player_transfer_question(clubs_played=True))
+    quiz_obj.collect_questions(quiz_obj.generate_player_left_joined_question())
+    quiz_obj.collect_questions(quiz_obj.generate_player_left_joined_question(joined=True))
+    quiz_obj.collect_questions(quiz_obj.generate_player_transfer_question())
 
     mixed_quiz_questions = quiz_obj.mix_quiz_questions()
     quiz_obj.post_quiz(questions = mixed_quiz_questions)
     return True
+
+
+@asset(group_name="quizzes")
+def small_demo_quiz() -> bool:
+    title = "English Premier League"
+    description = "Answer 5 questions about Premier League"
+    quiz_type = -1
+    is_demo = True
+    quiz_obj = Quizzes(title, description, quiz_type, is_demo)
+
+    quiz_obj.collect_questions(quiz_obj.generate_venue_question())
+    quiz_obj.collect_questions(quiz_obj.generate_player_played_for_team_question())
+
+    quiz_obj.collect_questions(quiz_obj.generate_capacity_question())
+    quiz_obj.collect_questions(quiz_obj.generate_fewest_points_question())
+
+    quiz_obj.collect_questions(quiz_obj.generate_relegations_question())
+
+    mixed_quiz_questions = quiz_obj.mix_quiz_questions()
+    quiz_obj.post_quiz(questions = mixed_quiz_questions)
+
+    return True
+
 
 @asset(group_name="quizzes")
 def demo_quiz() -> bool:

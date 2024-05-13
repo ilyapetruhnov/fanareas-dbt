@@ -59,6 +59,19 @@ class Quizzes:
                 "correctAnswer": correct_response
             }
         return result
+    
+    def demo_question_template(self, question_statement, options, correct_response, description) -> dict:
+        if len(options) < 4:
+            result = None
+        else:
+            random.shuffle(options)
+            result = {
+                "description": question_statement,
+                "quizQuestionOptions": options,
+                "correctAnswer": correct_response,
+                "correctAnswerDescription": description
+            }
+        return result
 
     def collect_questions(self, question):
         if question is not None:
@@ -476,17 +489,29 @@ class Quizzes:
 
     def generate_venue_question(self):
         df = self.generate_df(query_capacity_venue)
+        df = df.drop_duplicates()
         sample_df = df[~df['team'].isin(['Brentford', 'Swansea City', 'Tottenham Hotspur'])].sample(4)[
             ['team', 'venue']]
         correct_response = sample_df.iloc[0]['venue']
         correct_team = sample_df.iloc[0]['team']
+
+        venue_1 = sample_df.iloc[1]['venue']
+        venue_2 = sample_df.iloc[2]['venue']
+        venue_3 = sample_df.iloc[3]['venue']
+
+        team_1 = sample_df.iloc[1]['team']
+        team_2 = sample_df.iloc[2]['team']
+        team_3 = sample_df.iloc[3]['team']
+
+        description = f"""{venue_1} is the home venue of {team_1} / {venue_2} is the home venue of {team_2} / {venue_3} is the home venue of {team_3}"""
         statement = f"What is the home venue of {correct_team}?"
         options = list(sample_df['venue'])
-        question = self.question_template(statement, options, correct_response)
+        question = self.demo_question_template(statement, options, correct_response, description)
         return question
 
     def generate_founded_question(self):
         df = self.generate_df(query_capacity_venue)
+        df = df.drop_duplicates()
         sample_df = df.sample(4).sort_values('founded_rn')
         correct_response = sample_df.iloc[0]['team']
         statement = f"Which team was founded first?"
@@ -496,12 +521,23 @@ class Quizzes:
 
     def generate_capacity_question(self):
         df = self.generate_df(query_capacity_venue)
+        df = df.drop_duplicates()
         df['venue_city'] = df['venue'] + ' ' + '(' + df['city'] + ')'
         sample_df = df.sample(4).sort_values('capacity_rn')
         correct_response = sample_df.iloc[0]['venue_city']
+
+        venue_1 = sample_df.iloc[1]['venue']
+        venue_2 = sample_df.iloc[2]['venue']
+        venue_3 = sample_df.iloc[3]['venue']
+
+        capacity_1 = sample_df.iloc[1]['capacity']
+        capacity_2 = sample_df.iloc[2]['capacity']
+        capacity_3 = sample_df.iloc[3]['capacity']
+
+        description = f"""Capacity of {venue_1} is {capacity_1} / Capacity of {venue_2} is {capacity_2} / Capacity of {venue_3} is {capacity_3}"""
         statement = f"Which stadium has higher capacity?"
         options = list(sample_df['venue_city'])
-        question = self.question_template(statement, options, correct_response)
+        question = self.demo_question_template(statement, options, correct_response, description)
         return question
 
     def generate_fewest_points_question(self):
@@ -509,8 +545,9 @@ class Quizzes:
         sample_df = df.head(4)
         correct_response = sample_df.iloc[0]['team']
         statement = f"Which team finished the 2007/2008 season with 11 points?"
+        description = f"""{correct_response} played 8 draws, won 1 and lost 29 games thereby getting the fewest number of points in Premier League history"""
         options = list(sample_df['team'])
-        question = self.question_template(statement, options, correct_response)
+        question = self.demo_question_template(statement, options, correct_response, description)
         return question
 
     def generate_most_points_question(self):
@@ -529,7 +566,29 @@ class Quizzes:
         season = sample_df.iloc[0]['season']
         options = sample_df.iloc[0]['options']
         statement = f"Which team did not relegate in the {season} season?"
-        question = self.question_template(statement, options, correct_response)
+        description = f"""{correct_response} promoted from Championship in {season} season"""
+        question = self.demo_question_template(statement, options, correct_response, description)
+        return question
+    
+    def generate_player_played_for_team_question(self):
+        df = self.generate_df(query_player_played_for_team)
+        sample_df = df.sample(4)
+        correct_response = sample_df.iloc[0]['player']
+        correct_team = sample_df.iloc[0]['team']
+
+        player_1 = sample_df.iloc[1]['player']
+        player_2 = sample_df.iloc[2]['player']
+        player_3 = sample_df.iloc[3]['player']
+
+        team_1 = sample_df.iloc[1]['team']
+        team_2 = sample_df.iloc[2]['team']
+        team_3 = sample_df.iloc[3]['team']
+
+        options = [i for i in sample_df['player']]
+        statement = f"Who played for {correct_team} in his career?"
+
+        description = f"""{player_1} played for {team_1} / {player_2} played for {team_2} / {player_3} played for {team_3}"""
+        question = self.demo_question_template(statement, options, correct_response, description)
         return question
 
     def mix_quiz_questions(self):

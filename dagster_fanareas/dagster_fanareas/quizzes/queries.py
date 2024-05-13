@@ -795,3 +795,49 @@ query_transfers = """WITH vw as (SELECT player_id,
                    cast(transfer_to_team_id as int) as transfer_to_team_id
             FROM vw1
 """
+
+query_player_played_for_team = """
+with vw as (
+select
+player_id
+,season
+,season_name
+,fullname
+,team_id[1] as team_id
+,team[1] as team
+,appearances
+,goals
+    from dim_player_stats),
+vw1 as (
+    select
+    player_id
+   , max(fullname) as fullname
+   , max(season_name) as season_name
+   , array_agg (distinct team_id) as team_ids
+   , array_agg (distinct team) as teams
+    , sum(appearances) as appearances
+   , sum(goals) as goals
+    from vw
+    where team_id in (6, 8, 9, 14, 18, 19)
+    group by player_id
+    ),
+vw2 as (
+select
+    player_id
+,season_name
+,fullname
+,team_ids[1] as team_id
+,teams[1] as team
+,appearances
+,goals
+from vw1
+where appearances > 34),
+vw3 as (
+select team,
+       array_agg(fullname order by random()) as players
+from vw2
+group by team)
+select team,
+       players[1] as player
+from vw3
+"""
