@@ -490,7 +490,15 @@ class Quizzes:
     def generate_venue_question(self):
         df = self.generate_df(query_capacity_venue)
         df = df.drop_duplicates()
-        sample_df = df[~df['team'].isin(['Brentford', 'Swansea City', 'Tottenham Hotspur'])].sample(4)[
+        sample_df = df[df['team'].isin(['Manchester United',
+                                        'Arsenal',
+                                        'Liverpool',
+                                        'Manchester City',
+                                        'Newcastle United',
+                                        'Aston Villa',
+                                        'Chelsea',
+                                        'Everton'
+                                         ])].sample(4)[
             ['team', 'venue']]
         correct_response = sample_df.iloc[0]['venue']
         correct_team = sample_df.iloc[0]['team']
@@ -503,7 +511,7 @@ class Quizzes:
         team_2 = sample_df.iloc[2]['team']
         team_3 = sample_df.iloc[3]['team']
 
-        description = f"""{venue_1} is the home venue of {team_1} / {venue_2} is the home venue of {team_2} / {venue_3} is the home venue of {team_3}"""
+        description = f"""{correct_response} is the home venue of {correct_team} / {venue_1} is the home venue of {team_1} / {venue_2} is the home venue of {team_2} / {venue_3} is the home venue of {team_3}"""
         statement = f"What is the home venue of {correct_team}?"
         options = list(sample_df['venue'])
         question = self.demo_question_template(statement, options, correct_response, description)
@@ -512,7 +520,15 @@ class Quizzes:
     def generate_founded_question(self):
         df = self.generate_df(query_capacity_venue)
         df = df.drop_duplicates()
-        sample_df = df.sample(4).sort_values('founded_rn')
+        sample_df = df[df['team'].isin(['Manchester United',
+                                        'Arsenal',
+                                        'Liverpool',
+                                        'Manchester City',
+                                        'Newcastle United',
+                                        'Aston Villa',
+                                        'Chelsea',
+                                        'Everton'
+                                         ])].sample(4).sort_values('founded_rn')
         correct_response = sample_df.iloc[0]['team']
         statement = f"Which team was founded first?"
         options = list(sample_df['team'])
@@ -523,8 +539,19 @@ class Quizzes:
         df = self.generate_df(query_capacity_venue)
         df = df.drop_duplicates()
         df['venue_city'] = df['venue'] + ' ' + '(' + df['city'] + ')'
-        sample_df = df.sample(4).sort_values('capacity_rn')
+        sample_df = df[df['team'].isin(['Manchester United',
+                                        'Arsenal',
+                                        'Liverpool',
+                                        'Manchester City',
+                                        'Newcastle United',
+                                        'Aston Villa',
+                                        'Chelsea',
+                                        'Everton'
+                                         ])].sample(4).sort_values('capacity_rn')
         correct_response = sample_df.iloc[0]['venue_city']
+
+        correct_venue = sample_df.iloc[0]['venue']
+        correct_capacity = sample_df.iloc[0]['capacity']
 
         venue_1 = sample_df.iloc[1]['venue']
         venue_2 = sample_df.iloc[2]['venue']
@@ -534,7 +561,7 @@ class Quizzes:
         capacity_2 = sample_df.iloc[2]['capacity']
         capacity_3 = sample_df.iloc[3]['capacity']
 
-        description = f"""Capacity of {venue_1} is {capacity_1} / Capacity of {venue_2} is {capacity_2} / Capacity of {venue_3} is {capacity_3}"""
+        description = f"""Capacity of {correct_venue} is {correct_capacity} / Capacity of {venue_1} is {capacity_1} / Capacity of {venue_2} is {capacity_2} / Capacity of {venue_3} is {capacity_3}"""
         statement = f"Which stadium has higher capacity?"
         options = list(sample_df['venue_city'])
         question = self.demo_question_template(statement, options, correct_response, description)
