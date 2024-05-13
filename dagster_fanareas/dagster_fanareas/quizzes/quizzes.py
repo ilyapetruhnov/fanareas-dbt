@@ -441,9 +441,9 @@ class Quizzes:
         correct_response = sample_df['fullname'].iloc[0]
         options = list(sample_df['fullname'])
 
-        player_1 = sample_df.iloc[1]['player']
-        player_2 = sample_df.iloc[2]['player']
-        player_3 = sample_df.iloc[3]['player']
+        player_1 = sample_df.iloc[1]['fullname']
+        player_2 = sample_df.iloc[2]['fullname']
+        player_3 = sample_df.iloc[3]['fullname']
 
         jersey_number_1 = sample_df.iloc[1]['jersey_number']
         jersey_number_2 = sample_df.iloc[2]['jersey_number']
