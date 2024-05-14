@@ -197,6 +197,7 @@ class Quizzes:
                 return None
             correct_df = selected_df.sample(1)
             correct_response = correct_df['fullname'].iloc[0]
+            season_name = correct_df['season_name'].iloc[0]
             options_df = df[df['season_name'] != season_name].sample(3)
             question_statement = "Who left {} in the {} season?".format(team, season_name)
         
