@@ -26,7 +26,7 @@ def guess_team_player_quiz() -> bool:
 @asset(group_name="quizzes")
 def transfers_quiz() -> bool:
     title = "Daily transfers"
-    description = "Answer 10 questions about Premier League transfers"
+    description = "Answer 5 questions about Premier League transfers"
     quiz_type = 1
     is_demo = False
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
