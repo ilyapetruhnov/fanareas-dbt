@@ -153,7 +153,7 @@ def player_stats_detailed(context, player_stats_dict: dict) -> pd.DataFrame:
     df = upsert(df, existing_df)
     return df
 
-@asset( group_name="team_stats", compute_kind="pandas")
+@asset( group_name="ingest", compute_kind="pandas")
 def team_stats_dict(context, teams: pd.DataFrame) -> dict:
     teams = teams[teams['short_code'].notnull()]
     team_ids = list(teams['id'].unique())
@@ -176,7 +176,7 @@ def team_stats_dict(context, teams: pd.DataFrame) -> dict:
     return {'stats': team_stats, 'detailed_stats': team_stats_detailed}
 
 
-@asset( group_name="team_stats", compute_kind="pandas",io_manager_key="db_io_manager")
+@asset( group_name="ingest", compute_kind="pandas",io_manager_key="db_io_manager")
 def team_stats(context, team_stats_dict: dict) -> pd.DataFrame:
     team_stats = team_stats_dict['stats']
     context.log.info(team_stats)
@@ -191,7 +191,7 @@ def team_stats(context, team_stats_dict: dict) -> pd.DataFrame:
     return df
 
 
-@asset( group_name="team_stats", compute_kind="pandas",io_manager_key="db_io_manager")
+@asset( group_name="ingest", compute_kind="pandas",io_manager_key="db_io_manager")
 def team_stats_detailed(context, team_stats_dict: dict) -> pd.DataFrame:
     team_stats_detailed = flatten_list(team_stats_dict['detailed_stats'])
     df = pd.json_normalize(team_stats_detailed)
