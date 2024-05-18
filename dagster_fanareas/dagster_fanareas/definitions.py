@@ -57,11 +57,6 @@ guess_the_player_quiz_schedule = ScheduleDefinition(
     cron_schedule="0 8 */2 * *"
 )
 
-facts_schedule = ScheduleDefinition(
-    job=post_facts_job, 
-    cron_schedule="0 8,13,18 * * *"
-)
-
 facts_by_team_schedule = ScheduleDefinition(
     job=post_facts_by_team_job, 
     cron_schedule="0 19 * * *"
@@ -88,7 +83,6 @@ defs = Definitions(
     jobs = [guess_the_player_quiz_job,
             transfers_quiz_job,
             post_news_job,
-            post_facts_job,
             post_facts_by_team_job,
             post_facts_player_season_job,
             dbt_job,
@@ -97,7 +91,6 @@ defs = Definitions(
     schedules=[news_schedule,
                transfers_quiz_schedule,
                guess_the_player_quiz_schedule,
-               facts_schedule,
                facts_by_team_schedule,
                facts_player_season_schedule,
                daily_dbt_assets_schedule,
