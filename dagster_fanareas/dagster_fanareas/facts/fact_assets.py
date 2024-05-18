@@ -4,13 +4,6 @@ import random
 from dagster_fanareas.facts.queries import top_teams_query, top_season_stats_query
 
 # @asset(group_name="facts")
-# def publish_all_facts():
-#     facts_obj = Facts(top_players_query, season, top_n, metric_list)
-#     for metric in facts_obj.metric_list:
-#         facts_obj.post_facts(metric)
-#     return True
-
-# @asset(group_name="facts")
 # def publish_one_fact():
 #     facts_obj = Facts(top_players_query, season, top_n, metric_list)
 #     metric = random.choice(metric_list)
