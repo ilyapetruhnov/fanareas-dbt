@@ -458,11 +458,15 @@ class Quizzes:
     def generate_player_2_clubs_question(self):
 
         df = self.generate_df(query_player_2_clubs_played)
-        sample_df = df.drop_duplicates('player_id').sample(n=4)
-        club1 = sample_df['transfer_from_team'].iloc[0]
-        club2 = sample_df['team'].iloc[0]
-        options = list(sample_df['fullname'])
-        correct_response = sample_df.iloc[0]['fullname']
+        df = df.drop_duplicates('player_id')
+        correct_df = df.sample(n=1)
+        correct_response = correct_df.iloc[0]['fullname']
+        club1 = correct_df['transfer_from_team'].iloc[0]
+        club2 = correct_df['team'].iloc[0]
+        options_df = df[(df['transfer_from_team'] != club1) & (df['team'] != club1)]
+        options = list(options_df.sample(3)['fullname'])
+        options.append(correct_response)
+        
         statement = f"Which player played for {club1} and {club2} in his career?"
         question = self.question_template(statement, options, correct_response)
         return question

@@ -32,7 +32,7 @@ transfers_quiz_job = define_asset_job(name="trigger_transfers_quiz", selection="
 
 post_news_job = define_asset_job(name="trigger_post_news", selection="post_news")
 
-post_facts_job = define_asset_job(name="trigger_post_facts", selection="publish_one_fact")
+# post_facts_job = define_asset_job(name="trigger_post_facts", selection="publish_one_fact")
 
 post_facts_by_team_job = define_asset_job(name="trigger_post_facts_by_team", selection="publish_one_fact_by_team")
 

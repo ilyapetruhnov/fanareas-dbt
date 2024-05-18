@@ -5,11 +5,10 @@ from sqlalchemy import text
 import requests
 
 class Facts:
-    def __init__(self, query: str, season: int, top_n: int, metric_list: list) -> None:
+    def __init__(self, query: str, season: int, top_n: int) -> None:
         self.query = query
         self.season = season
         self.top_n = top_n
-        self.metric_list = metric_list
         self.url = "https://fanareas.com/api/facts/createFact"
 
     def fact_template(self, season_name: str, quiz_type: int, title: str, facts: list):
@@ -21,11 +20,25 @@ class Facts:
             }
         return json_data
     
+    def metrics(self):
+        metric_list = ['goals',
+                       'assists',
+                       'goals_assists',
+                       'yellow_cards',
+                       'red_cards',
+                       'penalties',
+                       'minutes_played',
+                       'lineups',
+                       'substitute_appearances']
+        return metric_list
+
     def format_metric(self, metric: str) -> str:
         if metric == 'penalties':
             result = 'penalty goals'
         if metric == 'goals_assists':
             result = 'goals + assists'
+        if metric == 'substitute_appearances':
+            result = 'appearances coming off the bench'
         else:
             result = metric.replace('_',' ')
         return result
