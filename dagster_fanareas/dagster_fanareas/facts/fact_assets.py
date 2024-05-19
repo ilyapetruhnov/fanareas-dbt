@@ -15,7 +15,8 @@ def publish_one_fact_by_team():
     season = random.randint(2008,2023)
     facts_obj = Facts(query = top_teams_query, season = season, top_n = 5)
     metrics = facts_obj.metrics()
-    metrics.remove('penalties','red_cards')
+    metrics.remove('penalties')
+    metrics.remove('red_cards')
     metric = random.choice(metrics)
     facts_obj.post_facts(metric, by_team=True)
     return True
@@ -25,7 +26,8 @@ def publish_player_season_stats_fact():
     season = random.randint(2008,2023)
     facts_obj = Facts(query = top_season_stats_query, season = season, top_n = 5)
     metrics = facts_obj.metrics()
-    metrics.remove('minutes_played','lineups')
+    metrics.remove('minutes_played')
+    metrics.remove('lineups')
     metric = random.choice(metrics)
     facts_obj.post_facts(metric)
     return True
