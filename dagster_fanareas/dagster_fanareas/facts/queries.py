@@ -100,7 +100,7 @@ top_season_stats_query = """
                         t.goals + t.assists as goals_assists,
                         t.red_cards as red_cards,
                         t.yellow_cards as yellow_cards,
-                        t.penalties as penalties
+                        t.penalties as penalties,
                         t.appearances - t.lineups as substitute_appearances
                         FROM
                         dim_players
