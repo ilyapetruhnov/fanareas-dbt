@@ -101,6 +101,7 @@ top_season_stats_query = """
                         t.red_cards as red_cards,
                         t.yellow_cards as yellow_cards,
                         t.penalties as penalties
+                        t.appearances - t.lineups as substitute_appearances
                         FROM
                         dim_players
                         CROSS JOIN UNNEST (season_stats) AS t
