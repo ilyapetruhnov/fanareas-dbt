@@ -109,6 +109,8 @@ def get_dim_name_and_id(dim: str) -> dict:
 @op
 def post_json(json_data, url):
     response = requests.post(url, json=json_data)
+    if response.status_code == 400:
+        return False
 
     if response.status_code == 200:
         print('POST request successful!')

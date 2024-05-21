@@ -99,6 +99,3 @@ class Facts:
         else:
             json_data = self.top_n_facts_assembler(self.query, metric)
         return post_json(json_data, self.url)
-
-
-

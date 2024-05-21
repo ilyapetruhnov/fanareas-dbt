@@ -27,11 +27,22 @@ final as (
     stg_teams.founded as founded,
     stg_teams.venue as venue,
     stg_teams.capacity as capacity,
-    stg_teams.city as city
+    stg_teams.city as city,
+    row_number() over (partition by team_id, seasons.name order by team_id ) as rn
     from standings
     join seasons on standings.season_id = seasons.id
     join stg_teams on stg_teams.team_id = participant_id
 
 )
-
-    select * from final
+    select
+    team_id,
+    team,
+    season,
+    position,
+    points,
+    founded,
+    venue,
+    capacity,
+    city
+    from final
+    where rn = 1
