@@ -15,19 +15,19 @@ def validate_team_season(team_id, season_id) -> bool:
     return False
 
 def post_guess_team_player_quiz(team_id, team_name, season, season_id, season_name) -> bool:
-    player_metrics = ['assists','substitute_appearances','goal_assists','yellow_cards','appearances','goals']
-    player_dim_metrics = ['nationality','position','jersey_number']
+    player_metrics = ['assists','substitute_appearances','goals_assists','yellow_cards','appearances','goals']
+    player_dim_metrics = ['nationality', 'jersey_number']
     random.shuffle(player_metrics)
     random.shuffle(player_dim_metrics)
     title = f"Guess {team_name} player in {season_name} Premier League season"
-    description = f"Guess 10 {team_name} players in {season_name} Premier League season"
+    description = f"Guess 5 {team_name} players in {season_name} Premier League season"
     quiz_type = 0
     is_demo = False
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
 
     quiz_player_joined = quiz_obj.generate_player_joined_question(
-        query = query_player_joined_club.format(team_id), 
-        team_name = team_name, 
+        query = query_player_joined_club.format(team_id),
+        team_name = team_name,
         season_name = season_name
         )
     quiz_obj.collect_questions(quiz_player_joined)
@@ -86,7 +86,6 @@ def post_guess_team_player_quiz(team_id, team_name, season, season_id, season_na
         season_name = season_name
         )
     quiz_obj.collect_questions(quiz_player_position_played)
-
 
     for metric in player_dim_metrics:
         quiz_team_player_dims = quiz_obj.generate_player_metric_question(

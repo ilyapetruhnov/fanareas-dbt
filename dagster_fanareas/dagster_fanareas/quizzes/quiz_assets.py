@@ -1,5 +1,6 @@
 from dagster import asset
 from dagster_fanareas.quizzes.quizzes import Quizzes
+from dagster_fanareas.quizzes.transfer_quizzes import TransferQuizzes
 from dagster_fanareas.quizzes.queries import *
 from dagster_fanareas.ops.utils import get_dim_name_and_id
 from dagster_fanareas.quizzes.quiz_collection import validate_team_season, post_guess_team_player_quiz
@@ -29,15 +30,9 @@ def transfers_quiz() -> bool:
     description = "Answer 5 questions about Premier League transfers"
     quiz_type = 1
     is_demo = False
-    quiz_obj = Quizzes(title, description, quiz_type, is_demo)
-    quiz_obj.collect_questions(quiz_obj.generate_player_transfer_question())
-    quiz_obj.collect_questions(quiz_obj.generate_player_transfer_question(clubs_played=True))
-    quiz_obj.collect_questions(quiz_obj.generate_player_left_joined_question())
-    quiz_obj.collect_questions(quiz_obj.generate_player_left_joined_question(joined=True))
-    quiz_obj.collect_questions(quiz_obj.generate_player_transfer_question())
-
-    mixed_quiz_questions = quiz_obj.mix_quiz_questions()
-    quiz_obj.post_quiz(questions = mixed_quiz_questions)
+    quiz_obj = TransferQuizzes(title, description, quiz_type, is_demo)
+    quiz_obj.fill_questions()
+    quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
 

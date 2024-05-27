@@ -2,7 +2,9 @@ import pandas as pd
 import random
 from dagster_fanareas.ops.utils import post_json, create_db_session, get_dim_name_and_id
 from dagster_fanareas.quizzes.queries import *
+from dagster_fanareas.quizzes.transfers_queries import transfers_query
 from dagster_fanareas.quizzes.maps import top_n_metric_map
+from datetime import datetime
 
 
 class Quizzes:
@@ -84,7 +86,7 @@ class Quizzes:
             result = 'penalty goals'
         if metric == 'substitute_appearances':
             result = 'substitute appearances'
-        if metric == 'goal_assists':
+        if metric == 'goals_assists':
             result = 'goals + assists'
         else:
             result = metric.replace('_', ' ')
@@ -107,9 +109,9 @@ class Quizzes:
 
             if metric == 'nationality':
                 question_statement = "Who is a citizen of {0}?".format(correct_metric)
-            elif metric == 'position':
-                question_statement = "Which player played at {0} position in the {1} season?".format(correct_metric,
-                                                                                                    season_name)
+            # elif metric == 'position':
+            #     question_statement = "Which player played at {0} position in the {1} season?".format(correct_metric,
+            #                                                                                         season_name)
             elif metric == 'jersey_number':
                 question_statement = "Which player played under {0} jersey number in the {1} season?".format(correct_metric,
                                                                                                             season_name)
@@ -148,65 +150,6 @@ class Quizzes:
             question = self.question_template(question_statement, options, correct_response)
             return question
         
-    def generate_player_transfer_question(self, clubs_played=False) -> dict:
-        df = self.generate_df(query_transfers)
-        generated_team = get_dim_name_and_id('teams')
-        team_from = generated_team['name']
-        correct_df = df[df['transfer_from_team']==team_from].sample(1)
-        correct_response = correct_df['fullname'].iloc[0]
-        season_name = correct_df['season_name'].iloc[0]
-
-        team_to = correct_df['transfer_to_team'].iloc[0]
-
-        if clubs_played:
-            options_df = df[(df['transfer_from_team']!= team_from) & (df['transfer_to_team']!= team_from)].sample(3)
-            question_statement = "Who played for {} and {} in his career?".format(team_from, team_to)
-
-        else:
-            options_df = df.drop([correct_df.index[0]], axis=0).sample(3)
-            question_statement = "Which player left {} and joined {} in the {} season?".format(team_from, team_to, season_name)
-
-        options = [i for i in options_df['fullname']]
-        options.append(correct_response)
-        question = self.question_template(question_statement, options, correct_response)
-        return question
-    
-    def generate_player_left_joined_question(self, joined=False) -> dict:
-        generated_team = get_dim_name_and_id('teams')
-        team = generated_team['name']
-        team_id = generated_team['id']
-        if joined:
-            df = self.generate_df(query_player_joined_club.format(team_id))
-            seasons = df['season_name'].unique()
-            season = random.choice(seasons)
-            selected_df = df[ (df['season_name']== season) & ( df['transfer_to_team']== team)]
-            if selected_df.empty:
-                return None
-            correct_df = selected_df.sample(1)
-            correct_response = correct_df['fullname'].iloc[0]
-            season_name = correct_df['season_name'].iloc[0]
-            options_df = df[df['season_name'] != season_name].sample(3)
-            question_statement = "Who joined {} in the {} season?".format(team, season_name)
-
-        else:
-            df = self.generate_df(query_player_left_club.format(team_id))
-            seasons = df['season_name'].unique()
-            season = random.choice(seasons)
-            selected_df = df[ (df['season_name']== season) & ( df['transfer_from_team']== team)]
-            if selected_df.empty:
-                return None
-            correct_df = selected_df.sample(1)
-            correct_response = correct_df['fullname'].iloc[0]
-            season_name = correct_df['season_name'].iloc[0]
-            options_df = df[df['season_name'] != season_name].sample(3)
-            question_statement = "Who left {} in the {} season?".format(team, season_name)
-        
-        options = [i for i in options_df['fullname']]
-        options.append(correct_response)
-        question = self.question_template(question_statement, options, correct_response)
-        return question
-        
-        
     def generate_player_age_question(self, query: str, team_name: str, season_name: str, youngest: bool) -> dict:
         df = self.generate_df(query)
         sample_df = df.groupby('age')['fullname'].apply(list).reset_index().sort_values('age', ascending=youngest).head(4)
@@ -241,26 +184,26 @@ class Quizzes:
         question_statement = "Who played at {} position in the {} season?".format(position, season_name)
         return self.question_template(question_statement, options, correct_response)
 
-    def generate_player_position_stats_question(self, query: str, season_name: str, metric: str) -> dict:
-        df = self.generate_df(query)
-        positions = [i for i in df['position'].unique()]
-        random.shuffle(positions)
-        for player_position in positions:
-            if len(df[df['position'] == player_position]) > 3:
-                result_df = df[df['position'] == player_position].sort_values(metric, ascending=False).head(4)
-                correct_response = result_df.iloc[0]['fullname']
-                options = [i for i in result_df.fullname]
-                formatted_metric = self.format_metric(metric)
-                if metric == 'substitute_appearances':
-                    question_statement = "Which {} player had the most appearances coming off the bench in the {} season?".format(
-                        player_position, season_name)
-                    return self.question_template(question_statement, options, correct_response)
-                else:
-                    question_statement = "Which {} player had more {} in the {} season?".format(player_position,
-                                                                                         formatted_metric,
-                                                                                         season_name)
-                    return self.question_template(question_statement, options, correct_response)
-        return None
+    # def generate_player_position_stats_question(self, query: str, season_name: str, metric: str) -> dict:
+    #     df = self.generate_df(query)
+    #     positions = [i for i in df['position'].unique()]
+    #     random.shuffle(positions)
+    #     for player_position in positions:
+    #         if len(df[df['position'] == player_position]) > 3:
+    #             result_df = df[df['position'] == player_position].sort_values(metric, ascending=False).head(4)
+    #             correct_response = result_df.iloc[0]['fullname']
+    #             options = [i for i in result_df.fullname]
+    #             formatted_metric = self.format_metric(metric)
+    #             if metric == 'substitute_appearances':
+    #                 question_statement = "Which {} player had the most appearances coming off the bench in the {} season?".format(
+    #                     player_position, season_name)
+    #                 return self.question_template(question_statement, options, correct_response)
+    #             else:
+    #                 question_statement = "Which {} player had more {} in the {} season?".format(player_position,
+    #                                                                                      formatted_metric,
+    #                                                                                      season_name)
+    #                 return self.question_template(question_statement, options, correct_response)
+    #     return None
     
     def generate_player_stats_question(self, query: str, season_name: str, metric: str) -> dict:
         df = self.generate_df(query)
@@ -330,7 +273,7 @@ class Quizzes:
             else:
                 return None
         else:
-            correct_df = df[~df['goal_assists'].isnull()][['fullname', 'team_name', 'goals', 'assists', 'goal_assists']]
+            correct_df = df[~df['goals_assists'].isnull()][['fullname', 'team_name', 'goals', 'assists', 'goals_assists']]
             if len(correct_df)>3:
                 goals = int(correct_df['goals'].iloc[0])
                 assists = int(correct_df['assists'].iloc[0])
@@ -631,13 +574,7 @@ class Quizzes:
         question = self.demo_question_template(statement, options, correct_response, description)
         return question
 
-    def mix_quiz_questions(self):
-        random.shuffle(self.quiz_collection)
-        # result_list = self.quiz_collection[:10]
-        # return result_list
-        return self.quiz_collection
-
-
     def post_quiz(self, questions, tags = None):
+        random.shuffle(questions)
         json_data = self.quiz_template(questions, tags)
         return post_json(json_data, self.url)

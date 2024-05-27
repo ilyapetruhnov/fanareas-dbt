@@ -489,7 +489,7 @@ select
         ,t.captain as captain
         ,t.goals as goals
         ,t.assists
-        ,t.goals + t.assists as goal_assists
+        ,t.goals + t.assists as goals_assists
         ,t.own_goals
         ,t.season
         ,t.season_name
@@ -512,7 +512,7 @@ select
 select *
         , dense_rank() over (partition by season ORDER BY goals desc nulls last) as goals_rn
         , dense_rank() over (partition by season ORDER BY assists desc nulls last) as assists_rn
-        , dense_rank() over (partition by season ORDER BY goal_assists desc nulls last) as goal_assists_rn
+        , dense_rank() over (partition by season ORDER BY goals_assists desc nulls last) as goals_assists_rn
         , dense_rank() over (partition by season ORDER BY appearances desc nulls last) as appearances_rn
         , dense_rank() over (partition by season ORDER BY lineups desc nulls last) as lineups_rn
         , dense_rank() over (partition by season ORDER BY yellow_cards desc nulls last) as yellow_cards_rn
@@ -535,7 +535,7 @@ select
         ,t.captain as captain
         ,t.goals as goals
         ,t.assists
-        ,t.goals + t.assists as goal_assists
+        ,t.goals + t.assists as goals_assists
         ,t.own_goals
         ,t.season
         ,t.season_name
@@ -561,7 +561,7 @@ select
 select *
         , dense_rank() over (partition by season ORDER BY goals desc nulls last) as goals_rn
         , dense_rank() over (partition by season ORDER BY assists desc nulls last) as assists_rn
-        , dense_rank() over (partition by season ORDER BY goal_assists desc nulls last) as goal_assists_rn
+        , dense_rank() over (partition by season ORDER BY goals_assists desc nulls last) as goals_assists_rn
         , dense_rank() over (partition by season ORDER BY appearances desc nulls last) as appearances_rn
         , dense_rank() over (partition by season ORDER BY lineups desc nulls last) as lineups_rn
         , dense_rank() over (partition by season ORDER BY yellow_cards desc nulls last) as yellow_cards_rn
