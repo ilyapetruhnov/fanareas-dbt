@@ -1,6 +1,6 @@
 from dagster import asset
 from dagster_fanareas.quizzes.quizzes import Quizzes
-from dagster_fanareas.quizzes.transfer_quizzes import TransferQuizzes
+from dagster_fanareas.quizzes.transferQuizzes import TransferQuizzes
 from dagster_fanareas.quizzes.queries import *
 from dagster_fanareas.ops.utils import get_dim_name_and_id
 from dagster_fanareas.quizzes.quiz_collection import validate_team_season, post_guess_team_player_quiz
@@ -31,7 +31,7 @@ def transfers_quiz() -> bool:
     quiz_type = 1
     is_demo = False
     quiz_obj = TransferQuizzes(title, description, quiz_type, is_demo)
-    quiz_obj.fill_questions()
+    quiz_obj.fill_quiz_with_questions()
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
