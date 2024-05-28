@@ -1,3 +1,7 @@
+photo_query = """
+        SELECT * from stg_players where team_id = {}
+        """
+
 query_player_shirt_number="""
         SELECT
         firstname,
