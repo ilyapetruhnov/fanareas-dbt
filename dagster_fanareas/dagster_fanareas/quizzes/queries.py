@@ -1,5 +1,11 @@
 photo_query = """
-        SELECT * from stg_players where team_id = {}
+        SELECT player_id,
+        max(fullname) as fullname,
+        max(image_path) as image_path
+        from stg_players
+        where team_id = {}
+        and image_path is not null
+        group by player_id
         """
 
 query_player_shirt_number="""
