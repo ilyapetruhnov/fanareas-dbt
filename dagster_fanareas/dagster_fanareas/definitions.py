@@ -50,17 +50,17 @@ news_schedule = ScheduleDefinition(
 
 transfers_quiz_schedule = ScheduleDefinition(
     job=transfers_quiz_job, 
-    cron_schedule="10 8 * * *"
+    cron_schedule="10 6 * * *"
 )
 
 photo_quiz_schedule = ScheduleDefinition(
     job=photo_quiz_job, 
-    cron_schedule="15 8 * * *"
+    cron_schedule="0 12 * * *"
 )
 
 guess_the_player_quiz_schedule = ScheduleDefinition(
     job=guess_the_player_quiz_job, 
-    cron_schedule="0 8 */2 * *"
+    cron_schedule="0 6 */2 * *"
 )
 
 facts_by_team_schedule = ScheduleDefinition(
