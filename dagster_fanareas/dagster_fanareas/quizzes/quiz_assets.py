@@ -64,9 +64,7 @@ def small_demo_quiz() -> bool:
 
     quiz_obj.collect_questions(quiz_obj.generate_player_shirt_number_question())
 
-    mixed_quiz_questions = quiz_obj.mix_quiz_questions()
-    quiz_obj.post_quiz(questions = mixed_quiz_questions)
-
+    quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
 
@@ -88,7 +86,5 @@ def demo_quiz() -> bool:
     quiz_obj.collect_questions(quiz_obj.generate_most_points_question())
     quiz_obj.collect_questions(quiz_obj.generate_relegations_question())
 
-    mixed_quiz_questions = quiz_obj.mix_quiz_questions()
-    quiz_obj.post_quiz(questions = mixed_quiz_questions)
-
+    quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
