@@ -5,6 +5,7 @@ photo_query = """
         from stg_players
         where team_id = {}
         and image_path is not null
+        and image_path != 'https://cdn.sportmonks.com/images/soccer/placeholder.png'
         group by player_id
         """
 
