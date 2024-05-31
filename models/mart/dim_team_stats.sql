@@ -8,6 +8,11 @@ teams as (
 
 ),
 
+standings as (
+    select * from {{ ref('stg_standings') }}
+
+),
+
 vw as (
     select 
         team_stats_id as id
@@ -15,6 +20,12 @@ vw as (
         , team_stats.team_id   as team_id
         , teams.team           as team
         , team_stats.type           as type
+        , stg_standings.position
+        , stg_standings.points
+        , stg_standings.founded
+        , stg_standings.venue
+        , stg_standings.capacity
+        , stg_standings.city
         , value_all_count
         , value_all_percentage
         , value_home_count
@@ -74,6 +85,9 @@ vw as (
     from team_stats
     join teams 
     on team_stats.team_id = teams.team_id
+    join stg_standings
+    on team_stats.team_id = stg_standings.team_id
+    and team_stats.season_name = stg_standings.season
     ),
 
 final as (
@@ -81,6 +95,12 @@ final as (
         id,
         season,
         team_id,
+        max(position) as position,
+        max(points) as points,
+        max(founded) as founded,
+        max(venue) as venue,
+        max(capacity) as capacity,
+        max(city) as city,
         max(team) as team,
         max(value_all_count) filter (where type = 'Goals') as goals_all_count,
         max(value_all_average) filter (where type = 'Goals') as goals_all_average,
