@@ -34,6 +34,7 @@ photo_quiz_job = define_asset_job(name="trigger_photo_quiz", selection="photo_qu
 post_news_job = define_asset_job(name="trigger_post_news", selection="post_news")
 
 # post_facts_job = define_asset_job(name="trigger_post_facts", selection="publish_one_fact")
+post_team_facts_job = define_asset_job(name="trigger_post_team_facts", selection="publish_team_fact")
 
 post_facts_by_team_job = define_asset_job(name="trigger_post_facts_by_team", selection="publish_one_fact_by_team")
 
@@ -50,12 +51,12 @@ news_schedule = ScheduleDefinition(
 
 transfers_quiz_schedule = ScheduleDefinition(
     job=transfers_quiz_job, 
-    cron_schedule="10 6 * * *"
+    cron_schedule="0 6 * * *"
 )
 
 photo_quiz_schedule = ScheduleDefinition(
     job=photo_quiz_job, 
-    cron_schedule="0 12 * * *"
+    cron_schedule="0 6 * * *"
 )
 
 guess_the_player_quiz_schedule = ScheduleDefinition(
@@ -65,12 +66,17 @@ guess_the_player_quiz_schedule = ScheduleDefinition(
 
 facts_by_team_schedule = ScheduleDefinition(
     job=post_facts_by_team_job, 
-    cron_schedule="0 19 * * *"
+    cron_schedule="0 6 * * *"
+)
+
+team_facts_schedule = ScheduleDefinition(
+    job=post_team_facts_job, 
+    cron_schedule="0 6 * * *"
 )
 
 facts_player_season_schedule = ScheduleDefinition(
     job=post_facts_player_season_job, 
-    cron_schedule="0 8 * * *"
+    cron_schedule="10 6 * * *"
 )
 
 daily_dbt_assets_schedule = ScheduleDefinition(
@@ -90,6 +96,7 @@ defs = Definitions(
             transfers_quiz_job,
             photo_quiz_job,
             post_news_job,
+            post_team_facts_job,
             post_facts_by_team_job,
             post_facts_player_season_job,
             dbt_job,
@@ -100,6 +107,7 @@ defs = Definitions(
                photo_quiz_schedule,
                guess_the_player_quiz_schedule,
                facts_by_team_schedule,
+               team_facts_schedule,
                facts_player_season_schedule,
                daily_dbt_assets_schedule,
                daily_ingest_assets_schedule

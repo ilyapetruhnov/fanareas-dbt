@@ -1,6 +1,7 @@
 import pandas as pd
 import random
 from dagster_fanareas.ops.utils import post_json, create_db_session
+from dagster_fanareas.facts.queries import top_teams_query
 from sqlalchemy import text
 import requests
 
@@ -39,6 +40,18 @@ class Facts:
             result = 'goals + assists'
         if metric == 'substitute_appearances':
             result = 'appearances coming off the bench'
+        if metric == 'goals_all_count':
+            result = 'scored goals'
+        if metric == 'goals_conceded_all_count':
+            result = 'conceded goals'
+        if metric == 'scoring_minutes_75_90_count':
+            result = 'goals scored after 75 minute'
+        if metric == 'cleansheets_count':
+            result = 'cleansheets'
+        if metric == 'corners_count':
+            result = 'corners'
+        if metric == 'yellowcards_count':
+            result = 'yellowcards '
         else:
             result = metric.replace('_',' ')
         return result
@@ -50,6 +63,10 @@ class Facts:
         df = pd.read_sql(team_qr, con=engine)
         team_name = df['name'].iloc[0]
         return {'team_name': team_name, 'team_id': team_id}
+    
+    def get_random_season(self):
+        seasons = ['2020/2021','2021/2022','2022/2023', '2023/2024']
+        return random.choice(seasons)
     
     @staticmethod 
     def combine(x,y):
@@ -91,6 +108,40 @@ class Facts:
             top_facts.append(d)
         facts = top_facts[:self.top_n]
         return self.fact_template(season_name, quiz_type, title, facts)
+    
+
+    def team_facts(self) -> dict:
+        season_name = self.get_random_season()
+        df = self.generate_df(self.query.format(season_name))
+        metrics =[
+            'goals_all_count',
+                  'goals_conceded_all_count',
+                'scoring_minutes_75_90_count',
+                'cleansheets_count',
+                'corners_count',
+                'yellowcards_count',
+                'num_of_goals_over_3_5_team_count'
+        ]
+        metric = random.choice(metrics)
+        metric_formatted = self.format_metric(metric)
+        col_list = ['team','season', metric]
+        
+        quiz_type = 0
+        df = df[col_list].sort_values(metric, ascending=False)
+        if metric == 'num_of_goals_over_3_5_team_count':
+            title = f"Premier League {season_name}: Top 5 teams with the most 4+ goals scored games"
+        else:
+            title = f"Premier League {season_name}: Top 5 teams with the most {metric_formatted}"
+            
+        top_facts = []
+        for idx, row in df.iterrows():
+            d = {
+                "name": row['team'],
+                "number": int(row[metric])
+            }
+            top_facts.append(d)
+        facts = top_facts[:self.top_n]
+        return self.fact_template(season_name, quiz_type, title, facts)
 
 
     def post_facts(self, metric: str, by_team=False) -> bool:
@@ -98,4 +149,8 @@ class Facts:
             json_data = self.top_n_facts_assembler(self.query, metric, by_team=True)
         else:
             json_data = self.top_n_facts_assembler(self.query, metric)
+        return post_json(json_data, self.url)
+    
+    def post_team_facts(self) -> bool:
+        json_data = self.team_facts()
         return post_json(json_data, self.url)

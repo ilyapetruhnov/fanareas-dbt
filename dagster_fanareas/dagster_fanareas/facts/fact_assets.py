@@ -28,3 +28,12 @@ def publish_player_season_stats_fact():
     if result == False:
         publish_player_season_stats_fact()
     return True
+
+@asset(group_name="facts")
+def publish_team_fact():
+    season = random.randint(2008,2023)
+    facts_obj = Facts(query = top_teams_query, season = season, top_n = 5)
+    result = facts_obj.post_team_facts()
+    if result == False:
+        publish_team_fact()
+    return True
