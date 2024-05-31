@@ -4,6 +4,7 @@ import sqlalchemy
 import os
 from dagster_fanareas.constants import api_key, base_url
 from itertools import chain
+from dagster import op
 import time
 
 @op
