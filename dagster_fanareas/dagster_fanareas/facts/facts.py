@@ -1,7 +1,6 @@
 import pandas as pd
 import random
 from dagster_fanareas.ops.utils import post_json, create_db_session
-from dagster_fanareas.facts.queries import top_teams_query
 from sqlalchemy import text
 import requests
 
@@ -113,9 +112,10 @@ class Facts:
     def team_facts(self) -> dict:
         season_name = self.get_random_season()
         df = self.generate_df(self.query.format(season_name))
-        metrics =[
-            'goals_all_count',
-                  'goals_conceded_all_count',
+    
+        metrics = [
+                'goals_all_count',
+                'goals_conceded_all_count',
                 'scoring_minutes_75_90_count',
                 'cleansheets_count',
                 'corners_count',
@@ -125,7 +125,6 @@ class Facts:
         metric = random.choice(metrics)
         metric_formatted = self.format_metric(metric)
         col_list = ['team','season', metric]
-        
         quiz_type = 0
         df = df[col_list].sort_values(metric, ascending=False)
         if metric == 'num_of_goals_over_3_5_team_count':
