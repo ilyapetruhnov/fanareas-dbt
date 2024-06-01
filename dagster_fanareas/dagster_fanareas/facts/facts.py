@@ -63,7 +63,7 @@ class Facts:
         return {'team_name': team_name, 'team_id': team_id}
     
     def get_random_season(self):
-        seasons = [2020,2021,2022,2023]
+        seasons = [2020, 2021, 2022, 2023]
         return random.choice(seasons)
     
     def get_season_str(self, season: int):
@@ -124,11 +124,11 @@ class Facts:
                 'corners_count',
                 'yellowcards_count',
                 'num_of_goals_over_3_5_team_count'
-        ]
+                ]
         metric = random.choice(metrics)
         metric_formatted = self.format_metric(metric)
         col_list = ['team','season', metric]
-        quiz_type = 0
+        quiz_type = 1
         df = df[col_list].sort_values(metric, ascending=False)
         if metric == 'num_of_goals_over_3_5_team_count':
             title = f"Premier League {season_name}: Top 5 teams with the most 4+ goals scored games"
