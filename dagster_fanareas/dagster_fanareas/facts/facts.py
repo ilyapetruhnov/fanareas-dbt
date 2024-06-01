@@ -34,21 +34,21 @@ class Facts:
     def format_metric(self, metric: str) -> str:
         if metric == 'penalties':
             result = 'penalty goals'
-        if metric == 'goals_assists':
+        elif metric == 'goals_assists':
             result = 'goals + assists'
-        if metric == 'substitute_appearances':
+        elif metric == 'substitute_appearances':
             result = 'appearances coming off the bench'
-        if metric == 'goals_all_count':
+        elif metric == 'goals_all_count':
             result = 'scored goals'
-        if metric == 'goals_conceded_all_count':
+        elif metric == 'goals_conceded_all_count':
             result = 'conceded goals'
-        if metric == 'scoring_minutes_75_90_count':
+        elif metric == 'scoring_minutes_75_90_count':
             result = 'goals scored after 75 minute'
-        if metric == 'cleansheets_count':
+        elif metric == 'cleansheets_count':
             result = 'cleansheets'
-        if metric == 'corners_count':
+        elif metric == 'corners_count':
             result = 'corners'
-        if metric == 'yellowcards_count':
+        elif metric == 'yellowcards_count':
             result = 'yellow cards '
         else:
             result = metric.replace('_',' ')
