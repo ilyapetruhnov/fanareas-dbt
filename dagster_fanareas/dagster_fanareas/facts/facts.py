@@ -5,9 +5,8 @@ from sqlalchemy import text
 import requests
 
 class Facts:
-    def __init__(self, query: str, season: int, top_n: int) -> None:
+    def __init__(self, query: str, top_n: int) -> None:
         self.query = query
-        self.season = season
         self.top_n = top_n
         self.url = "https://fanareas.com/api/facts/createFact"
 
@@ -71,13 +70,13 @@ class Facts:
     def combine(x,y):
         return f"goals: {int(x)}, assists: {int(y)}"
 
-    def generate_df(self, query_str: str) -> pd.DataFrame:
+    def generate_df(self, query_str: str, season: int) -> pd.DataFrame:
         engine = create_db_session()
-        query = query_str.format(self.season)
+        query = query_str.format(season)
         return pd.read_sql(text(query), con=engine)
 
-    def top_n_facts_assembler(self, query, metric: str, by_team=False) -> dict:
-        df = self.generate_df(query)
+    def top_n_facts_assembler(self, query, metric: str, season: str, by_team=False) -> dict:
+        df = self.generate_df(query, season)
         metric_filter = (df[f'{metric}_rn'] <= self.top_n)
         metric_formatted = self.format_metric(metric)
         col_list = ['fullname','team','season_name', metric]
@@ -143,11 +142,11 @@ class Facts:
         return self.fact_template(season_name, quiz_type, title, facts)
 
 
-    def post_facts(self, metric: str, by_team=False) -> bool:
+    def post_facts(self, metric: str, season: int, by_team=False) -> bool:
         if by_team:
-            json_data = self.top_n_facts_assembler(self.query, metric, by_team=True)
+            json_data = self.top_n_facts_assembler(self.query, metric, season, by_team=True)
         else:
-            json_data = self.top_n_facts_assembler(self.query, metric)
+            json_data = self.top_n_facts_assembler(self.query, metric, season)
         return post_json(json_data, self.url)
     
     def post_team_facts(self) -> bool:

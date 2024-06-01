@@ -1,6 +1,6 @@
 top_teams_query = """
 select * from dim_team_stats
-where season = {}
+where season = '{}'
 """
 
 top_players_query = """
