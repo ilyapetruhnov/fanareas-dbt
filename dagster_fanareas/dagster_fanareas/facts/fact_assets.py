@@ -1,7 +1,7 @@
 from dagster import asset
 from dagster_fanareas.facts.facts import Facts
 import random
-from dagster_fanareas.facts.queries import top_teams_query, top_season_stats_query
+from dagster_fanareas.facts.queries import top_teams_query, top_season_stats_query, teams_query
 
 @asset(group_name="facts")
 def publish_one_fact_by_team():
@@ -31,7 +31,7 @@ def publish_player_season_stats_fact():
 
 @asset(group_name="facts")
 def publish_team_fact():
-    facts_obj = Facts(query = top_teams_query, top_n = 5)
+    facts_obj = Facts(query = teams_query, top_n = 5)
     result = facts_obj.post_team_facts()
     if result == False:
         publish_team_fact()

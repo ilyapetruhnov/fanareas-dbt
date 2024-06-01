@@ -1,4 +1,4 @@
-top_teams_query = """
+teams_query = """
 select * from dim_team_stats
 where season = '{}'
 """
