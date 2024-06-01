@@ -49,7 +49,7 @@ class Facts:
         if metric == 'corners_count':
             result = 'corners'
         if metric == 'yellowcards_count':
-            result = 'yellowcards '
+            result = 'yellow cards '
         else:
             result = metric.replace('_',' ')
         return result
@@ -63,14 +63,17 @@ class Facts:
         return {'team_name': team_name, 'team_id': team_id}
     
     def get_random_season(self):
-        seasons = ['2020/2021','2021/2022','2022/2023', '2023/2024']
+        seasons = [2020,2021,2022,2023]
         return random.choice(seasons)
+    
+    def get_season_str(self, season: int):
+        return f"{season}/{season+1}"
     
     @staticmethod 
     def combine(x,y):
         return f"goals: {int(x)}, assists: {int(y)}"
 
-    def generate_df(self, query_str: str, season: int) -> pd.DataFrame:
+    def generate_df(self, query_str: str, season) -> pd.DataFrame:
         engine = create_db_session()
         query = query_str.format(season)
         return pd.read_sql(text(query), con=engine)
@@ -109,8 +112,9 @@ class Facts:
     
 
     def team_facts(self) -> dict:
-        season_name = self.get_random_season()
-        df = self.generate_df(self.query.format(season_name))
+        season = self.get_random_season()
+        season_name = self.get_season_str(season)
+        df = self.generate_df(self.query, season_name)
     
         metrics = [
                 'goals_all_count',
