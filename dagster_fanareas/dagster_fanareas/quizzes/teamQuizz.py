@@ -109,7 +109,7 @@ class TeamQuizz(Quizzes):
         val2 = df[metric].iloc[positions[1]]
         val3 = df[metric].iloc[positions[2]]
 
-        options = list(correct_response, team1, team2, team3)
+        options = [correct_response, team1, team2, team3]
 
         if metric == 'yellowcards_count':
             question_statement = "which team received the most yellow cards in {} season?".format(season)
@@ -143,7 +143,7 @@ class TeamQuizz(Quizzes):
             team3 = df['team'].iloc[positions[2]]
             question_statement = "Who won the Premier League title in the {} season?".format(season)
             description = f"""{correct_response} secured the title with an impressive performance throughout the season"""
-            options = list(correct_response, team1, team2, team3)
+            options = [correct_response, team1, team2, team3]
         else:
             correct_response = df['team'].iloc[5]
             correct_val = df['position'].iloc[5]
@@ -153,7 +153,7 @@ class TeamQuizz(Quizzes):
             team4 = df['team'].iloc[3]
             question_statement = "Which of the following teams did not finish in the top four in the {} Premier League season?".format(season)
             description = f"""The correct answer is {correct_response}, they ended the {season} Premier League season in {correct_val}th place/ {team1}, {team2}, {team3} and {team4} finished in the top 4"""
-            options = list(correct_response, team1, team2, team4)
+            options = [correct_response, team1, team2, team4]
         question = self.question_template(question_statement, options, correct_response, description)
         return question
     
@@ -169,7 +169,7 @@ class TeamQuizz(Quizzes):
         team3 = df['team'].iloc[positions[2]]
         question_statement = "In the {} Premier League season, which team was relegated to the Championship?".format(season)
         description = f"""The correct answer is {correct_response}, who were relegated to the Championship at the end of the {season} Premier League season"""
-        options = list(correct_response, team1, team2, team3)
+        options = [correct_response, team1, team2, team3]
         question = self.question_template(question_statement, options, correct_response, description)
         return question
 
