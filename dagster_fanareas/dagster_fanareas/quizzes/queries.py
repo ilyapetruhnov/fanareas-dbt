@@ -3,15 +3,29 @@ guess_the_team_query = """
                         where season = '{}'
                         """
 
+player_for_the_team_query = """
+                        with vw as (select team, 
+                        array_agg(fullname ORDER BY random()) as fullname 
+                        from dim_player_team_stats
+                        where season_name = '{}'
+                        and appearances > 15
+                        group by team)
+                        select team, 
+                        fullname[1] as fullname 
+                        from vw
+                        """
+
 photo_query = """
         SELECT player_id,
         max(fullname) as fullname,
         max(image_path) as image_path
-        from stg_players
-        where team_id = {}
+        from dim_player_team_stats
+        where team = {}
+        and season_name = {}
         and position_id is not null
         and image_path is not null
         and image_path != 'https://cdn.sportmonks.com/images/soccer/placeholder.png'
+        and appearances > 15
         group by player_id
         """
 

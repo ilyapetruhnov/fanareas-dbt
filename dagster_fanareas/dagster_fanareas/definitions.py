@@ -26,10 +26,12 @@ dbt_selection = build_dbt_asset_selection(
 
 
 guess_the_player_quiz_job = define_asset_job(name="trigger_guess_team_player_quiz", selection="guess_team_player_quiz")
+
 transfers_quiz_job = define_asset_job(name="trigger_transfers_quiz", selection="transfers_quiz")
 
 photo_quiz_job = define_asset_job(name="trigger_photo_quiz", selection="photo_quiz")
 
+guess_the_team_quiz_job = define_asset_job(name="trigger_team_quiz", selection="guess_the_team_quiz")
 
 post_news_job = define_asset_job(name="trigger_post_news", selection="post_news")
 
@@ -57,6 +59,11 @@ transfers_quiz_schedule = ScheduleDefinition(
 photo_quiz_schedule = ScheduleDefinition(
     job=photo_quiz_job, 
     cron_schedule="0 6 * * *"
+)
+
+guess_the_team_quiz_schedule = ScheduleDefinition(
+    job=guess_the_team_quiz_job, 
+    cron_schedule="0 6 */2 * *"
 )
 
 guess_the_player_quiz_schedule = ScheduleDefinition(
@@ -93,6 +100,7 @@ daily_ingest_assets_schedule = ScheduleDefinition(
 defs = Definitions(
     assets=[*all_assets],
     jobs = [guess_the_player_quiz_job,
+            guess_the_team_quiz_job,
             transfers_quiz_job,
             photo_quiz_job,
             post_news_job,
@@ -106,6 +114,7 @@ defs = Definitions(
                transfers_quiz_schedule,
                photo_quiz_schedule,
                guess_the_player_quiz_schedule,
+               guess_the_team_quiz_schedule,
                facts_by_team_schedule,
                team_facts_schedule,
                facts_player_season_schedule,

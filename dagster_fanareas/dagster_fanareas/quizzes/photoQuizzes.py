@@ -12,8 +12,9 @@ class PhotoQuizzes(Quizzes):
     
     def generate_player_by_photo_question(self) -> dict:
         generated_team = get_dim_name_and_id('teams')
-        team_id = generated_team['id']
-        df = self.generate_df(photo_query.format(team_id))
+        season_name = self.get_season()
+        team_name = generated_team['name']
+        df = self.generate_df(photo_query.format(team_name, season_name))
 
         options_df = df.sample(4)
         correct_response = options_df['fullname'].iloc[0]

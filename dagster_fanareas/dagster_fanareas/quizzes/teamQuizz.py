@@ -1,6 +1,6 @@
 import random
 from dagster_fanareas.ops.utils import get_dim_name_and_id
-from dagster_fanareas.quizzes.queries import guess_the_team_query
+from dagster_fanareas.quizzes.queries import guess_the_team_query, player_for_the_team_query
 from dagster_fanareas.quizzes.quizzes import Quizzes
 from datetime import datetime
 
@@ -14,10 +14,6 @@ class TeamQuizz(Quizzes):
                         'goals_conceded_all_count'
                         ]
         self.quiz_collection = []
-
-    def get_season(self):
-        seasons = ['2020/2021', '2021/2022', '2022/2023', '2023/2024']
-        return random.choice(seasons)
 
     def scored_num_goals(self):
         season = self.get_season()
@@ -189,9 +185,49 @@ class TeamQuizz(Quizzes):
         return question
     
     def player_from_team(self):
+        season = '2023/2024'
+        df = self.generate_df(player_for_the_team_query.format(season))
+        df = df.sample(4)
+        correct_response = df['team'].iloc[0]
+        player = df['fullname'].iloc[0]
+        options = list(df['team'].unique())
+        question_statement = "As of the 2023/2024 season, which team does {} play for?".format(player)
+        description = f"""As of the 2023/2024 season, {player} plays for {correct_response}"""
+        question = self.question_template(question_statement, options, correct_response, description)
+        return question
+    
+    def get_question(self, i):
+        if i == 1:
+            question = self.scored_num_goals()
 
-        # As of the 2023-2024 season, which team does Erling Haaland play for?
+        elif i == 2:
+            question = self.team_draws_wins_losses()
 
+        elif i == 3:
+            question = self.team_metrics()
+
+        elif i == 4:
+            question = self.the_most_fewest_metrics()
+
+        elif i == 5:
+            question = self.team_position()
+
+        elif i == 6:
+            question = self.team_relegated()
+
+        elif i == 7:
+            question = self.home_venue()
+
+        elif i == 8:
+            question = self.player_from_team()
+            
+        return question 
+    
+    def fill_quiz_with_questions(self):
+        nums = random.sample(range(1, 8), 5)
+        for i in nums:
+            question = self.get_question(i)
+            self.collect_questions(question)
     
 
             
