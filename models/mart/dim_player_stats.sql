@@ -13,7 +13,6 @@ agg_player_stats as (
         player_stats.player_id,
         player_stats.team_id,
         player_stats.season_id,
-        max(jersey_number) as jersey_number,
         max(total) filter (where type = 'Captain') as captain,
         max(total) filter (where type = 'Yellowcards') as yellow_cards,
         max(total) filter (where type = 'Redcards') as red_cards,
