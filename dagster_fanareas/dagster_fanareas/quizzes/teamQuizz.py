@@ -74,19 +74,19 @@ class TeamQuizz(Quizzes):
 
         if metric == 'yellowcards_count':
             question_statement = "Which team received more yellow cards in {} season?".format(season)
-            description = f"""During the {season} Premier League season {correct_response} received {correct_val} yellow cards/ {team1} received {val1} yellow cards/  {team2} received {val2} yellow cards/  {team3} received {val3} yellow cards"""
+            description = f"""During the {season} Premier League season {correct_response} received {correct_val} yellow cards_ {team1} received {val1} yellow cards_  {team2} received {val2} yellow cards_  {team3} received {val3} yellow cards"""
         elif metric == 'ball_possession_average':
             question_statement = "Which team had a higher average ball possession in {} season?".format(season)
-            description = f"""In the {season} Premier League season {correct_response}'s average ball possession was {correct_val}%/ {team1} ball possession was {val1}%/  {team2} ball possession was {val2}%/  {team3} ball possession was {val3}%"""
+            description = f"""In the {season} Premier League season {correct_response}'s average ball possession was {correct_val}%_ {team1} ball possession was {val1}%_  {team2} ball possession was {val2}%_  {team3} ball possession was {val3}%"""
         elif metric == 'corners_count':
             question_statement = "Which team took more corners in {} season?".format(season)
-            description = f"""During the {season} Premier League season {correct_response} took {correct_val} corners/ {team1} took {val1} corners/  {team2} took {val2} corners/  {team3} took {val3} corners"""
+            description = f"""During the {season} Premier League season {correct_response} took {correct_val} corners_ {team1} took {val1} corners_  {team2} took {val2} corners_  {team3} took {val3} corners"""
         elif metric == 'goals_conceded_all_count':
             question_statement = "Which team conceded more goals in {} season?".format(season)
-            description = f"""During the {season} Premier League season {correct_response} conceded {correct_val} goals/ {team1} conceded {val1} goals/  {team2} conceded {val2} goals/  {team3} conceded {val3} goals"""
+            description = f"""During the {season} Premier League season {correct_response} conceded {correct_val} goals_ {team1} conceded {val1} goals_  {team2} conceded {val2} goals_  {team3} conceded {val3} goals"""
         elif metric == 'cleansheets_count':
             question_statement = "Which team kept more clean sheets in {} season?".format(season)
-            description = f"""During the {season} Premier League season {correct_response} kept {correct_val} clean sheets/ {team1} kept {val1} clean sheets/  {team2} kept {val2} clean sheets/  {team3} kept {val3} clean sheets. A clean sheet means that the team did not concede any goals during a match."""
+            description = f"""During the {season} Premier League season {correct_response} kept {correct_val} clean sheets_ {team1} kept {val1} clean sheets_  {team2} kept {val2} clean sheets_  {team3} kept {val3} clean sheets. A clean sheet means that the team did not concede any goals during a match."""
         question = self.question_template(question_statement, options, correct_response, description)
         self.metrics.remove(metric)
         return question
@@ -101,31 +101,32 @@ class TeamQuizz(Quizzes):
         correct_val = df[metric].iloc[0]
         
         positions = random.sample(range(1, df_size), 3)
+        positions.sort()
         team1 = df['team'].iloc[positions[0]]
         team2 = df['team'].iloc[positions[1]]
         team3 = df['team'].iloc[positions[2]]
 
-        val1 = df[metric].iloc[positions[0]]
-        val2 = df[metric].iloc[positions[1]]
-        val3 = df[metric].iloc[positions[2]]
+        val1 = int(df[metric].iloc[positions[0]])
+        val2 = int(df[metric].iloc[positions[1]])
+        val3 = int(df[metric].iloc[positions[2]])
 
         options = [correct_response, team1, team2, team3]
 
         if metric == 'yellowcards_count':
-            question_statement = "which team received the most yellow cards in {} season?".format(season)
-            description = f"""During the {season} Premier League season {correct_response} received {correct_val} yellow cards/ {team1} received {val1} yellow cards/  {team2} received {val2} yellow cards/  {team3} received {val3} yellow cards"""
+            question_statement = "Which team received the most yellow cards in {} season?".format(season)
+            description = f"""During the {season} Premier League season {correct_response} received {correct_val} yellow cards_ {team1} received {val1} yellow cards_  {team2} received {val2} yellow cards_  {team3} received {val3} yellow cards"""
         elif metric == 'ball_possession_average':
-            question_statement = "which team had the highest average ball possession in {} season?".format(season)
-            description = f"""{correct_response} had the highest average ball possession of {correct_val}% in the 2022-2023 Premier League season which helped them dominate matches and create numerous scoring opportunities"""
+            question_statement = "Which team had the highest average ball possession in {} season?".format(season)
+            description = f"""{correct_response} had the highest average ball possession of {correct_val}% in the {season} Premier League season which helped them dominate matches and create numerous scoring opportunities"""
         elif metric == 'corners_count':
             question_statement = "Which team took the most corners in {} season?".format(season)
-            description = f"""In the {season} Premier League season {correct_response} earned a total of {correct_val} corners, demonstrating their offensive prowess and ability to maintain pressure on their opponents/ {team1} took {val1} corners/  {team2} took {val2} corners/  {team3} took {val3} corners"""
+            description = f"""In the {season} Premier League season {correct_response} earned a total of {correct_val} corners, demonstrating their offensive prowess and ability to maintain pressure on their opponents_ {team1} took {val1} corners_  {team2} took {val2} corners_  {team3} took {val3} corners"""
         elif metric == 'goals_conceded_all_count':
             question_statement = "Which team conceded the most goals in {} season?".format(season)
-            description = f"""The correct answer is {correct_response}, who conceded the most goals in the {season} Premier League season, with a total of {correct_val} goals conceded./ {team1} conceded {val1} goals/  {team2} conceded {val2} goals/  {team3} conceded {val3} goals"""
+            description = f"""The correct answer is {correct_response}, who conceded the most goals in the {season} Premier League season, with a total of {correct_val} goals conceded._ {team1} conceded {val1} goals_  {team2} conceded {val2} goals_  {team3} conceded {val3} goals"""
         elif metric == 'cleansheets_count':
             question_statement = "Which team kept the most clean sheets in {} season?".format(season)
-            description = f"""The correct answer is {correct_response}, who kept the most clean sheets in the {season} Premier League season/ {team1} kept {val1} clean sheets/  {team2} kept {val2} clean sheets/  {team3} kept {val3} clean sheets"""
+            description = f"""The correct answer is {correct_response}, who kept the most clean sheets in the {season} Premier League season_ {team1} kept {val1} clean sheets_  {team2} kept {val2} clean sheets_  {team3} kept {val3} clean sheets"""
         question = self.question_template(question_statement, options, correct_response, description)
         self.metrics.remove(metric)
         return question
@@ -138,6 +139,7 @@ class TeamQuizz(Quizzes):
         if title_won:
             correct_response = df['team'].iloc[0]
             positions = random.sample(range(1, df_size), 3)
+            positions.sort()
             team1 = df['team'].iloc[positions[0]]
             team2 = df['team'].iloc[positions[1]]
             team3 = df['team'].iloc[positions[2]]
@@ -152,7 +154,7 @@ class TeamQuizz(Quizzes):
             team3 = df['team'].iloc[2]
             team4 = df['team'].iloc[3]
             question_statement = "Which of the following teams did not finish in the top four in the {} Premier League season?".format(season)
-            description = f"""The correct answer is {correct_response}, they ended the {season} Premier League season in {correct_val}th place/ {team1}, {team2}, {team3} and {team4} finished in the top 4"""
+            description = f"""The correct answer is {correct_response}, they ended the {season} Premier League season in {correct_val}th place_ {team1}, {team2}, {team3} and {team4} finished in the top 4"""
             options = [correct_response, team1, team2, team4]
         question = self.question_template(question_statement, options, correct_response, description)
         return question
@@ -164,6 +166,7 @@ class TeamQuizz(Quizzes):
         df_size = len(df) - 1
         correct_response = df['team'].iloc[0]
         positions = random.sample(range(6, df_size), 3)
+        positions.sort()
         team1 = df['team'].iloc[positions[0]]
         team2 = df['team'].iloc[positions[1]]
         team3 = df['team'].iloc[positions[2]]
@@ -227,8 +230,7 @@ class TeamQuizz(Quizzes):
         return question 
     
     def fill_quiz_with_questions(self):
-        nums = random.sample(range(1, 8), 5)
-        for i in nums:
+        for i in range(1, 8):
             question = self.get_question(i)
             self.collect_questions(question)
     

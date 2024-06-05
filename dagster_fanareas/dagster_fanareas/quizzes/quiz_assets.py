@@ -41,7 +41,7 @@ def transfers_quiz() -> bool:
 def guess_the_team_quiz() -> bool:
     title = f"Guess the Premier League team"
     description = f"Guess 5 Premier League teams"
-    quiz_type = 1
+    quiz_type = 3
     is_demo = False
     quiz_obj = TeamQuizz(title, description, quiz_type, is_demo)
     quiz_obj.fill_quiz_with_questions()
