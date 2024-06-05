@@ -96,10 +96,11 @@ class TeamQuizz(Quizzes):
         season = self.get_season()
         df = self.generate_df(guess_the_team_query.format(season))
         df = df.sort_values(metric, ascending = False)[['team', metric]].drop_duplicates(metric)
+        df_size = len(df) - 1
         correct_response = df['team'].iloc[0]
         correct_val = df[metric].iloc[0]
         
-        positions = random.sample(range(1, 19), 3)
+        positions = random.sample(range(1, df_size), 3)
         team1 = df['team'].iloc[positions[0]]
         team2 = df['team'].iloc[positions[1]]
         team3 = df['team'].iloc[positions[2]]
@@ -133,9 +134,10 @@ class TeamQuizz(Quizzes):
         season = self.get_season()
         df = self.generate_df(guess_the_team_query.format(season))
         df = df.sort_values('position', ascending = True)[['team', 'position']]
+        df_size = len(df) - 1
         if title_won:
             correct_response = df['team'].iloc[0]
-            positions = random.sample(range(1, 19), 3)
+            positions = random.sample(range(1, df_size), 3)
             team1 = df['team'].iloc[positions[0]]
             team2 = df['team'].iloc[positions[1]]
             team3 = df['team'].iloc[positions[2]]
@@ -159,8 +161,9 @@ class TeamQuizz(Quizzes):
         season = self.get_season()
         df = self.generate_df(guess_the_team_query.format(season))
         df = df.sort_values('position', ascending = False)[['team', 'position']]
+        df_size = len(df) - 1
         correct_response = df['team'].iloc[0]
-        positions = random.sample(range(6, 19), 3)
+        positions = random.sample(range(6, df_size), 3)
         team1 = df['team'].iloc[positions[0]]
         team2 = df['team'].iloc[positions[1]]
         team3 = df['team'].iloc[positions[2]]
