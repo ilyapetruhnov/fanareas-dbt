@@ -61,6 +61,7 @@ squads_seasons_teams as (
 
     select
         player_id,
+        squads.jersey_number,
         teams.id as team_id,
         teams.name as team,
         seasons.id as season_id,
@@ -75,6 +76,7 @@ final as (
 
     select
         players.id as player_id,
+        jersey_number,
         countries_continents.country_id as nationality_id,
         countries_continents.continent as continent,
         countries_continents.country as nationality,
@@ -106,6 +108,7 @@ final as (
 
 select
         player_id,
+        jersey_number,
         nationality_id,
         continent,
         nationality,

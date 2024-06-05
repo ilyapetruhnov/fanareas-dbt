@@ -49,20 +49,8 @@ class Quizzes:
                      }
 
         return json_data
-
-    def question_template(self, question_statement, options, correct_response) -> dict:
-        if len(options) < 4:
-            result = None
-        else:
-            random.shuffle(options)
-            result = {
-                "description": question_statement,
-                "quizQuestionOptions": options,
-                "correctAnswer": correct_response
-            }
-        return result
     
-    def demo_question_template(self, question_statement, options, correct_response, description) -> dict:
+    def question_template(self, question_statement, options, correct_response, description=None) -> dict:
         if len(options) < 4:
             result = None
         else:
@@ -183,27 +171,6 @@ class Quizzes:
         options.append(correct_response)
         question_statement = "Who played at {} position in the {} season?".format(position, season_name)
         return self.question_template(question_statement, options, correct_response)
-
-    # def generate_player_position_stats_question(self, query: str, season_name: str, metric: str) -> dict:
-    #     df = self.generate_df(query)
-    #     positions = [i for i in df['position'].unique()]
-    #     random.shuffle(positions)
-    #     for player_position in positions:
-    #         if len(df[df['position'] == player_position]) > 3:
-    #             result_df = df[df['position'] == player_position].sort_values(metric, ascending=False).head(4)
-    #             correct_response = result_df.iloc[0]['fullname']
-    #             options = [i for i in result_df.fullname]
-    #             formatted_metric = self.format_metric(metric)
-    #             if metric == 'substitute_appearances':
-    #                 question_statement = "Which {} player had the most appearances coming off the bench in the {} season?".format(
-    #                     player_position, season_name)
-    #                 return self.question_template(question_statement, options, correct_response)
-    #             else:
-    #                 question_statement = "Which {} player had more {} in the {} season?".format(player_position,
-    #                                                                                      formatted_metric,
-    #                                                                                      season_name)
-    #                 return self.question_template(question_statement, options, correct_response)
-    #     return None
     
     def generate_player_stats_question(self, query: str, season_name: str, metric: str) -> dict:
         df = self.generate_df(query)

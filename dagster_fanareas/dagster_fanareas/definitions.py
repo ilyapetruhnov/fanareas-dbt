@@ -71,7 +71,7 @@ facts_by_team_schedule = ScheduleDefinition(
 
 team_facts_schedule = ScheduleDefinition(
     job=post_team_facts_job, 
-    cron_schedule="0 6 * * *"
+    cron_schedule="0 6 */2 * *"
 )
 
 facts_player_season_schedule = ScheduleDefinition(

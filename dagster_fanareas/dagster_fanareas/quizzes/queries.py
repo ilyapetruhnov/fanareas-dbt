@@ -1,9 +1,15 @@
+guess_the_team_query = """
+                        select * from dim_team_stats 
+                        where season = '{}'
+                        """
+
 photo_query = """
         SELECT player_id,
         max(fullname) as fullname,
         max(image_path) as image_path
         from stg_players
         where team_id = {}
+        and position_id is not null
         and image_path is not null
         and image_path != 'https://cdn.sportmonks.com/images/soccer/placeholder.png'
         group by player_id
@@ -463,7 +469,6 @@ from stg_teams"""
 
 query_standings = """
 select * from stg_standings
-where season != '2023/2024' 
 order by points
 """
 
@@ -472,7 +477,7 @@ query_relegations = """
 with vw as (select season,
                    array_agg(team) as teams
             from stg_standings
-            where season not in ('2023/2024', '2005/2006')
+            where season != '2005/2006'
             group by season),
     vw1 as (
 select season,

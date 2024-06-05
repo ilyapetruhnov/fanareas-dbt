@@ -1,6 +1,5 @@
-import pandas as pd
 import random
-from dagster_fanareas.ops.utils import post_json, create_db_session, get_dim_name_and_id
+from dagster_fanareas.ops.utils import get_dim_name_and_id
 from dagster_fanareas.quizzes.queries import *
 from dagster_fanareas.quizzes.transfers_queries import transfers_query
 from dagster_fanareas.quizzes.quizzes import Quizzes
@@ -19,16 +18,17 @@ class TransferQuizzes(Quizzes):
         df['date'] = df['date'].apply(lambda x: datetime.strptime(x,'%Y-%m-%d'))
         df['month'] = df['date'].apply(lambda x: x.strftime('%B'))
         df['year'] = df['date'].apply(lambda x: x.year)
-        correct_df = df[df['from_team'] == team_from].sample(1)
+        try:
+            correct_df = df[df['from_team'] == team_from].sample(1)
+        except Exception as e:
+            return None
         correct_response = correct_df['fullname'].iloc[0]
         year = correct_df['year'].iloc[0]
         month = correct_df['month'].iloc[0]
         team_to = correct_df['to_team'].iloc[0]
-
         if clubs_played:
             options_df = df[(df['from_team']!= team_from) & (df['to_team']!= team_from)].sample(3)
             question_statement = "Who played for {} and {} in his career?".format(team_from, team_to)
-
         else:
             options_df = df.drop([correct_df.index[0]], axis=0).sample(3)
             question_statement = "Which player left {} and joined {} in {} {}?".format(team_from, team_to, month, year)
@@ -79,23 +79,23 @@ class TransferQuizzes(Quizzes):
         return question
     
     def get_question(self):
-        i = random.randint(1,4)
+        i = random.randint(1,2)
         if i == 1:
             question = self.generate_player_transfer_question(clubs_played=False)
 
         elif i == 2:
             question = self.generate_player_transfer_question(clubs_played=True)
 
-        elif i == 3:
-            question = self.generate_player_left_joined_question(joined=False)
+        # elif i == 3:
+        #     question = self.generate_player_left_joined_question(joined=False)
 
-        elif i == 4:
-            question = self.generate_player_left_joined_question(joined=True)
+        # elif i == 4:
+        #     question = self.generate_player_left_joined_question(joined=True)
             
         return question 
     
     def fill_quiz_with_questions(self):
-        while len(self.quiz_collection) < 5:
+        while len(self.quiz_collection) < 10:
             question = self.get_question()
             self.collect_questions(question)
             
