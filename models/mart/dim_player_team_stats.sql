@@ -13,7 +13,6 @@ select
         stg_player_stats.team_id,
         stg_player_stats.season_id,
         stg_player_stats.player_statistic_id,
-        max(jersey_number) as jersey_number,
         max(total) filter (where type = 'Captain') as captain,
         max(total) filter (where type = 'Yellowcards') as yellow_cards,
         max(total) filter (where type = 'Redcards') as red_cards,
