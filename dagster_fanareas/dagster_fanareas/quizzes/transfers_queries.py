@@ -23,10 +23,10 @@ select
 from from_team
 join stg_teams
 on stg_teams.team_id = to_team_id
-where amount > 4000000
+where amount > 400000
 and completed = true
 and fullname is not null
 and from_team is not null
 and stg_teams.team is not null
-and date > '2016-01-01'
+and date > '2014-01-01'
 """
