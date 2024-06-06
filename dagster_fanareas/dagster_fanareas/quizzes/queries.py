@@ -20,9 +20,8 @@ photo_query = """
         max(fullname) as fullname,
         max(image_path) as image_path
         from dim_player_team_stats
-        where team = {}
-        and season_name = {}
-        and position_id is not null
+        where team = '{}'
+        and season_name = '{}'
         and image_path is not null
         and image_path != 'https://cdn.sportmonks.com/images/soccer/placeholder.png'
         and appearances > 15
