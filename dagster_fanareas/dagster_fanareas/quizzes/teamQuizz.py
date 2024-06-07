@@ -74,10 +74,10 @@ class TeamQuizz(Quizzes):
 
         if metric == 'yellowcards_count':
             question_statement = "Which team received more yellow cards in {} season?".format(season)
-            description = f"""During the {season} Premier League season {correct_response} received {correct_val} yellow cards_ {team1} received {val1} yellow cards_  {team2} received {val2} yellow cards_  {team3} received {val3} yellow cards"""
+            description = f"""During the {season} Premier League season {correct_response} received {correct_val} yellow cards _ {team1} received {val1} yellow cards _  {team2} received {val2} yellow cards _ {team3} received {val3} yellow cards"""
         elif metric == 'ball_possession_average':
             question_statement = "Which team had a higher average ball possession in {} season?".format(season)
-            description = f"""In the {season} Premier League season {correct_response}'s average ball possession was {correct_val}%_ {team1} ball possession was {val1}%_  {team2} ball possession was {val2}%_  {team3} ball possession was {val3}%"""
+            description = f"""In the {season} Premier League season {correct_response}'s average ball possession was {correct_val}% _ {team1} ball possession was {val1}% _ {team2} ball possession was {val2}% _ {team3} ball possession was {val3}%"""
         elif metric == 'corners_count':
             question_statement = "Which team took more corners in {} season?".format(season)
             description = f"""During the {season} Premier League season {correct_response} took {correct_val} corners_ {team1} took {val1} corners_  {team2} took {val2} corners_  {team3} took {val3} corners"""
@@ -86,7 +86,7 @@ class TeamQuizz(Quizzes):
             description = f"""During the {season} Premier League season {correct_response} conceded {correct_val} goals_ {team1} conceded {val1} goals_  {team2} conceded {val2} goals_  {team3} conceded {val3} goals"""
         elif metric == 'cleansheets_count':
             question_statement = "Which team kept more clean sheets in {} season?".format(season)
-            description = f"""During the {season} Premier League season {correct_response} kept {correct_val} clean sheets_ {team1} kept {val1} clean sheets_  {team2} kept {val2} clean sheets_  {team3} kept {val3} clean sheets. A clean sheet means that the team did not concede any goals during a match."""
+            description = f"""During the {season} Premier League season {correct_response} kept {correct_val} clean sheets _ {team1} kept {val1} clean sheets_  {team2} kept {val2} clean sheets_  {team3} kept {val3} clean sheets. A clean sheet means that the team did not concede any goals during a match."""
         question = self.question_template(question_statement, options, correct_response, description)
         self.metrics.remove(metric)
         return question
@@ -126,7 +126,7 @@ class TeamQuizz(Quizzes):
             description = f"""The correct answer is {correct_response}, who conceded the most goals in the {season} Premier League season, with a total of {correct_val} goals conceded._ {team1} conceded {val1} goals_  {team2} conceded {val2} goals_  {team3} conceded {val3} goals"""
         elif metric == 'cleansheets_count':
             question_statement = "Which team kept the most clean sheets in {} season?".format(season)
-            description = f"""The correct answer is {correct_response}, who kept the most clean sheets in the {season} Premier League season_ {team1} kept {val1} clean sheets_  {team2} kept {val2} clean sheets_  {team3} kept {val3} clean sheets"""
+            description = f"""The correct answer is {correct_response}, who kept the {correct_val} clean sheets in the {season} Premier League season _ {team1} kept {val1} clean sheets _  {team2} kept {val2} clean sheets _  {team3} kept {val3} clean sheets"""
         question = self.question_template(question_statement, options, correct_response, description)
         self.metrics.remove(metric)
         return question
