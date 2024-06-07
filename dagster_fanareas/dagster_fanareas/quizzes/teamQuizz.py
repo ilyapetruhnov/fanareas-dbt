@@ -17,7 +17,7 @@ class TeamQuizz(Quizzes):
 
     def scored_num_goals(self):
         season = self.get_season()
-        goals = [30, 40, 50]
+        goals = [40, 45, 50]
         n_goals = random.choice(goals)
         df = self.generate_df(guess_the_team_query.format(season))
         correct_response = df[df['goals_all_count'] < n_goals]['team'].sample(1).iloc[0]
