@@ -15,17 +15,19 @@ class PhotoQuizzes(Quizzes):
         season_name = self.get_season()
         team_name = generated_team['name']
         df = self.generate_df(photo_query.format(team_name, season_name))
-
-        options_df = df.sample(4)
-        correct_response = options_df['fullname'].iloc[0]
-        question_statement = options_df['image_path'].iloc[0]
-        options = [i for i in options_df['fullname']]
- 
-        if correct_response in self.players:
+        try:
+            options_df = df.sample(4)
+            correct_response = options_df['fullname'].iloc[0]
+            question_statement = options_df['image_path'].iloc[0]
+            options = [i for i in options_df['fullname']]
+            if correct_response in self.players:
+                return None
+            else:
+                question = self.question_template(question_statement, options, correct_response)
+                self.players.append(correct_response)
+                return question
+        except Exception:
             return None
-        question = self.question_template(question_statement, options, correct_response)
-        self.players.append(correct_response)
-        return question
     
     def fill_quiz_with_questions(self):
         while len(self.quiz_collection) < 5:
