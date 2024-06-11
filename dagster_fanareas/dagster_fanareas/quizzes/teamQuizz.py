@@ -20,6 +20,7 @@ class TeamQuizz(Quizzes):
         goals = [40, 45, 50]
         n_goals = random.choice(goals)
         df = self.generate_df(guess_the_team_query.format(season))
+        df['goals_all_count'] = df['goals_all_count'].astype(int)
         correct_response = df[df['goals_all_count'] < n_goals]['team'].sample(1).iloc[0]
         options = list(df[df['goals_all_count'] > n_goals]['team'].sample(3))
         options.append(correct_response)
@@ -58,6 +59,7 @@ class TeamQuizz(Quizzes):
         season = self.get_season()
         df = self.generate_df(guess_the_team_query.format(season))
         df = df.sample(4).sort_values(metric, ascending = False)[['team',metric]].drop_duplicates(metric)
+        df[metric] = df[metric].astype(int)
         correct_response = df['team'].iloc[0]
         correct_val = df[metric].iloc[0]
 
@@ -74,19 +76,19 @@ class TeamQuizz(Quizzes):
 
         if metric == 'yellowcards_count':
             question_statement = "Which team received more yellow cards in {} season?".format(season)
-            description = f"""During the {season} Premier League season {correct_response} received {correct_val} yellow cards _ {team1} received {val1} yellow cards _  {team2} received {val2} yellow cards _ {team3} received {val3} yellow cards"""
+            description = f"""During the {season} Premier League season <i>{correct_response}</i> received <b>{correct_val}</b> yellow cards _ <i>{team1}</i> received <b>{val1}</b> yellow cards _ <i>{team2}</i> received <b>{val2}</b> yellow cards _ <i>{team3}</i> received <b>{val3}</b> yellow cards"""
         elif metric == 'ball_possession_average':
             question_statement = "Which team had a higher average ball possession in {} season?".format(season)
-            description = f"""In the {season} Premier League season {correct_response}'s average ball possession was {correct_val}% _ {team1} ball possession was {val1}% _ {team2} ball possession was {val2}% _ {team3} ball possession was {val3}%"""
+            description = f"""In the {season} Premier League season <i>{correct_response}'s</i> average ball possession was <b>{correct_val}%</b> _ <i>{team1}</i> ball possession was <b>{val1}%</b> _ <i>{team2}</i> ball possession was <b>{val2}%</b> _ <i>{team3}</i> ball possession was <b>{val3}%</b>"""
         elif metric == 'corners_count':
             question_statement = "Which team took more corners in {} season?".format(season)
-            description = f"""During the {season} Premier League season {correct_response} took {correct_val} corners_ {team1} took {val1} corners_  {team2} took {val2} corners_  {team3} took {val3} corners"""
+            description = f"""During the {season} Premier League season <i>{correct_response}</i> took <b>{correct_val}</b> corners _ <i>{team1}</i> took <b>{val1}</b> corners _ <i>{team2}</i> took <b>{val2}</b> corners _ <i>{team3}</i> took <b>{val3}</b> corners"""
         elif metric == 'goals_conceded_all_count':
             question_statement = "Which team conceded more goals in {} season?".format(season)
-            description = f"""During the {season} Premier League season {correct_response} conceded {correct_val} goals_ {team1} conceded {val1} goals_  {team2} conceded {val2} goals_  {team3} conceded {val3} goals"""
+            description = f"""During the {season} Premier League season <i>{correct_response}</i> conceded <b>{correct_val}</b> goals _ <i>{team1}</i> conceded <b>{val1}</b> goals _ <i>{team2}</i> conceded <b>{val2}</b> goals _ <i>{team3}</i> conceded <b>{val3}</b> goals"""
         elif metric == 'cleansheets_count':
             question_statement = "Which team kept more clean sheets in {} season?".format(season)
-            description = f"""During the {season} Premier League season {correct_response} kept {correct_val} clean sheets _ {team1} kept {val1} clean sheets_  {team2} kept {val2} clean sheets_  {team3} kept {val3} clean sheets. A clean sheet means that the team did not concede any goals during a match."""
+            description = f"""During the {season} Premier League season <i>{correct_response}</i> kept <b>{correct_val}</b> clean sheets _ <i>{team1}</i> kept <b>{val1}</b> clean sheets _ <i>{team2}</i> kept <b>{val2}</b> clean sheets _ <i>{team3}</i> kept <b>{val3}</b> clean sheets. A clean sheet means that the team did not concede any goals during a match."""
         question = self.question_template(question_statement, options, correct_response, description)
         self.metrics.remove(metric)
         return question
@@ -96,6 +98,7 @@ class TeamQuizz(Quizzes):
         season = self.get_season()
         df = self.generate_df(guess_the_team_query.format(season))
         df = df.sort_values(metric, ascending = False)[['team', metric]].drop_duplicates(metric)
+        df[metric] = df[metric].astype(int)
         df_size = len(df) - 1
         correct_response = df['team'].iloc[0]
         correct_val = df[metric].iloc[0]
@@ -154,7 +157,7 @@ class TeamQuizz(Quizzes):
             team3 = df['team'].iloc[2]
             team4 = df['team'].iloc[3]
             question_statement = "Which of the following teams did not finish in the top four in the {} Premier League season?".format(season)
-            description = f"""The correct answer is {correct_response}, they ended the {season} Premier League season in {correct_val}th place_ {team1}, {team2}, {team3} and {team4} finished in the top 4"""
+            description = f"""The correct answer is {correct_response}, they ended the {season} Premier League season in <b>{correct_val}th</b> place_ {team1}, {team2}, {team3} and {team4} finished in the top 4"""
             options = [correct_response, team1, team2, team4]
         question = self.question_template(question_statement, options, correct_response, description)
         return question
