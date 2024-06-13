@@ -49,7 +49,7 @@ def api_call(url):
         return None
 
 @op
-def tm_api_call(url, params=None):
+def tm_api_call(url, params):
     headers = {"X-RapidAPI-Key": tm_api_key, "X-RapidAPI-Host": tm_host}
     response = requests.get(url, headers=headers, params = params)
     if response.status_code == 200:
