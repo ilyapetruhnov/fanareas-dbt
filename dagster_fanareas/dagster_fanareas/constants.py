@@ -28,6 +28,17 @@ POSTGRES_CONFIG = {
     )
 }
 
+NEW_POSTGRES_CONFIG = {
+    "con_string": get_conn_string(
+        username= os.getenv("POSTGRES_USER"),
+        password= os.getenv("POSTGRES_PWD"),
+        hostname= os.getenv("POSTGRES_HOST"),
+        port= "25060",
+        db_name= os.getenv("TM_POSTGRES_DBNAME"),
+        scheme = 'postgresql'
+    )
+}
+
 tm_url = 'https://transfermarkt-db.p.rapidapi.com/v1/'
 tm_host = 'transfermarkt-db.p.rapidapi.com'
 tm_api_key = os.getenv("TM_API_KEY")

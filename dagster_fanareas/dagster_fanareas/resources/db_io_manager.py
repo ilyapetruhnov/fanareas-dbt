@@ -80,62 +80,9 @@ class DbIOManager(IOManager):
         return df
 
 
-class NewIOManager(IOManager):
-    """Sample IOManager to handle loading the contents of tables as pandas DataFrames.
-
-    Does not handle cases where data is written to different schemas for different outputs, and
-    uses the name of the asset key as the table name.
-    """
-
-    def __init__(self, con_string: str):
-        self._con = con_string
-
-    def handle_output(self, context, obj):
-        overwrite_tables = ['player_stats','player_stats_detailed','team_stats','team_stats_detailed', 
-                            'raw_player_stats','raw_player_stats_detailed','raw_team_stats','raw_team_stats_detailed',
-                            'stg_player_stats','stg_team_stats','stg_teams','stg_players','stg_standings',
-                            'dim_player_stats', 'dim_team_stats','dim_player_team_stats'
-                            ]
-        if isinstance(obj, pd.DataFrame) and obj.empty:
-            pass
-        # dbt has already written the data to this table
-        elif isinstance(obj, pd.DataFrame) and obj.empty == False:
-            # write df to table
-            if context.asset_key.path[-1] in overwrite_tables:
-                obj.set_index('id').to_sql(name=context.asset_key.path[-1], con=self._con, schema = 'transfermarkt', if_exists="replace")
-            else:
-                obj.set_index('id').to_sql(name=context.asset_key.path[-1], con=self._con, schema = 'transfermarkt', if_exists="append")
-        else:
-            raise ValueError(f"Unsupported object type {type(obj)} for DbIOManager.")
-        
-
-    def load_input(self, context) -> pd.DataFrame:
-        """Load the contents of a table as a pandas DataFrame."""
-        model_name = context.asset_key.path[-1]
-        #context.add_output_metadata({"table_name": model_name})
-        return pd.read_sql(f"SELECT * FROM {model_name}", schema = 'transfermarkt', con=self._con)
-    
-
-    def load_table(self, table_name) -> pd.DataFrame:
-        """Load the contents of a table as a pandas DataFrame."""
-        #context.add_output_metadata({"table_name": model_name})
-        return pd.read_sql(f"SELECT * FROM {table_name}", schema = 'transfermarkt', con=self._con)
-
-    def load_table_by_id(self, context, input_id) -> pd.DataFrame:
-        """Load the contents of a table as a pandas DataFrame."""
-        model_name = context.asset_key.path[-1]
-        #context.add_output_metadata({"table_name": model_name})
-        return pd.read_sql(f"SELECT * FROM {model_name} WHERE id = {input_id}", schema = 'transfermarkt', con=self._con)
-
-
 @io_manager(config_schema={"con_string": str})
 def db_io_manager(context):
     return DbIOManager(context.resource_config["con_string"])
-
-
-@io_manager(config_schema={"con_string": str})
-def new_io_manager(context):
-    return NewIOManager(context.resource_config["con_string"])
 
 
 

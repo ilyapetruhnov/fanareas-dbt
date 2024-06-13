@@ -8,9 +8,9 @@ from dagster_fanareas.assets import assets, dbt, core_assets
 from dagster_fanareas.quizzes import quiz_assets
 from dagster_fanareas.facts import facts, fact_assets
 
-from .constants import dbt_project_dir, POSTGRES_CONFIG
+from .constants import dbt_project_dir, POSTGRES_CONFIG, NEW_POSTGRES_CONFIG
 # from .schedules import schedules
-from dagster_fanareas.resources.db_io_manager import db_io_manager, new_io_manager
+from dagster_fanareas.resources.db_io_manager import db_io_manager
 
 all_assets = load_assets_from_modules([assets, dbt, core_assets, facts, fact_assets, quiz_assets])
 
@@ -124,7 +124,7 @@ defs = Definitions(
     resources={
         "dbt": DbtCliResource(project_dir=os.fspath(dbt_project_dir)),
         "db_io_manager": db_io_manager.configured(POSTGRES_CONFIG),
-        "new_io_manager": new_io_manager.configured(POSTGRES_CONFIG)
+        "new_io_manager": db_io_manager.configured(NEW_POSTGRES_CONFIG)
     },
 )
 

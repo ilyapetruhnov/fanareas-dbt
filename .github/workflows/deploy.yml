@@ -21,6 +21,7 @@ env:
   POSTGRES_PWD: ${{ secrets.POSTGRES_PWD }}
   API_KEY: ${{ secrets.API_KEY }}
   TM_API_KEY: ${{ secrets.TM_API_KEY }}
+  TM_POSTGRES_DBNAME: ${{ secrets.TM_POSTGRES_DBNAME }}
 
 
 jobs:
