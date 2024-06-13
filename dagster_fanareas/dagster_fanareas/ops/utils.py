@@ -62,12 +62,8 @@ def tm_api_call(url, params=None):
 def tm_fetch_data(url, params):
     data = []
     result = tm_api_call(url, params)
-    if 'data' in result.json().keys():
-        data.append(result.json()['data']['table'])
-        result_df = pd.DataFrame(list(chain(*data)))
-    else:
-        # context.log.info('executing else statement')
-        result_df = pd.DataFrame([])
+    data.append(result.json()['data']['table'])
+    result_df = pd.DataFrame(list(chain(*data)))
     return result_df
 
 @op
