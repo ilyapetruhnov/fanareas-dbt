@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 import sqlalchemy
 import os
-from dagster_fanareas.constants import api_key, base_url
+from dagster_fanareas.constants import api_key, tm_api_key, tm_host
 from itertools import chain
 from dagster import op
 import time
@@ -47,7 +47,29 @@ def api_call(url):
     else:
         print(f"Error: {response.status_code}")
         return None
-    
+
+@op
+def tm_api_call(url, params=None):
+    headers = {"X-RapidAPI-Key": tm_api_key, "X-RapidAPI-Host": tm_host}
+    response = requests.get(url, headers=headers, params = params)
+    if response.status_code == 200:
+        return response
+    else:
+        print(f"Error: {response.status_code}")
+        return None
+
+@op
+def tm_fetch_data(url, params):
+    data = []
+    result = tm_api_call(url, params)
+    if 'data' in result.json().keys():
+        data.append(result.json()['data']['table'])
+        result_df = pd.DataFrame(list(chain(*data)))
+    else:
+        # context.log.info('executing else statement')
+        result_df = pd.DataFrame([])
+    return result_df
+
 @op
 def fetch_data(url):
     data = []

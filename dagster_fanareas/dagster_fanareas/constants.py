@@ -28,6 +28,9 @@ POSTGRES_CONFIG = {
     )
 }
 
+tm_url = 'https://transfermarkt-db.p.rapidapi.com/v1/'
+tm_host = 'transfermarkt-db.p.rapidapi.com'
+tm_api_key = os.getenv("TM_API_KEY")
 api_key = os.getenv("API_KEY")
 base_url = "https://api.sportmonks.com/v3/football"
 core_url = "https://api.sportmonks.com/v3/core"

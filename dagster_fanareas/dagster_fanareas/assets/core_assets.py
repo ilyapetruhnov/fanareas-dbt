@@ -1,7 +1,23 @@
 from dagster import asset
 import pandas as pd
-from dagster_fanareas.ops.utils import fetch_data, upsert
-from dagster_fanareas.constants import core_url
+from dagster_fanareas.ops.utils import fetch_data, upsert, tm_fetch_data
+from dagster_fanareas.constants import core_url, tm_url
+
+
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def rankings(context) -> pd.DataFrame:
+    season = "2023"
+    params = {"locale":"US",
+                "season_id":season,
+                "standing_type":"general",
+                "competition_id":"GB1"}
+
+    url = f"{tm_url}competitions/standings"
+    df = tm_fetch_data(url ,params)
+    df['season_id'] = season
+    df
+    return df
+
 
 
 @asset(compute_kind="pandas", io_manager_key="db_io_manager")
