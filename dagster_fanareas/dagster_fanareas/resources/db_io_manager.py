@@ -11,10 +11,6 @@ import sqlalchemy
 from sqlalchemy import text
 import uuid
 from dagster import IOManager, io_manager
-from dagster import (
-    IOManager,
-    io_manager,
-)
 
 
 class DbIOManager(IOManager):

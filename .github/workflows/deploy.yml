@@ -20,6 +20,7 @@ env:
   POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
   POSTGRES_PWD: ${{ secrets.POSTGRES_PWD }}
   API_KEY: ${{ secrets.API_KEY }}
+  TM_API_KEY: ${{ secrets.TM_API_KEY }}
 
 
 jobs:
