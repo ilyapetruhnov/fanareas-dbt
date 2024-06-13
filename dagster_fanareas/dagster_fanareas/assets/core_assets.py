@@ -15,7 +15,6 @@ def rankings(context) -> pd.DataFrame:
     url = f"{tm_url}competitions/standings"
     df = tm_fetch_data(url ,params)
     df['season_id'] = season
-    df
     return df
 
 
