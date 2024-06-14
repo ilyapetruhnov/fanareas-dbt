@@ -4,7 +4,7 @@ from dagster_dbt import DbtCliResource, build_dbt_asset_selection
 
 from dagster_fanareas.assets.dbt import fanareas_dbt_assets
 
-from dagster_fanareas.assets import assets, dbt, core_assets
+from dagster_fanareas.assets import assets, dbt, core_assets, tm_assets
 from dagster_fanareas.quizzes import quiz_assets
 from dagster_fanareas.facts import facts, fact_assets
 
@@ -12,7 +12,7 @@ from .constants import dbt_project_dir, POSTGRES_CONFIG, NEW_POSTGRES_CONFIG
 # from .schedules import schedules
 from dagster_fanareas.resources.db_io_manager import db_io_manager
 
-all_assets = load_assets_from_modules([assets, dbt, core_assets, facts, fact_assets, quiz_assets])
+all_assets = load_assets_from_modules([tm_assets, assets, dbt, core_assets, facts, fact_assets, quiz_assets])
 
 dbt_selection = build_dbt_asset_selection(
     [fanareas_dbt_assets]

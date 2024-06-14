@@ -4,7 +4,7 @@ from dagster_fanareas.ops.utils import tm_fetch_data
 from dagster_fanareas.constants import tm_url
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
-def season(context) -> pd.DataFrame:
+def seasons(context) -> pd.DataFrame:
     url = f"{tm_url}competitions/seasons"
 
     params = {"locale":"US","competition_id":"GB1"}
@@ -13,8 +13,8 @@ def season(context) -> pd.DataFrame:
     return df
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
-def ranking(context) -> pd.DataFrame:
-    existing_df = context.resources.db_io_manager.load_table(table_name='season')
+def standings(context) -> pd.DataFrame:
+    existing_df = context.resources.db_io_manager.load_table(table_name='seasons')
     seasons = existing_df['id'].unique()
     frames = []
     for i in seasons:
