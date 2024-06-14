@@ -28,6 +28,7 @@ def standing(context) -> pd.DataFrame:
         df['season_id'] = i
         df['season_id'] = df['season_id'].astype(int)
         df.rename(columns={"id": 'team_id'},inplace=True)
+        df.rename(columns={"group": 'group_id'},inplace=True)
         df['team_id'] = df['team_id'].astype(int)
         df['id'] = df['team_id'] + df['season_id']
         frames.append(df)
