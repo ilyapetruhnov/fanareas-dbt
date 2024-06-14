@@ -14,7 +14,7 @@ def season(context) -> pd.DataFrame:
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
 def standing(context) -> pd.DataFrame:
-    existing_df = context.resources.db_io_manager.load_table(table_name='season')
+    existing_df = context.resources.new_io_manager.load_table(table_name='season')
     seasons = existing_df['id'].unique()
     frames = []
     for i in seasons:
