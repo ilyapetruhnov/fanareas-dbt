@@ -6,6 +6,7 @@ from dagster_fanareas.constants import api_key, tm_api_key, tm_host
 from itertools import chain
 from dagster import op
 import time
+import re
 
 @op
 def get_records(response):
@@ -47,6 +48,15 @@ def api_call(url):
     else:
         print(f"Error: {response.status_code}")
         return None
+
+@op
+def rename_camel_col(camel_str):
+    # Identify the uppercase letters and replace them with an underscore followed by the lowercase letter
+    snake_str = re.sub(r'([A-Z])', r'_\1', camel_str).lower()
+    # Remove any leading underscore if it exists
+    if snake_str.startswith('_'):
+        snake_str = snake_str[1:]
+    return snake_str
 
 @op
 def tm_api_call(url, params):
