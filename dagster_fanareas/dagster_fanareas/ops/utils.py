@@ -59,10 +59,13 @@ def tm_api_call(url, params):
         return None
 
 @op
-def tm_fetch_data(url, params):
+def tm_fetch_data(url, params, key=None):
     data = []
     result = tm_api_call(url, params)
-    data.append(result.json()['data']['table'])
+    if key is not None:
+        data.append(result.json()['data'].get(key))
+    else:
+        data.append(result.json()['data'])
     result_df = pd.DataFrame(list(chain(*data)))
     return result_df
 
