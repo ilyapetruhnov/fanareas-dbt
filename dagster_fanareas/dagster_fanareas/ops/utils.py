@@ -8,6 +8,7 @@ from dagster import op
 import time
 import re
 import datetime
+from datetime import datetime
 
 @op
 def get_records(response):
