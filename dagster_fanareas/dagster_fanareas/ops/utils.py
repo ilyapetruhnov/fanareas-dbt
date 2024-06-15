@@ -7,6 +7,7 @@ from itertools import chain
 from dagster import op
 import time
 import re
+import datetime
 
 @op
 def get_records(response):
@@ -77,6 +78,36 @@ def tm_fetch_data(url, params, key=None):
     else:
         data.append(result.json()['data'])
     result_df = pd.DataFrame(list(chain(*data)))
+    return result_df
+
+@op
+def tm_fetch_squads(season_id, team_id):
+    url = "https://transfermarkt-db.p.rapidapi.com/v1/clubs/squad"
+    frames = []
+    params = {"season_id":season_id,"locale":"US","club_id":team_id}
+    response = tm_api_call(url, params)
+    for i in response.json()['data']:
+        sliced_dict = {k: i[k] for k in list(i.keys())}
+        df = pd.DataFrame.from_dict(sliced_dict, orient='index').T
+        df['team_id'] = team_id
+        df['season_id'] = season_id
+        df['joined'] = df['joined'].apply(lambda x: datetime.fromtimestamp(x))
+        df['contract_until'] = df['contractUntil'].apply(lambda x: datetime.fromtimestamp(x))
+        df['market_value'] = df['marketValue'].apply(lambda x: x['value'])
+        df['market_value'] = df['marketValue'].apply(lambda x: x['value'])
+        df['market_value_currency'] = df['marketValue'].apply(lambda x: x['currency'])
+        df['market_value_progression'] = df['marketValue'].apply(lambda x: x['progression'])
+        cols = ['id','team_id','season_id','name','joined', 'contract_until',
+       'captain', 
+       'isLoan', 
+       'wasLoan',   
+        'shirtNumber', 
+        'age',
+        'market_value', 
+        'market_value_currency',
+       'market_value_progression']
+        frames.append(df[cols])
+    result_df = pd.concat(frames)
     return result_df
 
 @op
