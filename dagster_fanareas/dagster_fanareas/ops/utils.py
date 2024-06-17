@@ -82,6 +82,29 @@ def tm_fetch_data(url, params, key=None):
     return result_df
 
 @op
+def tm_fetch_player_performance(season_id, player_id):
+    url = "https://transfermarkt-db.p.rapidapi.com/v1/players/performance-details"
+    params = {"competition_id":"GB1","season_id":season_id,"player_id":player_id,"locale":"US"}
+    frames = []
+    response = tm_api_call(url, params)
+    data = response.json()['data']
+    for i in range(len(data)):
+        match = data[i]
+        match_id = match['match']['id']
+        performance = data[i]['performance']
+        performance['match_id'] = match_id
+        performance['player_id'] = player_id
+        performance['season_id'] = season_id
+        df = pd.DataFrame.from_dict(performance, orient='index').T
+        frames.append(df)
+    result_df = pd.concat(frames)
+    result_df = result_df[['player_id', 'season_id','match_id', 'goals', 'assists', 'ownGoals', 'yellowCardMinute',
+        'yellowRedCardMinute', 'redCardMinute', 'minutesPlayed',
+        'substitutedOn', 'substitutedOff', 'position', 'isGoalkeeper',
+        'additional']]
+    return result_df
+
+@op
 def tm_fetch_squads(season_id, team_id):
     url = "https://transfermarkt-db.p.rapidapi.com/v1/clubs/squad"
     frames = []
@@ -102,7 +125,7 @@ def tm_fetch_squads(season_id, team_id):
        'captain', 
        'isLoan', 
        'wasLoan',   
-        'shirtNumber', 
+       'shirtNumber', 
         'age',
         'market_value', 
         'market_value_currency',
