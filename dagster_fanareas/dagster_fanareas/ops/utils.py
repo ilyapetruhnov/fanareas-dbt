@@ -98,10 +98,13 @@ def tm_fetch_player_performance(season_id, player_id):
         df = pd.DataFrame.from_dict(performance, orient='index').T
         frames.append(df)
     result_df = pd.concat(frames)
-    result_df = result_df[['id','player_id', 'season_id', 'goals', 'assists', 'ownGoals', 'yellowCardMinute',
+    cols = ['id','player_id', 'season_id', 'goals', 'assists', 'ownGoals', 'yellowCardMinute',
         'yellowRedCardMinute', 'redCardMinute', 'minutesPlayed',
-        'substitutedOn', 'substitutedOff', 'position', 'isGoalkeeper',
-        'additional']]
+        'substitutedOn', 'substitutedOff']
+    for col in cols:
+        result_df[col] = result_df[col].astype(int)
+    cols.append('position')
+    result_df = result_df[cols]
     return result_df
 
 @op
@@ -132,6 +135,75 @@ def tm_fetch_squads(season_id, team_id):
        'market_value_progression']
         frames.append(df[cols])
     result_df = pd.concat(frames)
+    return result_df
+
+@op
+def match_result(result_type, home_goals, home_team, away_goals, away_team):
+    if home_goals>away_goals and result_type == 'win':
+        return home_team
+    elif away_goals>home_goals and result_type == 'win':
+        return away_team
+    elif away_goals>home_goals and result_type == 'lose':
+        return home_team
+    elif home_goals>away_goals and result_type == 'lose':
+        return away_team
+    else:
+        return None
+    
+@op
+def tm_fetch_match_stats(match_id):
+    url = "https://transfermarkt-db.p.rapidapi.com/v1/fixtures/result"
+
+    params = {"locale":"US","fixture_id":match_id}
+    response = tm_api_call(url, params)
+    data = response.json()['data']
+    result = pd.DataFrame.from_dict(data, orient='index').T
+    return result
+
+@op
+def tm_fetch_match_result(match_id):
+    url = "https://transfermarkt-db.p.rapidapi.com/v1/fixtures/statistics"
+    params = {"locale":"US","fixture_id":match_id}
+    result = tm_fetch_data(url,params)
+    result['id'] = match_id
+    return result
+    
+@op
+def tm_fetch_match(match_id):
+    url = "https://transfermarkt-db.p.rapidapi.com/v1/fixtures/info"
+    params = {"locale":"US","fixture_id": match_id}
+    response = tm_api_call(url, params)
+    data = response.json()['data']
+    df = pd.DataFrame.from_dict(data, orient='index').T
+    df['date'] = df['timestamp'].apply(lambda x: datetime.fromtimestamp(x))
+    match_result = tm_fetch_match_result(match_id)
+    result_df = pd.concat([df,match_result],axis=1)
+    cols = ['id',
+            'date',
+            'postponed',
+            'stadiumID', 
+            'stadiumName', 
+            'spectators', 
+            'seasonID', 
+            'competitionID', 
+            'competitionName', 
+            'competitionRound',
+            'refereeID', 
+            'homeTeamID', 
+            'homeTeamName', 
+            'awayTeamID', 
+            'awayTeamName', 
+            'firstLeg', 
+            'nextRound',
+            'goalsHome',
+            'goalsAway', 
+            'halftimeGoalsHome',
+            'halftimeGoalsAway'
+    ]
+    result_df = result_df[cols]
+    result_df['draw'] = result_df.apply(lambda x: True if x.goalsHome == x.goalsAway else False, axis=1)
+    result_df['winning_team'] = result_df.apply(lambda x: match_result('win', x.goalsHome, x.homeTeamID, x.goalsAway, x.awayTeamID), axis=1)
+    result_df['losing_team'] = result_df.apply(lambda x: match_result('lose', x.goalsHome, x.homeTeamID, x.goalsAway, x.awayTeamID), axis=1)
     return result_df
 
 @op

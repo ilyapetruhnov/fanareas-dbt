@@ -1,6 +1,6 @@
 from dagster import asset
 import pandas as pd
-from dagster_fanareas.ops.utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance
+from dagster_fanareas.ops.utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match
 from dagster_fanareas.constants import tm_url
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
@@ -57,11 +57,26 @@ def squad(context) -> pd.DataFrame:
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
 def player_performace(context) -> pd.DataFrame:
     # existing_df = context.resources.new_io_manager.load_table(table_name='season')
-    season_id = 2023
+    season_id = '2023'
     players = ['331560','451276']
     frames = []
     for i in players:
         df = tm_fetch_player_performance(season_id=season_id, player_id=i)
+        for col in df.columns:
+            new_col_name = rename_camel_col(col)
+            df.rename(columns={col: new_col_name},inplace=True)
+        frames.append(df)
+    result = pd.concat(frames)
+    result_df = result_df.fillna(0)
+    return result
+
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def matches(context) -> pd.DataFrame:
+    existing_df = context.resources.new_io_manager.load_table(table_name='player_performace')
+    matches = existing_df['id'].unique()
+    frames = []
+    for match_id in matches:
+        df = tm_fetch_match(match_id)
         for col in df.columns:
             new_col_name = rename_camel_col(col)
             df.rename(columns={col: new_col_name},inplace=True)
