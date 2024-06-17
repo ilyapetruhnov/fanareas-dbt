@@ -92,13 +92,13 @@ def tm_fetch_player_performance(season_id, player_id):
         match = data[i]
         match_id = match['match']['id']
         performance = data[i]['performance']
-        performance['match_id'] = match_id
+        performance['id'] = match_id
         performance['player_id'] = player_id
         performance['season_id'] = season_id
         df = pd.DataFrame.from_dict(performance, orient='index').T
         frames.append(df)
     result_df = pd.concat(frames)
-    result_df = result_df[['player_id', 'season_id','match_id', 'goals', 'assists', 'ownGoals', 'yellowCardMinute',
+    result_df = result_df[['id','player_id', 'season_id', 'goals', 'assists', 'ownGoals', 'yellowCardMinute',
         'yellowRedCardMinute', 'redCardMinute', 'minutesPlayed',
         'substitutedOn', 'substitutedOff', 'position', 'isGoalkeeper',
         'additional']]
