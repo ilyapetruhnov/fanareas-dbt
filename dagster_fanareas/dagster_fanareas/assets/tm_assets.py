@@ -67,7 +67,6 @@ def player_performace(context) -> pd.DataFrame:
             df.rename(columns={col: new_col_name},inplace=True)
         frames.append(df)
     result = pd.concat(frames)
-    result_df = result_df.fillna(0)
     return result
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")

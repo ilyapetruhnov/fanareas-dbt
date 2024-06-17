@@ -98,6 +98,7 @@ def tm_fetch_player_performance(season_id, player_id):
         df = pd.DataFrame.from_dict(performance, orient='index').T
         frames.append(df)
     result_df = pd.concat(frames)
+    result_df = result_df.fillna(0)
     cols = ['id','player_id', 'season_id', 'goals', 'assists', 'ownGoals', 'yellowCardMinute',
         'yellowRedCardMinute', 'redCardMinute', 'minutesPlayed',
         'substitutedOn', 'substitutedOff']
