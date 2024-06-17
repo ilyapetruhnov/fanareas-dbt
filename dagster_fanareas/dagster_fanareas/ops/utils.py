@@ -138,16 +138,17 @@ def tm_fetch_squads(season_id, team_id):
     result_df = pd.concat(frames)
     return result_df
 
-@op
-def match_result(result_type, home_goals, home_team, away_goals, away_team):
-    if home_goals>away_goals and result_type == 'win':
-        return home_team
-    elif away_goals>home_goals and result_type == 'win':
-        return away_team
-    elif away_goals>home_goals and result_type == 'lose':
-        return home_team
-    elif home_goals>away_goals and result_type == 'lose':
-        return away_team
+def match_result(goalsHome, homeTeamID, goalsAway, awayTeamID, result_type):
+    if goalsHome == goalsAway:
+        return 0
+    elif goalsHome > goalsAway and result_type == 'win':
+        return homeTeamID
+    elif goalsHome < goalsAway and result_type == 'win':
+        return awayTeamID
+    elif goalsHome < goalsAway and result_type == 'lose':
+        return homeTeamID
+    elif goalsHome > goalsAway and result_type == 'lose':
+        return awayTeamID
     else:
         return None
     
@@ -203,8 +204,8 @@ def tm_fetch_match(match_id):
     ]
     result_df = result_df[cols]
     result_df['draw'] = result_df.apply(lambda x: True if x.goalsHome == x.goalsAway else False, axis=1)
-    result_df['winning_team'] = result_df.apply(lambda x: match_result('win', x.goalsHome, x.homeTeamID, x.goalsAway, x.awayTeamID), axis=1)
-    result_df['losing_team'] = result_df.apply(lambda x: match_result('lose', x.goalsHome, x.homeTeamID, x.goalsAway, x.awayTeamID), axis=1)
+    result_df['winning_team'] = result_df.apply(lambda x: match_result(x.goalsHome, x.homeTeamID, x.goalsAway, x.awayTeamID, 'win'), axis=1)
+    result_df['losing_team'] = result_df.apply(lambda x: match_result(x.goalsHome, x.homeTeamID, x.goalsAway, x.awayTeamID, 'lose'), axis=1)
     return result_df
 
 @op
