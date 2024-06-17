@@ -152,7 +152,7 @@ def match_result(result_type, home_goals, home_team, away_goals, away_team):
         return None
     
 @op
-def tm_fetch_match_stats(match_id):
+def tm_fetch_match_result(match_id):
     url = "https://transfermarkt-db.p.rapidapi.com/v1/fixtures/result"
 
     params = {"locale":"US","fixture_id":match_id}
@@ -162,7 +162,7 @@ def tm_fetch_match_stats(match_id):
     return result
 
 @op
-def tm_fetch_match_result(match_id):
+def tm_fetch_match_stats(match_id):
     url = "https://transfermarkt-db.p.rapidapi.com/v1/fixtures/statistics"
     params = {"locale":"US","fixture_id":match_id}
     result = tm_fetch_data(url,params)
@@ -178,7 +178,7 @@ def tm_fetch_match(match_id):
     df = pd.DataFrame.from_dict(data, orient='index').T
     df['date'] = df['timestamp'].apply(lambda x: datetime.fromtimestamp(x))
     match_result = tm_fetch_match_result(match_id)
-    result_df = pd.concat([df,match_result],axis=1)
+    result_df = pd.concat([df, match_result],axis=1)
     cols = ['id',
             'date',
             'postponed',
