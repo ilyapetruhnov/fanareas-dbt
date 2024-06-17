@@ -178,8 +178,8 @@ def tm_fetch_match(match_id):
     data = response.json()['data']
     df = pd.DataFrame.from_dict(data, orient='index').T
     df['date'] = df['timestamp'].apply(lambda x: datetime.fromtimestamp(x))
-    match_result = tm_fetch_match_result(match_id)
-    result_df = pd.concat([df, match_result],axis=1)
+    match_result_df = tm_fetch_match_result(match_id)
+    result_df = pd.concat([df, match_result_df],axis=1)
     cols = ['id',
             'date',
             'postponed',
