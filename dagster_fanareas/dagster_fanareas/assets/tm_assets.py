@@ -93,10 +93,11 @@ def match_stats(context) -> pd.DataFrame:
         df.rename(columns={'clubId': 'team_id'},inplace=True)
         frames.append(df)
     result = pd.concat(frames)
-    cols = ['id','team_id', 'ballpossession', 'offsides', 'fouls', 'freekicks',
+    cols = ['id','match_id','team_id', 'ballpossession', 'offsides', 'fouls', 'freekicks',
        'cornerkicks', 'goalkeepersaves', 'shotsoffgoal', 'shotsongoal',
        'shotstotal']
     result = result[cols]
+
     return result
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")

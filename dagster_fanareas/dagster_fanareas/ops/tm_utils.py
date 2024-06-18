@@ -126,7 +126,8 @@ def tm_fetch_match_stats(match_id):
     url = "https://transfermarkt-db.p.rapidapi.com/v1/fixtures/statistics"
     params = {"locale":"US","fixture_id":match_id}
     result = tm_fetch_data(url,params)
-    result['id'] = match_id
+    result['match_id'] = match_id
+    result['id'] = result.apply(lambda df: eval(f"{df['match_id']}{df['clubId']}"),axis=1)
     return result
     
 @op
@@ -172,6 +173,6 @@ def tm_fetch_player_profile(player_id):
     url = f"{tm_url}players/profile"
     params = {"locale":"US","player_id":player_id}
     response = tm_api_call(url, params)
-    data = response.json()['data']
+    data = response.json()['data']['playerProfile']
     result = pd.DataFrame.from_dict(data, orient='index').T
     return result
