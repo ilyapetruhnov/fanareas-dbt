@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 import sqlalchemy
 import os
-from dagster_fanareas.constants import api_key, tm_api_key, tm_host, tm_url
+from dagster_fanareas.constants import tm_api_key, tm_host, tm_url
 from itertools import chain
 from dagster import op
 import time
@@ -73,28 +73,33 @@ def tm_fetch_squads(season_id, team_id):
     frames = []
     params = {"season_id":season_id,"locale":"US","club_id":team_id}
     response = tm_api_call(url, params)
-    for i in response.json()['data']:
-        sliced_dict = {k: i[k] for k in list(i.keys())}
-        df = pd.DataFrame.from_dict(sliced_dict, orient='index').T
-        df['team_id'] = team_id
-        df['season_id'] = season_id
-        df['joined'] = df['joined'].apply(lambda x: datetime.fromtimestamp(x))
-        df['contract_until'] = df['contractUntil'].apply(lambda x: datetime.fromtimestamp(x))
-        df['market_value'] = df['marketValue'].apply(lambda x: x['value'])
-        df['market_value'] = df['marketValue'].apply(lambda x: x['value'])
-        df['market_value_currency'] = df['marketValue'].apply(lambda x: x['currency'])
-        df['market_value_progression'] = df['marketValue'].apply(lambda x: x['progression'])
-        cols = ['id','team_id','season_id','name','joined', 'contract_until',
-       'captain', 
-       'isLoan', 
-       'wasLoan',   
-       'shirtNumber', 
-        'age',
-        'market_value', 
-        'market_value_currency',
-       'market_value_progression']
-        frames.append(df[cols])
-    result_df = pd.concat(frames)
+    try:
+        data = response.json()['data']
+        for i in data:
+            sliced_dict = {k: i[k] for k in list(i.keys())}
+            df = pd.DataFrame.from_dict(sliced_dict, orient='index').T
+            df['team_id'] = team_id
+            df['season_id'] = season_id
+            df['joined'] = df['joined'].apply(lambda x: datetime.fromtimestamp(x))
+            df['contract_until'] = df['contractUntil'].apply(lambda x: datetime.fromtimestamp(x))
+            df['market_value'] = df['marketValue'].apply(lambda x: x['value'])
+            df['market_value'] = df['marketValue'].apply(lambda x: x['value'])
+            df['market_value_currency'] = df['marketValue'].apply(lambda x: x['currency'])
+            df['market_value_progression'] = df['marketValue'].apply(lambda x: x['progression'])
+            cols = ['id','team_id','season_id','name','joined', 'contract_until',
+                    'captain', 
+                    'isLoan', 
+                    'wasLoan',   
+                    'shirtNumber', 
+                    'age',
+                    'market_value', 
+                    'market_value_currency',
+                    'market_value_progression']
+            frames.append(df[cols])
+
+        result_df = pd.concat(frames)
+    except Exception as e:
+        result_df = pd.DataFrame([])
     return result_df
 
 def match_result(goalsHome, homeTeamID, goalsAway, awayTeamID, result_type):
