@@ -33,7 +33,7 @@ def standing(context) -> pd.DataFrame:
             new_col_name = rename_camel_col(col)
             df.rename(columns={col: new_col_name},inplace=True)
         df['team_id'] = df['team_id'].astype(int)
-        df['id'] = df.apply(lambda df: eval(f"{df['season_id']}{df['team_']}"),axis=1)
+        df['id'] = df.apply(lambda df: eval(f"{df['season_id']}{df['team_id']}"),axis=1)
         frames.append(df)
     return pd.concat(frames)
 
