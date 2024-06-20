@@ -33,19 +33,19 @@ def standing(context) -> pd.DataFrame:
             new_col_name = rename_camel_col(col)
             df.rename(columns={col: new_col_name},inplace=True)
         df['team_id'] = df['team_id'].astype(int)
-        df['id'] = df['team_id'] + df['season_id']
+        df['id'] = df.apply(lambda df: eval(f"{df['season_id']}{df['team_']}"),axis=1)
         frames.append(df)
-    result = pd.concat(frames)
-    return result
+    return pd.concat(frames)
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
 def squad(context) -> pd.DataFrame:
-    # existing_df = context.resources.new_io_manager.load_table(table_name='season')
-    season_id = 2023
-    teams = ['11','31']
+    standing_df = context.resources.new_io_manager.load_table(table_name='standing')
+    team_seasons = list(zip(standing_df['team_id'], standing_df['season_id']))
     frames = []
-    for i in teams:
-        df = tm_fetch_squads(season_id=season_id, team_id=i)
+    for i in team_seasons:
+        team_id = i[0]
+        season_id = i[1]
+        df = tm_fetch_squads(season_id=season_id, team_id=team_id)
         for col in df.columns:
             new_col_name = rename_camel_col(col)
             df.rename(columns={col: new_col_name},inplace=True)
@@ -56,12 +56,13 @@ def squad(context) -> pd.DataFrame:
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
 def player_performace(context) -> pd.DataFrame:
-    # existing_df = context.resources.new_io_manager.load_table(table_name='season')
-    season_id = '2023'
-    players = ['331560','451276']
+    squad_df = context.resources.new_io_manager.load_table(table_name='squad')
+    player_seasons = list(zip(squad_df['player_id'], squad_df['season_id']))
     frames = []
-    for i in players:
-        df = tm_fetch_player_performance(season_id=season_id, player_id=i)
+    for i in player_seasons:
+        player_id = i[0]
+        season_id = i[1]
+        df = tm_fetch_player_performance(season_id=season_id, player_id=player_id)
         for col in df.columns:
             new_col_name = rename_camel_col(col)
             df.rename(columns={col: new_col_name},inplace=True)
@@ -108,8 +109,11 @@ def player(context) -> pd.DataFrame:
     for i in players:
         df = tm_fetch_player_profile(i)
         df.rename(columns={'playerID': 'id'},inplace=True)
-        df.rename(columns={'clubId': 'team_id'},inplace=True)
+        df.rename(columns={'clubID': 'team_id'},inplace=True)
         df.rename(columns={'club': 'team'},inplace=True)
+        for col in df.columns:
+            new_col_name = rename_camel_col(col)
+            df.rename(columns={col: new_col_name},inplace=True)
         frames.append(df)
     result = pd.concat(frames)
     cols = [
