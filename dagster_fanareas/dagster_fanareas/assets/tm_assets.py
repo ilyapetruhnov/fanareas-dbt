@@ -50,6 +50,7 @@ def squad(context) -> pd.DataFrame:
             new_col_name = rename_camel_col(col)
             df.rename(columns={col: new_col_name},inplace=True)
             df.rename(columns={"id": 'player_id'},inplace=True)
+        df['id'] = df.apply(lambda df: eval(f"{df['player_id']}{df['team_id']}{df['season_id']}"),axis=1)
         frames.append(df)
     result = pd.concat(frames)
     return result
