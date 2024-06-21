@@ -86,7 +86,7 @@ def tm_fetch_squads(season_id, team_id):
             df['market_value'] = df['marketValue'].apply(lambda x: x['value'])
             df['market_value_currency'] = df['marketValue'].apply(lambda x: x['currency'])
             df['market_value_progression'] = df['marketValue'].apply(lambda x: x['progression'])
-            cols = ['id','team_id','season_id','name','joined', 'contract_until',
+            cols = ['player_id','team_id','season_id','name','joined', 'contract_until',
                     'captain', 
                     'isLoan', 
                     'wasLoan',   
@@ -95,6 +95,7 @@ def tm_fetch_squads(season_id, team_id):
                     'market_value', 
                     'market_value_currency',
                     'market_value_progression']
+            df = df.rename(columns={'id': 'player_id'})
             frames.append(df[cols])
 
         result_df = pd.concat(frames)
