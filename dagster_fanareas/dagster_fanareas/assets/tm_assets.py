@@ -62,11 +62,14 @@ def player_performace(context) -> pd.DataFrame:
     for i in player_seasons:
         player_id = i[0]
         season_id = i[1]
-        df = tm_fetch_player_performance(season_id=season_id, player_id=player_id)
-        for col in df.columns:
-            new_col_name = rename_camel_col(col)
-            df.rename(columns={col: new_col_name},inplace=True)
-        frames.append(df)
+        try:
+            df = tm_fetch_player_performance(season_id=season_id, player_id=player_id)
+            for col in df.columns:
+                new_col_name = rename_camel_col(col)
+                df.rename(columns={col: new_col_name},inplace=True)
+            frames.append(df)
+        except Exception as e:
+            pass
     result = pd.concat(frames)
     return result
 
