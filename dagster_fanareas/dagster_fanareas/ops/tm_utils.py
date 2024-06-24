@@ -120,12 +120,15 @@ def match_result(goalsHome, homeTeamID, goalsAway, awayTeamID, result_type):
 @op
 def tm_fetch_match_result(match_id):
     url = "https://transfermarkt-db.p.rapidapi.com/v1/fixtures/result"
-
     params = {"locale":"US","fixture_id":match_id}
     response = tm_api_call(url, params)
-    data = response.json()['data']
-    result = pd.DataFrame.from_dict(data, orient='index').T
-    return result
+    try:
+        data = response.json()['data']
+        result_df = pd.DataFrame.from_dict(data, orient='index').T
+    except Exception as e:
+        result_df = pd.DataFrame([])
+    return result_df
+    
 
 @op
 def tm_fetch_match_stats(match_id):
@@ -141,37 +144,40 @@ def tm_fetch_match(match_id):
     url = "https://transfermarkt-db.p.rapidapi.com/v1/fixtures/info"
     params = {"locale":"US","fixture_id": match_id}
     response = tm_api_call(url, params)
-    data = response.json()['data']
-    df = pd.DataFrame.from_dict(data, orient='index').T
-    df['date'] = df['timestamp'].apply(lambda x: datetime.fromtimestamp(x))
-    match_result_df = tm_fetch_match_result(match_id)
-    result_df = pd.concat([df, match_result_df],axis=1)
-    cols = ['id',
-            'date',
-            'postponed',
-            'stadiumID', 
-            'stadiumName', 
-            'spectators', 
-            'seasonID', 
-            'competitionID', 
-            'competitionName', 
-            'competitionRound',
-            'refereeID', 
-            'homeTeamID', 
-            'homeTeamName', 
-            'awayTeamID', 
-            'awayTeamName', 
-            'firstLeg', 
-            'nextRound',
-            'goalsHome',
-            'goalsAway', 
-            'halftimeGoalsHome',
-            'halftimeGoalsAway'
-    ]
-    result_df = result_df[cols]
-    result_df['draw'] = result_df.apply(lambda x: True if x.goalsHome == x.goalsAway else False, axis=1)
-    result_df['winning_team'] = result_df.apply(lambda x: match_result(x.goalsHome, x.homeTeamID, x.goalsAway, x.awayTeamID, 'win'), axis=1)
-    result_df['losing_team'] = result_df.apply(lambda x: match_result(x.goalsHome, x.homeTeamID, x.goalsAway, x.awayTeamID, 'lose'), axis=1)
+    try:
+        data = response.json()['data']
+        df = pd.DataFrame.from_dict(data, orient='index').T
+        df['date'] = df['timestamp'].apply(lambda x: datetime.fromtimestamp(x))
+        match_result_df = tm_fetch_match_result(match_id)
+        result_df = pd.concat([df, match_result_df],axis=1)
+        cols = ['id',
+                'date',
+                'postponed',
+                'stadiumID', 
+                'stadiumName', 
+                'spectators', 
+                'seasonID', 
+                'competitionID', 
+                'competitionName', 
+                'competitionRound',
+                'refereeID', 
+                'homeTeamID', 
+                'homeTeamName', 
+                'awayTeamID', 
+                'awayTeamName', 
+                'firstLeg', 
+                'nextRound',
+                'goalsHome',
+                'goalsAway', 
+                'halftimeGoalsHome',
+                'halftimeGoalsAway'
+        ]
+        result_df = result_df[cols]
+        result_df['draw'] = result_df.apply(lambda x: True if x.goalsHome == x.goalsAway else False, axis=1)
+        result_df['winning_team'] = result_df.apply(lambda x: match_result(x.goalsHome, x.homeTeamID, x.goalsAway, x.awayTeamID, 'win'), axis=1)
+        result_df['losing_team'] = result_df.apply(lambda x: match_result(x.goalsHome, x.homeTeamID, x.goalsAway, x.awayTeamID, 'lose'), axis=1)
+    except Exception as e:
+        result_df = pd.DataFrame([])
     return result_df
 
 @op
