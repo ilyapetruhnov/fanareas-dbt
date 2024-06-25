@@ -32,12 +32,16 @@ def tm_api_call(url, params):
 @op
 def tm_fetch_data(url, params, key=None):
     data = []
-    result = tm_api_call(url, params)
-    if key is not None:
-        data.append(result.json()['data'].get(key))
-    else:
-        data.append(result.json()['data'])
-    result_df = pd.DataFrame(list(chain(*data)))
+    response = tm_api_call(url, params)
+    try:
+        result = response.json()['data']
+        if key is not None:
+            data.append(result.get(key))
+        else:
+            data.append(result)
+        result_df = pd.DataFrame(list(chain(*data)))
+    except Exception as e:
+        result_df = pd.DataFrame([])
     return result_df
 
 @op

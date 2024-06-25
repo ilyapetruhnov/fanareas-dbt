@@ -68,7 +68,7 @@ guess_the_team_quiz_schedule = ScheduleDefinition(
 
 guess_the_player_quiz_schedule = ScheduleDefinition(
     job=guess_the_player_quiz_job, 
-    cron_schedule="0 6 */3 * *"
+    cron_schedule="0 6 */2 * *"
 )
 
 facts_by_team_schedule = ScheduleDefinition(
