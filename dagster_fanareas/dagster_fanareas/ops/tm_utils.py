@@ -236,3 +236,36 @@ def tm_fetch_team_info(team_id):
     result_df = result_df[cols]
     result_df.rename(columns={'countryID': 'country_id','leagueID': 'league_id','coachID': 'coach_id'}, inplace=True)
     return result_df
+
+@op
+def tm_fetch_team_transfers(team_id):
+    url = f"{tm_url}transfers/list"
+    page_num = 0
+    frames = []
+    while True:
+        params = {
+            "locale":"US",
+            "club_id": team_id,
+            "page_number": page_num,
+            "top_transfers_first": "false"
+                  }
+        page_num +=1
+        response= tm_api_call(url, params)
+        data = response.json()['data']
+        if len(data) == 0:
+            break
+
+        frames.append(pd.DataFrame(data))
+    df = pd.concat(frames)
+    cols = ['id', 'playerID', 'fromClubID', 'toClubID', 'transferredAt', 'isLoan',
+        'wasLoan', 'season', 'fromCompetitionID', 'toCompetitionID','transferFee_value',
+        'transferFee_currency', 'transferMarketValue_value',
+        'transferMarketValue_currency']
+    df = df[cols]
+    df.rename(columns={'fromClubID': 'from_team_id',
+                    'toClubID': 'to_club_id',
+                    'playerID': 'player_id',
+                    'fromCompetitionID':'from_competition_id',
+                    'toCompetitionID':'to_competition_id'
+                    }, inplace=True)
+    return df
