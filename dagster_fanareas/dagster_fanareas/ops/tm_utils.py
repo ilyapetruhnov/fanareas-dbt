@@ -256,7 +256,10 @@ def tm_fetch_team_transfers(team_id):
             break
 
         frames.append(pd.DataFrame(data))
-    df = pd.concat(frames)
+    if len(frames)>0:
+        df = pd.concat(frames)
+    else:
+        return None
     df['transferFee_value'] = df['transferFee'].apply(lambda x: x['value'])
     df['transferFee_currency'] = df['transferFee'].apply(lambda x: x['currency'])
     df['transferMarketValue_value'] = df['transferMarketValue'].apply(lambda x: x['value'])
