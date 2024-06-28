@@ -172,7 +172,7 @@ def transfer(context) -> pd.DataFrame:
     frames = []
     for i in teams:
         df = tm_fetch_team_transfers(i)
-        if df:
+        if df is not None:
             for col in df.columns:
                 new_col_name = rename_camel_col(col)
                 df.rename(columns={col: new_col_name},inplace=True)
