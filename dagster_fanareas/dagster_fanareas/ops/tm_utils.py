@@ -257,11 +257,15 @@ def tm_fetch_team_transfers(team_id):
 
         frames.append(pd.DataFrame(data))
     df = pd.concat(frames)
+    df['transferFee_value'] = df['transferFee'].apply(lambda x: x['value'])
+    df['transferFee_currency'] = df['transferFee'].apply(lambda x: x['currency'])
+    df['transferMarketValue_value'] = df['transferMarketValue'].apply(lambda x: x['value'])
+    df['transferMarketValue_currency'] = df['transferMarketValue'].apply(lambda x: x['currency'])
     cols = ['id', 'playerID', 'fromClubID', 'toClubID', 'transferredAt', 'isLoan',
         'wasLoan', 'season', 'fromCompetitionID', 'toCompetitionID','transferFee_value',
         'transferFee_currency', 'transferMarketValue_value',
         'transferMarketValue_currency']
-    df = df[cols]
+    df = df[cols].reset_index()
     df.rename(columns={'fromClubID': 'from_team_id',
                     'toClubID': 'to_club_id',
                     'playerID': 'player_id',
