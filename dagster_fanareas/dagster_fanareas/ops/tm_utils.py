@@ -208,7 +208,7 @@ def tm_fetch_team_profile(team_id):
     stadium_df = pd.DataFrame.from_dict(stadium, orient='index').T
     stadium_df.rename(columns={'id': 'stadium_id','image': 'stadium_image','name': 'stadium_name'},inplace=True)
 
-    stadium_cols = ['stadium_id', 'stadium_name', 'street', 'postalCode', 'city',
+    stadium_cols = ['stadium_id', 'stadium_name',
        'constructionYear', 'totalCapacity', 'standingRoom', 'seats',
        'stadium_image']
     stadium_df = stadium_df[stadium_cols]
