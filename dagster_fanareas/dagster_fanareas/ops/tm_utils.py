@@ -192,3 +192,47 @@ def tm_fetch_player_profile(player_id):
     data = response.json()['data']['playerProfile']
     result = pd.DataFrame.from_dict(data, orient='index').T
     return result
+
+@op
+def tm_fetch_team_profile(team_id):
+    url = f"{tm_url}clubs/profile"
+    params = {"locale":"US","club_id":team_id}
+    response= tm_api_call(url, params)
+    
+    facts = response.json()['data']['mainFacts']
+    facts_df = pd.DataFrame.from_dict(facts, orient='index').T
+    cols = ['city','founding','avgAge']
+    facts_df = facts_df[cols]
+
+    stadium = response.json()['data']['stadium']
+    stadium_df = pd.DataFrame.from_dict(stadium, orient='index').T
+    stadium_df.rename(columns={'id': 'stadium_id','image': 'stadium_image','name': 'stadium_name'},inplace=True)
+
+    stadium_cols = ['stadium_id', 'stadium_name', 'street', 'postalCode', 'city',
+       'constructionYear', 'totalCapacity', 'standingRoom', 'seats',
+       'stadium_image']
+    stadium_df = stadium_df[stadium_cols]
+    result = pd.concat([facts_df,stadium_df],axis=1)
+    return result
+
+@op
+def tm_fetch_team_info(team_id):
+    url = f"{tm_url}clubs/info"
+    params = {"locale":"US","club_id":team_id}
+    response= tm_api_call(url, params)
+    data = response.json()['data']
+    result_df = pd.DataFrame.from_dict(data, orient='index').T
+    cols = ['id', 
+            'name', 
+            'image', 
+            'countryID', 
+            'leagueID', 
+            'leagueName', 
+            'coachID', 
+            'coachName',  
+            'marketValue', 
+            'marketValueCurrency', 
+            'marketValueNumeral']
+    result_df = result_df[cols]
+    result_df.rename(columns={'countryID': 'country_id','leagueID': 'league_id','coachID': 'coach_id'}, inplace=True)
+    return result_df

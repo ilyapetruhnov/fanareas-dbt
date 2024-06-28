@@ -1,6 +1,6 @@
 from dagster import asset
 import pandas as pd
-from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile
+from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info
 from dagster_fanareas.constants import tm_url
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
@@ -111,9 +111,7 @@ def player(context) -> pd.DataFrame:
     frames = []
     for i in players:
         df = tm_fetch_player_profile(i)
-        df.rename(columns={'playerID': 'id'},inplace=True)
-        df.rename(columns={'clubID': 'team_id'},inplace=True)
-        df.rename(columns={'club': 'team'},inplace=True)
+        df.rename(columns={'playerID': 'id','clubID': 'team_id','club': 'team'},inplace=True)
         for col in df.columns:
             new_col_name = rename_camel_col(col)
             df.rename(columns={col: new_col_name},inplace=True)
@@ -151,3 +149,18 @@ def player(context) -> pd.DataFrame:
         'market_value_last_change']
     result = result[cols]
     return result
+
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def team(context) -> pd.DataFrame:
+    existing_df = context.resources.new_io_manager.load_table(table_name='standing')
+    teams = existing_df['team_id'].unique()
+    frames = []
+    for i in teams:
+        df_profile = tm_fetch_team_profile(i)
+        df_info = tm_fetch_team_info(i)
+        df =  pd.concat([df_profile, df_info],axis=1)
+        for col in df.columns:
+            new_col_name = rename_camel_col(col)
+            df.rename(columns={col: new_col_name},inplace=True)
+        frames.append(df)
+    return pd.concat(frames)
