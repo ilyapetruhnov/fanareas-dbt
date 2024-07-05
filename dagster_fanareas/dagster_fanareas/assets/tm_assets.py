@@ -185,6 +185,7 @@ def titles(context) -> pd.DataFrame:
     teams = existing_df['id'].unique()
     frames = []
     for i in teams:
+        context.log.info(i)
         df = tm_fetch_titles(i)
         if df is not None:
             for col in df.columns:
