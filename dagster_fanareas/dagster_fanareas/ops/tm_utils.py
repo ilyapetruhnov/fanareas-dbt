@@ -303,3 +303,17 @@ def tm_fetch_titles(team_id):
         return df
     else:
         return None
+
+@op
+def tm_fetch_countries():
+    url = f"{tm_url}static/countries"
+    params = {"locale":"US"}
+    result = tm_api_call(url, params)
+    return result.json()['de']
+
+@op
+def tm_fetch_competitions(country_id):
+    url = f"{tm_url}countries/competitions"
+    params = {"country_id":country_id,"locale":'US'}
+    result = tm_api_call(url, params)
+    return result.json()['data']

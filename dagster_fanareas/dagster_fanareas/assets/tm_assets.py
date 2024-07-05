@@ -1,6 +1,6 @@
 from dagster import asset
 import pandas as pd
-from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info, tm_fetch_team_transfers, tm_fetch_titles
+from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info, tm_fetch_team_transfers, tm_fetch_titles, tm_fetch_countries, tm_fetch_competitions
 from dagster_fanareas.constants import tm_url
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
@@ -193,3 +193,33 @@ def titles(context) -> pd.DataFrame:
                 df.rename(columns={col: new_col_name},inplace=True)
             frames.append(df)
     return pd.concat(frames)
+
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def country() -> pd.DataFrame:
+    frames = []
+    data = tm_fetch_countries()
+    for i in data:
+        result_df = pd.DataFrame.from_dict(i, orient='index').T
+        frames.append(result_df)
+    return pd.concat(frames)
+
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def competitions(context) -> pd.DataFrame:
+    existing_df = context.resources.new_io_manager.load_table(table_name='country')
+    countries = existing_df['id'].unique()
+    frames = []
+    result = []
+    for country_id in countries:
+        context.log.info(i)
+        data = tm_fetch_competitions(country_id)
+        for i in data['children']:
+            result_df = pd.DataFrame.from_dict(i, orient='index').T
+            frames.append(result_df)
+        df = pd.concat(frames)
+        df['country'] = data['competitionGroupName']
+        df.rename(columns={'competitionGroupCompetitionID': 'competitionGroupCompetition_id'},inplace=True)
+        for col in df.columns:
+            new_col_name = rename_camel_col(col)
+            df.rename(columns={col: new_col_name},inplace=True)
+            result.append(df)
+    return pd.concat(result)
