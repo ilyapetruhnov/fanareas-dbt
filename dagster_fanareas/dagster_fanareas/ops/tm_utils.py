@@ -309,7 +309,9 @@ def tm_fetch_stuff(staff_id):
     url = f"{tm_url}staff/profile"
     params = {"locale":"US","staff_id":staff_id}
     result = tm_api_call(url, params)
-    return result.json()['data']['profile']
+    if result is not None:
+        return result.json()['data']['profile']
+    return None
 
 
 @op
@@ -324,4 +326,6 @@ def tm_fetch_competitions(country_id):
     url = f"{tm_url}countries/competitions"
     params = {"country_id":country_id,"locale":'US'}
     result = tm_api_call(url, params)
-    return result.json()['data']
+    if result is not None:
+        return result.json()['data']
+    return None
