@@ -279,7 +279,7 @@ def tm_fetch_team_transfers(team_id):
 
 @op
 def tm_fetch_titles(team_id):
-    url = f"{tm_url}/clubs/profile"
+    url = f"{tm_url}clubs/profile"
     params = {"locale":"US","club_id":team_id}
     frames = []
     result = tm_api_call(url, params)
