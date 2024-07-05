@@ -179,6 +179,7 @@ def transfer(context) -> pd.DataFrame:
             frames.append(df)
     return pd.concat(frames)
 
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
 def titles(context) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='team')
     teams = existing_df['id'].unique()

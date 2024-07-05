@@ -277,7 +277,7 @@ def tm_fetch_team_transfers(team_id):
                     }, inplace=True)
     return df
 
-
+@op
 def tm_fetch_titles(team_id):
     url = f"{tm_url}/clubs/profile"
     params = {"locale":"US","club_id":team_id}
