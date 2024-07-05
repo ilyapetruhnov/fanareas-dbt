@@ -1,6 +1,6 @@
 from dagster import asset
 import pandas as pd
-from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info, tm_fetch_team_transfers, tm_fetch_titles, tm_fetch_countries, tm_fetch_competitions
+from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info, tm_fetch_team_transfers, tm_fetch_titles, tm_fetch_countries, tm_fetch_competitions, tm_fetch_stuff
 from dagster_fanareas.constants import tm_url
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
@@ -193,6 +193,28 @@ def titles(context) -> pd.DataFrame:
                 df.rename(columns={col: new_col_name},inplace=True)
             frames.append(df)
     return pd.concat(frames)
+
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def stuff(context) -> pd.DataFrame:
+    frames = []
+    existing_df = context.resources.new_io_manager.load_table(table_name='team')
+    coaches = existing_df['coach_id'].unique()
+    for stuff_id in coaches:
+        data = tm_fetch_stuff(stuff_id)
+        result_df = pd.DataFrame.from_dict(data, orient='index').T
+        cols = ['id', 'countryID', 'personID', 'personImage','playerID', 'personnelID',
+       'personName', 'firstName', 'lastName', 'alias', 'dateOfBirth',
+       'deathDay', 'age', 'birthplace',  'countryImage',
+       'countryName', 'averageTermAsCoach']
+        result_df = result_df[cols]
+        result_df.rename(columns={'personID': 'id',
+                                'countryID': 'country_id',
+                                'playerID': 'player_id',
+                                'personnelID': 'personnel_id'},inplace=True)
+
+        frames.append(result_df)
+    return pd.concat(frames)
+
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
 def country() -> pd.DataFrame:

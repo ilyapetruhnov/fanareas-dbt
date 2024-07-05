@@ -305,6 +305,14 @@ def tm_fetch_titles(team_id):
         return None
 
 @op
+def tm_fetch_stuff(staff_id):
+    url = f"{tm_url}staff/profile"
+    params = {"locale":"US","staff_id":staff_id}
+    result = tm_api_call(url, params)
+    return result.json()['data']['profile']
+
+
+@op
 def tm_fetch_countries():
     url = f"{tm_url}static/countries"
     params = {"locale":"US"}
