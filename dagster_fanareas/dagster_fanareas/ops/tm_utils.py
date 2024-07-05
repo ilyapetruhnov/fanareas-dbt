@@ -281,22 +281,23 @@ def tm_fetch_team_transfers(team_id):
 def tm_fetch_titles(team_id):
     url = f"{tm_url}clubs/profile"
     params = {"locale":"US","club_id":team_id}
-    frames = []
     result = tm_api_call(url, params)
     if result is None:
         return None
-    data = result.json()['data']['successes']
-    cols = ['number', 'name', 'id', 'competition_id',
-       'competition_type_id', 'cycle', 'seasonIds']
+    else:
+        frames = []
+        data = result.json()['data']['successes']
+        cols = ['number', 'name', 'id', 'competition_id',
+        'competition_type_id', 'cycle', 'seasonIds']
 
-    for i in data:
-        result_df = pd.DataFrame.from_dict(i, orient='index').T
-        result_df['competition_id'] = result_df['additionalData'].apply(lambda x:x['competitionId'])
-        result_df['competition_type_id'] = result_df['additionalData'].apply(lambda x:x['competitionTypeId'])
-        result_df['cycle'] = result_df['additionalData'].apply(lambda x:x['cycle'])
-        result_df['seasonIds'] = result_df['additionalData'].apply(lambda x:x['seasonIds'])
-        result_df = result_df.explode('seasonIds',ignore_index=True)
-        frames.append(result_df[cols])
-    df = pd.concat(frames)
-    df['team_id'] = team_id
-    return df
+        for i in data:
+            result_df = pd.DataFrame.from_dict(i, orient='index').T
+            result_df['competition_id'] = result_df['additionalData'].apply(lambda x:x['competitionId'])
+            result_df['competition_type_id'] = result_df['additionalData'].apply(lambda x:x['competitionTypeId'])
+            result_df['cycle'] = result_df['additionalData'].apply(lambda x:x['cycle'])
+            result_df['seasonIds'] = result_df['additionalData'].apply(lambda x:x['seasonIds'])
+            result_df = result_df.explode('seasonIds',ignore_index=True)
+            frames.append(result_df[cols])
+        df = pd.concat(frames)
+        df['team_id'] = team_id
+        return df
