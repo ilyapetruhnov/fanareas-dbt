@@ -210,7 +210,6 @@ def competitions(context) -> pd.DataFrame:
     frames = []
     result = []
     for country_id in countries:
-        context.log.info(i)
         data = tm_fetch_competitions(country_id)
         for i in data['children']:
             result_df = pd.DataFrame.from_dict(i, orient='index').T
