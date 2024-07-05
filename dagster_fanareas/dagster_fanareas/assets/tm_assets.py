@@ -1,6 +1,6 @@
 from dagster import asset
 import pandas as pd
-from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info, tm_fetch_team_transfers
+from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info, tm_fetch_team_transfers, tm_fetch_titles
 from dagster_fanareas.constants import tm_url
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
@@ -172,6 +172,19 @@ def transfer(context) -> pd.DataFrame:
     frames = []
     for i in teams:
         df = tm_fetch_team_transfers(i)
+        if df is not None:
+            for col in df.columns:
+                new_col_name = rename_camel_col(col)
+                df.rename(columns={col: new_col_name},inplace=True)
+            frames.append(df)
+    return pd.concat(frames)
+
+def titles(context) -> pd.DataFrame:
+    existing_df = context.resources.new_io_manager.load_table(table_name='team')
+    teams = existing_df['id'].unique()
+    frames = []
+    for i in teams:
+        df = tm_fetch_titles(i)
         if df is not None:
             for col in df.columns:
                 new_col_name = rename_camel_col(col)

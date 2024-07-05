@@ -276,3 +276,24 @@ def tm_fetch_team_transfers(team_id):
                     'toCompetitionID':'to_competition_id'
                     }, inplace=True)
     return df
+
+
+def tm_fetch_titles(team_id):
+    url = f"{tm_url}/clubs/profile"
+    params = {"locale":"US","club_id":team_id}
+    frames = []
+    result = tm_api_call(url, params)
+    data = result.json()['data']['successes']
+    cols = ['number', 'name', 'id', 'competition_id',
+       'competition_type_id', 'cycle', 'seasonIds']
+
+    for i in data:
+        result_df = pd.DataFrame.from_dict(i, orient='index').T
+        result_df['competition_id'] = result_df['additionalData'].apply(lambda x:x['competitionId'])
+        result_df['competition_type_id'] = result_df['additionalData'].apply(lambda x:x['competitionTypeId'])
+        result_df['cycle'] = result_df['additionalData'].apply(lambda x:x['cycle'])
+        result_df['seasonIds'] = result_df['additionalData'].apply(lambda x:x['seasonIds'])
+        result_df = result_df.explode('seasonIds',ignore_index=True)
+        result_df['team_id'] = team_id
+        frames.append(result_df[cols])
+    return pd.concat(frames)
