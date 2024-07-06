@@ -200,7 +200,6 @@ def stuff(context) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='team')
     coaches = existing_df['coach_id'].unique()
     for stuff_id in coaches:
-        context.log.info(stuff_id)
         data = tm_fetch_stuff(stuff_id)
         if data is not None:
             result_df = pd.DataFrame.from_dict(data, orient='index').T
@@ -209,7 +208,7 @@ def stuff(context) -> pd.DataFrame:
         'deathDay', 'age', 'birthplace',  'countryImage',
         'countryName', 'averageTermAsCoach']
             result_df = result_df[cols]
-            result_df.rename(columns={'personID': 'id',
+            result_df.rename(columns={'personID': 'person_id',
                                     'countryID': 'country_id',
                                     'playerID': 'player_id',
                                     'personnelID': 'personnel_id'},inplace=True)
@@ -231,21 +230,26 @@ def country() -> pd.DataFrame:
 def competitions(context) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='country')
     countries = existing_df['id'].unique()
-    frames = []
     result = []
     for country_id in countries:
         try:
+            frames = []
             data = tm_fetch_competitions(country_id)
             for i in data['children']:
                 result_df = pd.DataFrame.from_dict(i, orient='index').T
                 frames.append(result_df)
             df = pd.concat(frames)
             df['country'] = data['competitionGroupName']
-            df.rename(columns={'competitionGroupCompetitionID': 'competitionGroupCompetition_id'},inplace=True)
-            for col in df.columns:
-                new_col_name = rename_camel_col(col)
-                df.rename(columns={col: new_col_name},inplace=True)
-                result.append(df)
+            df.rename(columns={'competitionGroupCompetitionID': 'id'},inplace=True)
+            result.append(df)
         except TypeError:
             pass
-    return pd.concat(result)
+    ndf = pd.concat(result)
+    for col in ndf.columns:
+        new_col_name = rename_camel_col(col)
+        ndf.rename(columns={col: new_col_name},inplace=True)
+    cols = ['competition_group_name', 
+            'id',
+            'league_level',
+            'country']
+    return ndf[cols]
