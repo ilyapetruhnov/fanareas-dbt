@@ -200,19 +200,21 @@ def stuff(context) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='team')
     coaches = existing_df['coach_id'].unique()
     for stuff_id in coaches:
+        context.log.info(stuff_id)
         data = tm_fetch_stuff(stuff_id)
-        result_df = pd.DataFrame.from_dict(data, orient='index').T
-        cols = ['id', 'countryID', 'personID', 'personImage','playerID', 'personnelID',
-       'personName', 'firstName', 'lastName', 'alias', 'dateOfBirth',
-       'deathDay', 'age', 'birthplace',  'countryImage',
-       'countryName', 'averageTermAsCoach']
-        result_df = result_df[cols]
-        result_df.rename(columns={'personID': 'id',
-                                'countryID': 'country_id',
-                                'playerID': 'player_id',
-                                'personnelID': 'personnel_id'},inplace=True)
+        if data is not None:
+            result_df = pd.DataFrame.from_dict(data, orient='index').T
+            cols = ['id', 'countryID', 'personID', 'personImage','playerID', 'personnelID',
+        'personName', 'firstName', 'lastName', 'alias', 'dateOfBirth',
+        'deathDay', 'age', 'birthplace',  'countryImage',
+        'countryName', 'averageTermAsCoach']
+            result_df = result_df[cols]
+            result_df.rename(columns={'personID': 'id',
+                                    'countryID': 'country_id',
+                                    'playerID': 'player_id',
+                                    'personnelID': 'personnel_id'},inplace=True)
 
-        frames.append(result_df)
+            frames.append(result_df)
     return pd.concat(frames)
 
 
@@ -232,15 +234,18 @@ def competitions(context) -> pd.DataFrame:
     frames = []
     result = []
     for country_id in countries:
-        data = tm_fetch_competitions(country_id)
-        for i in data['children']:
-            result_df = pd.DataFrame.from_dict(i, orient='index').T
-            frames.append(result_df)
-        df = pd.concat(frames)
-        df['country'] = data['competitionGroupName']
-        df.rename(columns={'competitionGroupCompetitionID': 'competitionGroupCompetition_id'},inplace=True)
-        for col in df.columns:
-            new_col_name = rename_camel_col(col)
-            df.rename(columns={col: new_col_name},inplace=True)
-            result.append(df)
+        try:
+            data = tm_fetch_competitions(country_id)
+            for i in data['children']:
+                result_df = pd.DataFrame.from_dict(i, orient='index').T
+                frames.append(result_df)
+            df = pd.concat(frames)
+            df['country'] = data['competitionGroupName']
+            df.rename(columns={'competitionGroupCompetitionID': 'competitionGroupCompetition_id'},inplace=True)
+            for col in df.columns:
+                new_col_name = rename_camel_col(col)
+                df.rename(columns={col: new_col_name},inplace=True)
+                result.append(df)
+        except TypeError:
+            pass
     return pd.concat(result)
