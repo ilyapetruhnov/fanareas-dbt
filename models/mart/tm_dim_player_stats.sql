@@ -90,13 +90,14 @@ group by player_id, season_id, team_id
 select
     stg_players.player_id,
     stg_players.season_id,
+    stg_players.team,
     stg_player_stats.team_id,
     stg_players.nationality,
     stg_players.fullname,
+    stg_players.captain,
     max(stg_players.position_group) as position_group,
     max(stg_players.position) as position,
     max(stg_players.international_team) as international_team,
-    max(stg_players.captain) as captain,
     max(stg_players.image_path) as image_path,
     max(stg_players.market_value) as market_value,
     max(stg_players.market_value_currency) as market_value_currency,
@@ -119,8 +120,10 @@ and stg_players.season_id = stg_player_stats.season_id
 group by 
     stg_players.player_id,
     stg_players.season_id,
+    stg_players.team,
     stg_player_stats.team_id,
     stg_players.nationality,
-    stg_players.fullname
+    stg_players.fullname,
+    stg_players.captain
 
 
