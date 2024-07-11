@@ -28,7 +28,7 @@ sources:
       - name: types
       - name: venues
 
-  - name: src_postgres
+  - name: tm_postgres
     database: db_transfermarkt
     schema: public
 
