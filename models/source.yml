@@ -27,4 +27,23 @@ sources:
       - name: topscorers
       - name: types
       - name: venues
+
+  - name: src_postgres
+    database: db_transfermarkt
+    schema: public
+
+    tables:
+      - name: competitions
+      - name: country
+      - name: match_stats
+      - name: matches
+      - name: player
+      - name: player_performace
+      - name: season
+      - name: squad
+      - name: standing
+      - name: stuff
+      - name: team
+      - name: titles
+      - name: transfer
   
