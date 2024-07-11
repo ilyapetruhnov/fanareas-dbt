@@ -8,7 +8,7 @@ fanareas:
       port: 25060
       user: "{{ env_var('POSTGRES_USER') }}"
       pass: "{{ env_var('POSTGRES_PWD') }}"
-      dbname: "{{ env_var('POSTGRES_DBNAME') }}"
+      dbname: "{{ env_var('TM_POSTGRES_DBNAME') }}"
       schema: public
 
     prod:
