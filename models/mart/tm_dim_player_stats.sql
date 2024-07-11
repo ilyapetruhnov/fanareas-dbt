@@ -93,28 +93,34 @@ select
     stg_player_stats.team_id,
     stg_players.nationality,
     stg_players.fullname,
-    stg_players.position_group,
-    stg_players.position,
-    stg_players.international_team,
-    stg_players.captain,
-    stg_players.image_path,
-    stg_players.market_value,
-    stg_players.market_value_currency,
-    stg_players.jersey_number,
-    goals,
-    assists,
-    own_goals,
-    minutes_played,
-    appearances,
-    lineups,
-    matches_coming_off_the_bench,
-    matches_substituted_off,
-    yellow_cards,
-    second_yellow_cards,
-    red_cards
+    max(stg_players.position_group) as position_group,
+    max(stg_players.position) as position,
+    max(stg_players.international_team) as international_team,
+    max(stg_players.captain) as captain,
+    max(stg_players.image_path) as image_path,
+    max(stg_players.market_value) as market_value,
+    max(stg_players.market_value_currency) as market_value_currency,
+    max(stg_players.jersey_number) as jersey_number,
+    max(goals) as goals,
+    max(assists) as assists,
+    max(own_goals) as own_goals,
+    max(minutes_played) as minutes_played,
+    max(appearances) as appearances,
+    max(lineups) as lineups,
+    max(matches_coming_off_the_bench) as matches_coming_off_the_bench,
+    max(matches_substituted_off) as matches_substituted_off,
+    max(yellow_cards) as yellow_cards,
+    max(second_yellow_cards) as second_yellow_cards,
+    max(red_cards) as red_cards
 from stg_players
 join stg_player_stats
 on stg_players.player_id = stg_player_stats.player_id
 and stg_players.season_id = stg_player_stats.season_id
+group by 
+    stg_players.player_id,
+    stg_players.season_id,
+    stg_player_stats.team_id,
+    stg_players.nationality,
+    stg_players.fullname
 
 
