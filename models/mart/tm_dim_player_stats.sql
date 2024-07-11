@@ -1,24 +1,24 @@
 with player as (
 
-    select * from {{ ref('player') }}
+    select * from {{ ref('tm_player') }}
 
 ),
 
 with squad as (
 
-    select * from {{ ref('squad') }}
+    select * from {{ ref('tm_squad') }}
 
 ),
 
 with team as (
 
-    select * from {{ ref('team') }}
+    select * from {{ ref('tm_team') }}
 
 ),
 
 with player_performace as (
 
-    select * from {{ ref('player_performace') }}
+    select * from {{ ref('tm_player_performace') }}
 
 ),
 
