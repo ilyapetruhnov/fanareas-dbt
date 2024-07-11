@@ -4,19 +4,19 @@ with player as (
 
 ),
 
-with squad as (
+squad as (
 
     select * from {{ ref('tm_squad') }}
 
 ),
 
-with team as (
+team as (
 
     select * from {{ ref('tm_team') }}
 
 ),
 
-with player_performace as (
+player_performace as (
 
     select * from {{ ref('tm_player_performace') }}
 
