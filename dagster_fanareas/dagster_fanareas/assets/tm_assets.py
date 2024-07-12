@@ -16,14 +16,13 @@ def season(context) -> pd.DataFrame:
     df = tm_fetch_data(url ,params)
     return df
 
-@asset(config_schema={"league_id": str}, group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
-def standing(context) -> pd.DataFrame:
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def standing(context, config: LeagueConfig) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='season')
     seasons = existing_df['id'].unique()
     frames = []
     # leagues = ['GB1','IT1','L1','FR1','ES1']
-    competiton_id = context.op_config["league_id"]
-    # competiton_id = config.league_id
+    competiton_id = config.league_id
     for i in seasons:
         params = {"locale":"US",
                     "season_id": i,
