@@ -7,26 +7,29 @@ from dagster_fanareas.constants import tm_url
 def season(context) -> pd.DataFrame:
     url = f"{tm_url}competitions/seasons"
 
-    params = {"locale":"US","competition_id":"GB1"}
+    params = {"locale":"US","competition_id":"ES1"}
 
     df = tm_fetch_data(url ,params)
     return df
 
-@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+@asset(config_schema={"league_id": str}, group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
 def standing(context) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='season')
     seasons = existing_df['id'].unique()
     frames = []
+    # leagues = ['GB1','IT1','L1','FR1','ES1']
+    competiton_id = context.asset_config["league_id"]
     for i in seasons:
         params = {"locale":"US",
                     "season_id": i,
                     "standing_type":"general",
-                    "competition_id":"GB1"}
+                    "competition_id":competiton_id}
 
         url = f"{tm_url}competitions/standings"
         df = tm_fetch_data(url,params,key='table')
         df['season_id'] = i
         df['season_id'] = df['season_id'].astype(int)
+        df['league_id'] = competiton_id
         df.rename(columns={"id": 'team_id'},inplace=True)
         df.rename(columns={"group": 'group_id'},inplace=True)
         for col in df.columns:
@@ -230,6 +233,7 @@ def country() -> pd.DataFrame:
 def competitions(context) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='country')
     countries = existing_df['id'].unique()
+
     result = []
     for country_id in countries:
         try:
