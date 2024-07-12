@@ -47,7 +47,7 @@ def tm_fetch_data(url, params, key=None):
 @op
 def tm_fetch_player_performance(season_id, player_id):
     url = "https://transfermarkt-db.p.rapidapi.com/v1/players/performance-details"
-    params = {"competition_id":"GB1","season_id":season_id,"player_id":player_id,"locale":"US"}
+    params = {"competition_id":"ES1","season_id":season_id,"player_id":player_id,"locale":"US"}
     frames = []
     response = tm_api_call(url, params)
     data = response.json()['data']

@@ -49,7 +49,7 @@ join squad on player.id = squad.player_id
 ),
 player_stats_agg as (
     select
-    id as match_id,
+    player_performace.id as match_id,
     player_id,
     season_id,
     team_id,
@@ -86,7 +86,7 @@ stg_player_stats as (
     sum(second_yellow_cards) as second_yellow_cards,
     sum(red_cards) as red_cards
 from player_stats_agg
-group by player_id, season_id, team_id
+group by player_id, season_id, team_id, team
     )
 select
     stg_players.player_id,
