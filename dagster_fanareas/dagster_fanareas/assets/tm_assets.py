@@ -1,11 +1,11 @@
-from dagster import asset, Config
+from dagster import asset, Config, MaterializeResult
 import pandas as pd
 from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info, tm_fetch_team_transfers, tm_fetch_titles, tm_fetch_countries, tm_fetch_competitions, tm_fetch_stuff
 from dagster_fanareas.constants import tm_url
 
 
 class LeagueConfig(Config):
-    league_id: str = "GB1"
+    league_id: str
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
 def season(context) -> pd.DataFrame:
@@ -22,7 +22,7 @@ def standing(context, config: LeagueConfig) -> pd.DataFrame:
     seasons = existing_df['id'].unique()
     frames = []
     # leagues = ['GB1','IT1','L1','FR1','ES1']
-    competiton_id = config["league_id"]
+    competiton_id = config.league_id
     for i in seasons:
         params = {"locale":"US",
                     "season_id": i,
@@ -42,7 +42,15 @@ def standing(context, config: LeagueConfig) -> pd.DataFrame:
         df['team_id'] = df['team_id'].astype(int)
         df['id'] = df.apply(lambda df: eval(f"{df['season_id']}{df['team_id']}"),axis=1)
         frames.append(df)
-    return pd.concat(frames)
+    data = pd.concat(frames)
+    # Return a MaterializeResult with metadata
+    context.resources.new_io_manager.handle_output(context, data)
+    file_path = context.resources.new_io_manager._get_path(context.asset_key)
+    return MaterializeResult(
+        asset_key=context.asset_key,
+        metadata={"file_path": file_path}
+    )
+
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
 def squad(context) -> pd.DataFrame:
