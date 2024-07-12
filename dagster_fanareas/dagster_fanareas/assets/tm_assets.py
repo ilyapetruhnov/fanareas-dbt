@@ -21,7 +21,6 @@ def standing(context, config: LeagueConfig) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='season')
     seasons = existing_df['id'].unique()
     frames = []
-    # leagues = ['GB1','IT1','L1','FR1','ES1']
     competiton_id = config.league_id
     for i in seasons:
         params = {"locale":"US",
@@ -46,27 +45,33 @@ def standing(context, config: LeagueConfig) -> pd.DataFrame:
 
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
-def squad(context) -> pd.DataFrame:
+def squad(context, config: LeagueConfig) -> pd.DataFrame:
     standing_df = context.resources.new_io_manager.load_table(table_name='standing')
-    league_id = 'ES1'
+    league_id = config.league_id
     standing_df = standing_df[standing_df['league_id'] == league_id]
     team_seasons = list(zip(standing_df['team_id'], standing_df['season_id']))
     frames = []
     for i in team_seasons:
         team_id = i[0]
         season_id = i[1]
-        df = tm_fetch_squads(season_id=season_id, team_id=team_id)
-        for col in df.columns:
-            new_col_name = rename_camel_col(col)
-            df.rename(columns={col: new_col_name},inplace=True)
-            df['id'] = df.apply(lambda df: eval(f"{df['player_id']}{df['team_id']}{df['season_id']}"),axis=1)
-        frames.append(df)
+        try:
+            df = tm_fetch_squads(season_id=season_id, team_id=team_id)
+            for col in df.columns:
+                new_col_name = rename_camel_col(col)
+                df.rename(columns={col: new_col_name},inplace=True)
+                df['id'] = df.apply(lambda df: eval(f"{df['player_id']}{df['team_id']}{df['season_id']}"),axis=1)
+                df['league_id'] = league_id
+            frames.append(df)
+        except Exception as e:
+            context.log.info(f"Error with season {season_id} and team {team_id}")
     result = pd.concat(frames)
     return result
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
-def player_performace(context) -> pd.DataFrame:
+def player_performace(context, config: LeagueConfig) -> pd.DataFrame:
     squad_df = context.resources.new_io_manager.load_table(table_name='squad')
+    league_id = config.league_id
+    squad_df = squad_df[squad_df['league_id'] == league_id]
     player_seasons = list(zip(squad_df['player_id'], squad_df['season_id']))
     frames = []
     for i in player_seasons:
@@ -79,21 +84,27 @@ def player_performace(context) -> pd.DataFrame:
                 df.rename(columns={col: new_col_name},inplace=True)
             frames.append(df)
         except Exception as e:
-            pass
+            context.log.info(f"Error with season {season_id} and player {player_id}")
     result = pd.concat(frames)
+    result['league_id'] = league_id
     return result
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
-def matches(context) -> pd.DataFrame:
+def matches(context, config: LeagueConfig) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='player_performace')
+    league_id = config.league_id
+    existing_df = existing_df[existing_df['league_id'] == league_id]
     matches = existing_df['id'].unique()
     frames = []
     for match_id in matches:
-        df = tm_fetch_match(match_id)
-        for col in df.columns:
-            new_col_name = rename_camel_col(col)
-            df.rename(columns={col: new_col_name},inplace=True)
-        frames.append(df)
+        try:
+            df = tm_fetch_match(match_id)
+            for col in df.columns:
+                new_col_name = rename_camel_col(col)
+                df.rename(columns={col: new_col_name},inplace=True)
+            frames.append(df)
+        except Exception as e:
+            context.log.info(f"Error with match {match_id}")
     result = pd.concat(frames)
     return result
 
@@ -161,8 +172,10 @@ def player(context) -> pd.DataFrame:
     return result
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
-def team(context) -> pd.DataFrame:
+def team(context, config: LeagueConfig) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='standing')
+    league_id = config.league_id
+    existing_df = existing_df[existing_df['league_id'] == league_id]
     teams = existing_df['team_id'].unique()
     frames = []
     for i in teams:
