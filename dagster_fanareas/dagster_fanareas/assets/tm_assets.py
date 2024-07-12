@@ -17,7 +17,7 @@ def season(context) -> pd.DataFrame:
     return df
 
 @asset(config_schema={"league_id": str}, group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
-def standing(context, config: LeagueConfig) -> pd.DataFrame:
+def standing(context) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='season')
     seasons = existing_df['id'].unique()
     frames = []
@@ -56,6 +56,8 @@ def standing(context, config: LeagueConfig) -> pd.DataFrame:
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
 def squad(context) -> pd.DataFrame:
     standing_df = context.resources.new_io_manager.load_table(table_name='standing')
+    league_id = 'ES1'
+    standing_df = standing_df[standing_df['league_id'] == league_id]
     team_seasons = list(zip(standing_df['team_id'], standing_df['season_id']))
     frames = []
     for i in team_seasons:
