@@ -1,7 +1,11 @@
-from dagster import asset
+from dagster import asset, Config
 import pandas as pd
 from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info, tm_fetch_team_transfers, tm_fetch_titles, tm_fetch_countries, tm_fetch_competitions, tm_fetch_stuff
 from dagster_fanareas.constants import tm_url
+
+
+class LeagueConfig(Config):
+    league_id: str = "GB1"
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
 def season(context) -> pd.DataFrame:
@@ -12,13 +16,13 @@ def season(context) -> pd.DataFrame:
     df = tm_fetch_data(url ,params)
     return df
 
-@asset(config_schema={"league_id": str}, group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
-def standing(context) -> pd.DataFrame:
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def standing(context, config: LeagueConfig) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='season')
     seasons = existing_df['id'].unique()
     frames = []
     # leagues = ['GB1','IT1','L1','FR1','ES1']
-    competiton_id = context.asset_config["league_id"]
+    competiton_id = config["league_id"]
     for i in seasons:
         params = {"locale":"US",
                     "season_id": i,
