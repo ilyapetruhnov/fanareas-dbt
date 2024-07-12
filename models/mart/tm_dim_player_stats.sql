@@ -66,7 +66,7 @@ player_stats_agg as (
     case when yellow_red_card_minute >0 then 1 else 0 end as second_yellow_cards,
     case when red_card_minute >0 then 1 else 0 end as red_cards
 from player_performace
-join team on player_performace.team_id = team.id
+join team on player_performace.team_id = cast(team.id as int)
 ),
 stg_player_stats as (
     select
@@ -94,8 +94,8 @@ select
     stg_players.nationality,
     stg_players.fullname,
     stg_players.captain,
-    ARRAY_AGG(DISTINCT stg_player_stats.team) as team_arr,
     ARRAY_AGG(DISTINCT stg_player_stats.team_id) as team_id_arr,
+    ARRAY_AGG(DISTINCT stg_player_stats.team) as team_arr,
     max(stg_players.position_group) as position_group,
     max(stg_players.position) as position,
     max(stg_players.international_team) as international_team,
