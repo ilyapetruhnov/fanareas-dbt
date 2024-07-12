@@ -28,7 +28,6 @@ stg_players as (
         cast(player.id as int) as player_id,
         cast(squad.season_id as int),
         cast(squad.team_id as int),
-        team.name as team,
         country as nationality,
         squad.age,
         player.international_team,
@@ -47,7 +46,6 @@ stg_players as (
         squad.market_value_currency
 from player
 join squad on player.id = squad.player_id
-join team on player.team_id = team.id
 ),
 player_stats_agg as (
     select
@@ -55,6 +53,7 @@ player_stats_agg as (
     player_id,
     season_id,
     team_id,
+    team.name as team,
     goals,
     assists,
     own_goals,
@@ -67,12 +66,14 @@ player_stats_agg as (
     case when yellow_red_card_minute >0 then 1 else 0 end as second_yellow_cards,
     case when red_card_minute >0 then 1 else 0 end as red_cards
 from player_performace
+join team on player_performace.team_id = team.id
 ),
 stg_player_stats as (
     select
     player_id,
     season_id,
     team_id,
+    team,
     sum(goals) as goals,
     sum(assists) as assists,
     sum(own_goals) as own_goals,
@@ -90,11 +91,11 @@ group by player_id, season_id, team_id
 select
     stg_players.player_id,
     stg_players.season_id,
-    stg_players.team,
-    stg_player_stats.team_id,
     stg_players.nationality,
     stg_players.fullname,
     stg_players.captain,
+    ARRAY_AGG(DISTINCT stg_player_stats.team) as team_arr,
+    ARRAY_AGG(DISTINCT stg_player_stats.team_id) as team_id_arr,
     max(stg_players.position_group) as position_group,
     max(stg_players.position) as position,
     max(stg_players.international_team) as international_team,
@@ -120,8 +121,6 @@ and stg_players.season_id = stg_player_stats.season_id
 group by 
     stg_players.player_id,
     stg_players.season_id,
-    stg_players.team,
-    stg_player_stats.team_id,
     stg_players.nationality,
     stg_players.fullname,
     stg_players.captain
