@@ -42,14 +42,7 @@ def standing(context, config: LeagueConfig) -> pd.DataFrame:
         df['team_id'] = df['team_id'].astype(int)
         df['id'] = df.apply(lambda df: eval(f"{df['season_id']}{df['team_id']}"),axis=1)
         frames.append(df)
-    data = pd.concat(frames)
-    # Return a MaterializeResult with metadata
-    context.resources.new_io_manager.handle_output(context, data)
-    file_path = context.resources.new_io_manager._get_path(context.asset_key)
-    return MaterializeResult(
-        asset_key=context.asset_key,
-        metadata={"file_path": file_path}
-    )
+    return pd.concat(frames)
 
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
