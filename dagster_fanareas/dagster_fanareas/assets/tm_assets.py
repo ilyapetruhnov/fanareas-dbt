@@ -71,7 +71,7 @@ def squad(context, config: LeagueConfig) -> pd.DataFrame:
 def player_performace(context, config: LeagueConfig) -> pd.DataFrame:
     squad_df = context.resources.new_io_manager.load_table(table_name='squad')
     league_id = config.league_id
-    squad_df = squad_df[squad_df['league_id'] == league_id]
+    squad_df = squad_df[(squad_df['league_id'] == league_id) & (squad_df['season_id'] != 2024) ]
     player_seasons = list(zip(squad_df['player_id'], squad_df['season_id']))
     frames = []
     for i in player_seasons:
