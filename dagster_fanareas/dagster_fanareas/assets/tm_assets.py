@@ -78,7 +78,7 @@ def player_performace(context, config: LeagueConfig) -> pd.DataFrame:
         player_id = i[0]
         season_id = i[1]
         try:
-            df = tm_fetch_player_performance(season_id=season_id, player_id=player_id)
+            df = tm_fetch_player_performance(season_id=season_id, player_id=player_id, league_id=league_id)
             for col in df.columns:
                 new_col_name = rename_camel_col(col)
                 df.rename(columns={col: new_col_name},inplace=True)
@@ -131,9 +131,13 @@ def match_stats(context, config: LeagueConfig) -> pd.DataFrame:
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
 def player(context, config: LeagueConfig) -> pd.DataFrame:
     squad_df = context.resources.new_io_manager.load_table(table_name='squad')
+    player_dataset = context.resources.new_io_manager.load_table(table_name='player')
     league_id = config.league_id
     squad_df = squad_df[squad_df['league_id'] == league_id]
-    players = squad_df['player_id'].unique()
+    players_from_squad = squad_df['player_id'].unique()
+    players_ingested = player_dataset['id'].unique()
+    players = [item for item in players_from_squad if item not in players_ingested]
+    context.log.info(len(players))
     frames = []
     for i in players:
         try:
