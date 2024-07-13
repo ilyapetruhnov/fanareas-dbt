@@ -109,14 +109,17 @@ def matches(context, config: LeagueConfig) -> pd.DataFrame:
     return result
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
-def match_stats(context) -> pd.DataFrame:
+def match_stats(context, config: LeagueConfig) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='matches')
     matches = existing_df['id'].unique()
     frames = []
     for match_id in matches:
-        df = tm_fetch_match_stats(match_id)
-        df.rename(columns={'clubId': 'team_id'},inplace=True)
-        frames.append(df)
+        try:
+            df = tm_fetch_match_stats(match_id)
+            df.rename(columns={'clubId': 'team_id'},inplace=True)
+            frames.append(df)
+        except Exception as e:
+            context.log.info(f"Error with match {match_id}")
     result = pd.concat(frames)
     cols = ['id','match_id','team_id', 'ballpossession', 'offsides', 'fouls', 'freekicks',
        'cornerkicks', 'goalkeepersaves', 'shotsoffgoal', 'shotsongoal',
@@ -126,17 +129,22 @@ def match_stats(context) -> pd.DataFrame:
     return result
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
-def player(context) -> pd.DataFrame:
-    existing_df = context.resources.new_io_manager.load_table(table_name='squad')
-    players = existing_df['player_id'].unique()
+def player(context, config: LeagueConfig) -> pd.DataFrame:
+    squad_df = context.resources.new_io_manager.load_table(table_name='squad')
+    league_id = config.league_id
+    squad_df = squad_df[squad_df['league_id'] == league_id]
+    players = squad_df['player_id'].unique()
     frames = []
     for i in players:
-        df = tm_fetch_player_profile(i)
-        df.rename(columns={'playerID': 'id','clubID': 'team_id','club': 'team'},inplace=True)
-        for col in df.columns:
-            new_col_name = rename_camel_col(col)
-            df.rename(columns={col: new_col_name},inplace=True)
-        frames.append(df)
+        try:
+            df = tm_fetch_player_profile(i)
+            df.rename(columns={'playerID': 'id','clubID': 'team_id','club': 'team'},inplace=True)
+            for col in df.columns:
+                new_col_name = rename_camel_col(col)
+                df.rename(columns={col: new_col_name},inplace=True)
+            frames.append(df)
+        except Exception as e:
+            context.log.info(f"Error with player {i}")
     result = pd.concat(frames)
     cols = [
         'id',
@@ -179,17 +187,20 @@ def team(context, config: LeagueConfig) -> pd.DataFrame:
     teams = existing_df['team_id'].unique()
     frames = []
     for i in teams:
-        df_profile = tm_fetch_team_profile(i)
-        df_info = tm_fetch_team_info(i)
-        df =  pd.concat([df_profile, df_info],axis=1)
-        for col in df.columns:
-            new_col_name = rename_camel_col(col)
-            df.rename(columns={col: new_col_name},inplace=True)
-        frames.append(df)
+        try:
+            df_profile = tm_fetch_team_profile(i)
+            df_info = tm_fetch_team_info(i)
+            df =  pd.concat([df_profile, df_info],axis=1)
+            for col in df.columns:
+                new_col_name = rename_camel_col(col)
+                df.rename(columns={col: new_col_name},inplace=True)
+            frames.append(df)
+        except Exception as e:
+            context.log.info(f"Error with team {i}")
     return pd.concat(frames)
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
-def transfer(context) -> pd.DataFrame:
+def transfer(context, config: LeagueConfig) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='team')
     teams = existing_df['id'].unique()
     frames = []
