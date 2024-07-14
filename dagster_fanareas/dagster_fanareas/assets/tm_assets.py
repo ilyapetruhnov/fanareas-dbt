@@ -90,11 +90,13 @@ def player_performace(context, config: LeagueConfig) -> pd.DataFrame:
     return result
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
-def matches(context, config: LeagueConfig) -> pd.DataFrame:
+def matches(context) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='player_performace')
-    league_id = config.league_id
-    existing_df = existing_df[existing_df['league_id'] == league_id]
-    matches = existing_df['id'].unique()
+    all_matches = existing_df['id'].unique()
+    matches_dataset = context.resources.new_io_manager.load_table(table_name='matches')
+    exisitng_matches = matches_dataset['id'].unique()
+    matches = [item for item in all_matches if item not in exisitng_matches]
+    # matches = existing_df['id'].unique()
     frames = []
     for match_id in matches:
         try:
