@@ -111,9 +111,30 @@ def matches(context) -> pd.DataFrame:
     return result
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
-def match_stats(context, config: LeagueConfig) -> pd.DataFrame:
-    existing_df = context.resources.new_io_manager.load_table(table_name='matches')
-    matches = existing_df['id'].unique()
+def matches_test(context) -> pd.DataFrame:
+    existing_df = context.resources.new_io_manager.load_table(table_name='player_performace')
+    matches = existing_df[existing_df['player_id']==418560]['id'].unique()
+    frames = []
+    for match_id in matches:
+        try:
+            df = tm_fetch_match(match_id)
+            for col in df.columns:
+                new_col_name = rename_camel_col(col)
+                df.rename(columns={col: new_col_name},inplace=True)
+            frames.append(df)
+        except Exception as e:
+            context.log.info(f"Error with match {match_id}")
+    result = pd.concat(frames)
+    return result
+
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def match_stats(context) -> pd.DataFrame:
+    matches_df = context.resources.new_io_manager.load_table(table_name='matches')
+    existing_match_stats_df = context.resources.new_io_manager.load_table(table_name='match_stats')
+    all_matches = matches_df['id'].unique()
+    existing_match_stats = existing_match_stats_df['match_id'].unique()
+    matches = [item for item in all_matches if item not in existing_match_stats]
+    context.log.info(len(matches))
     frames = []
     for match_id in matches:
         try:
@@ -206,17 +227,20 @@ def team(context, config: LeagueConfig) -> pd.DataFrame:
     return pd.concat(frames)
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
-def transfer(context, config: LeagueConfig) -> pd.DataFrame:
+def transfer(context) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='team')
     teams = existing_df['id'].unique()
     frames = []
     for i in teams:
-        df = tm_fetch_team_transfers(i)
-        if df is not None:
-            for col in df.columns:
-                new_col_name = rename_camel_col(col)
-                df.rename(columns={col: new_col_name},inplace=True)
-            frames.append(df)
+        try:
+            df = tm_fetch_team_transfers(i)
+            if df is not None:
+                for col in df.columns:
+                    new_col_name = rename_camel_col(col)
+                    df.rename(columns={col: new_col_name},inplace=True)
+                frames.append(df)
+        except Exception as e:
+            context.log.info(f"Error with team {i}")
     return pd.concat(frames)
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
@@ -226,12 +250,15 @@ def titles(context) -> pd.DataFrame:
     frames = []
     for i in teams:
         context.log.info(i)
-        df = tm_fetch_titles(i)
-        if df is not None:
-            for col in df.columns:
-                new_col_name = rename_camel_col(col)
-                df.rename(columns={col: new_col_name},inplace=True)
-            frames.append(df)
+        try:
+            df = tm_fetch_titles(i)
+            if df is not None:
+                for col in df.columns:
+                    new_col_name = rename_camel_col(col)
+                    df.rename(columns={col: new_col_name},inplace=True)
+                frames.append(df)
+        except Exception as e:
+            context.log.info(f"Error with team {i}")
     return pd.concat(frames)
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
@@ -240,20 +267,23 @@ def stuff(context) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='team')
     coaches = existing_df['coach_id'].unique()
     for stuff_id in coaches:
-        data = tm_fetch_stuff(stuff_id)
-        if data is not None:
-            result_df = pd.DataFrame.from_dict(data, orient='index').T
-            cols = ['id', 'countryID', 'personID', 'personImage','playerID', 'personnelID',
-        'personName', 'firstName', 'lastName', 'alias', 'dateOfBirth',
-        'deathDay', 'age', 'birthplace',  'countryImage',
-        'countryName', 'averageTermAsCoach']
-            result_df = result_df[cols]
-            result_df.rename(columns={'personID': 'person_id',
-                                    'countryID': 'country_id',
-                                    'playerID': 'player_id',
-                                    'personnelID': 'personnel_id'},inplace=True)
+        try:
+            data = tm_fetch_stuff(stuff_id)
+            if data is not None:
+                result_df = pd.DataFrame.from_dict(data, orient='index').T
+                cols = ['id', 'countryID', 'personID', 'personImage','playerID', 'personnelID',
+            'personName', 'firstName', 'lastName', 'alias', 'dateOfBirth',
+            'deathDay', 'age', 'birthplace',  'countryImage',
+            'countryName', 'averageTermAsCoach']
+                result_df = result_df[cols]
+                result_df.rename(columns={'personID': 'person_id',
+                                        'countryID': 'country_id',
+                                        'playerID': 'player_id',
+                                        'personnelID': 'personnel_id'},inplace=True)
 
-            frames.append(result_df)
+                frames.append(result_df)
+        except Exception as e:
+            context.log.info(f"Error with stuff_id {stuff_id}")
     return pd.concat(frames)
 
 
