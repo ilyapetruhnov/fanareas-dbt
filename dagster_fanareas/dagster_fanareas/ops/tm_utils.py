@@ -280,6 +280,45 @@ def tm_fetch_team_transfers(team_id):
     return df
 
 @op
+def tm_fetch_transfer_records():
+    url = f"{tm_url}markets/transfers-records"
+    page_num = 0
+    frames = []
+    while True:
+        params = {
+            "locale":"US",
+            "page_number": page_num,
+            "top_transfers_first": "false"
+                  }
+        page_num +=1
+        response= tm_api_call(url, params)
+        data = response.json()['data']
+        if len(data) == 0:
+            break
+
+        frames.append(pd.DataFrame(data))
+    if len(frames)>0:
+        df = pd.concat(frames)
+    else:
+        return None
+    df['transferFee_value'] = df['transferFee'].apply(lambda x: x['value'])
+    df['transferFee_currency'] = df['transferFee'].apply(lambda x: x['currency'])
+    df['transferMarketValue_value'] = df['transferMarketValue'].apply(lambda x: x['value'])
+    df['transferMarketValue_currency'] = df['transferMarketValue'].apply(lambda x: x['currency'])
+    cols = ['id', 'playerID', 'fromClubID', 'toClubID', 'transferredAt', 'isLoan',
+        'wasLoan', 'season', 'fromCompetitionID', 'toCompetitionID','transferFee_value',
+        'transferFee_currency', 'transferMarketValue_value',
+        'transferMarketValue_currency']
+    df = df[cols]
+    df.rename(columns={'fromClubID': 'from_team_id',
+                    'toClubID': 'to_club_id',
+                    'playerID': 'player_id',
+                    'fromCompetitionID':'from_competition_id',
+                    'toCompetitionID':'to_competition_id'
+                    }, inplace=True)
+    return df
+
+@op
 def tm_fetch_titles(team_id):
     url = f"{tm_url}clubs/profile"
     params = {"locale":"US","club_id":team_id}
@@ -327,6 +366,14 @@ def tm_fetch_countries():
 def tm_fetch_competitions(country_id):
     url = f"{tm_url}countries/competitions"
     params = {"country_id":country_id,"locale":'US'}
+    result = tm_api_call(url, params)
+    if result is not None:
+        return result.json()['data']
+    return None
+
+@op
+def tm_fetch_national_champions(url):
+    params = {"locale":'US'}
     result = tm_api_call(url, params)
     if result is not None:
         return result.json()['data']

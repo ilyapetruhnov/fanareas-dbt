@@ -1,6 +1,6 @@
 from dagster import asset, Config, MaterializeResult
 import pandas as pd
-from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info, tm_fetch_team_transfers, tm_fetch_titles, tm_fetch_countries, tm_fetch_competitions, tm_fetch_stuff
+from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info, tm_fetch_team_transfers, tm_fetch_titles, tm_fetch_countries, tm_fetch_competitions, tm_fetch_stuff, tm_fetch_transfer_records, tm_fetch_national_champions
 from dagster_fanareas.constants import tm_url
 
 
@@ -97,23 +97,6 @@ def matches(context) -> pd.DataFrame:
     exisitng_matches = matches_dataset['id'].unique()
     matches = [item for item in all_matches if item not in exisitng_matches]
     # matches = existing_df['id'].unique()
-    frames = []
-    for match_id in matches:
-        try:
-            df = tm_fetch_match(match_id)
-            for col in df.columns:
-                new_col_name = rename_camel_col(col)
-                df.rename(columns={col: new_col_name},inplace=True)
-            frames.append(df)
-        except Exception as e:
-            context.log.info(f"Error with match {match_id}")
-    result = pd.concat(frames)
-    return result
-
-@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
-def matches_test(context) -> pd.DataFrame:
-    existing_df = context.resources.new_io_manager.load_table(table_name='player_performace')
-    matches = existing_df[existing_df['player_id']==418560]['id'].unique()
     frames = []
     for match_id in matches:
         try:
@@ -244,6 +227,20 @@ def transfer(context) -> pd.DataFrame:
     return pd.concat(frames)
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def transfer_records(context) -> pd.DataFrame:
+    frames = []
+    try:
+        df = tm_fetch_transfer_records()
+        if df is not None:
+            for col in df.columns:
+                new_col_name = rename_camel_col(col)
+                df.rename(columns={col: new_col_name},inplace=True)
+            frames.append(df)
+    except Exception as e:
+        context.log.info(f"Error")
+    return pd.concat(frames)
+
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
 def titles(context) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='team')
     teams = existing_df['id'].unique()
@@ -324,3 +321,29 @@ def competitions(context) -> pd.DataFrame:
             'league_level',
             'country']
     return ndf[cols]
+
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def euro_champions() -> pd.DataFrame:
+    url = f"{tm_url}rankings/european-champions"
+    data = tm_fetch_national_champions(url)
+    df = pd.DataFrame(data['teams'])
+    df.rename(columns={'seasonID': 'season_id'},inplace=True)
+    df.rename(columns={'successID': 'success_id'},inplace=True)
+    df.rename(columns={'coachID': 'coach_id'},inplace=True)
+    for col in df.columns:
+        new_col_name = rename_camel_col(col)
+        df.rename(columns={col: new_col_name},inplace=True)
+    return df
+
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def world_champions() -> pd.DataFrame:
+    url = f"{tm_url}rankings/world-cup-champions"
+    data = tm_fetch_national_champions(url)
+    df = pd.DataFrame(data['teams'])
+    df.rename(columns={'seasonID': 'season_id'},inplace=True)
+    df.rename(columns={'successID': 'success_id'},inplace=True)
+    df.rename(columns={'coachID': 'coach_id'},inplace=True)
+    for col in df.columns:
+        new_col_name = rename_camel_col(col)
+        df.rename(columns={col: new_col_name},inplace=True)
+    return df
