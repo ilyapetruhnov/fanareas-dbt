@@ -463,4 +463,17 @@ def staff_achievements(context) -> pd.DataFrame:
     for col in df.columns:
         new_col_name = rename_camel_col(col)
         df.rename(columns={col: new_col_name},inplace=True)
+    df['id'] = df.apply(lambda df: eval(f"{df['season_id']}{df['achievement_id']}{df['club_id']}"),axis=1)
     return df
+
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def player_images(context) -> pd.DataFrame:
+    players_df = context.resources.new_io_manager.load_table(table_name='player')
+    players = players_df['id'].unique()
+    player_ids = ",".join(players)
+    url = f"{tm_url}players/images"
+    params = {"player_ids":player_ids,"locale":"US"}
+    response = tm_api_call(url, params)
+    df = pd.DataFrame(response.json()['data'])
+    return df
+
