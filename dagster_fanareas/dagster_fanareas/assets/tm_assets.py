@@ -1,6 +1,6 @@
 from dagster import asset, Config, MaterializeResult
 import pandas as pd
-from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info, tm_fetch_team_transfers, tm_fetch_titles, tm_fetch_countries, tm_fetch_competitions, tm_fetch_stuff, tm_fetch_transfer_records, tm_fetch_national_champions
+from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info, tm_fetch_team_transfers, tm_fetch_titles, tm_fetch_countries, tm_fetch_competitions, tm_fetch_stuff, tm_fetch_transfer_records, tm_fetch_national_champions, tm_api_call
 from dagster_fanareas.constants import tm_url
 
 
@@ -227,18 +227,43 @@ def transfer(context) -> pd.DataFrame:
     return pd.concat(frames)
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
-def transfer_records(context) -> pd.DataFrame:
+def transfer_records():
+    url = f"{tm_url}markets/transfers-records"
+    page_num = 0
     frames = []
-    try:
-        df = tm_fetch_transfer_records()
-        if df is not None:
-            for col in df.columns:
-                new_col_name = rename_camel_col(col)
-                df.rename(columns={col: new_col_name},inplace=True)
-            frames.append(df)
-    except Exception as e:
-        context.log.info(f"Error")
-    return pd.concat(frames)
+    while True:
+        params = {
+            "locale":"US",
+            "page_number": page_num,
+            "top_transfers_first": "false"
+                  }
+        page_num +=1
+        response= tm_api_call(url, params)
+        data = response.json()['data']
+        if len(data) == 0:
+            break
+
+        frames.append(pd.DataFrame(data))
+    if len(frames)>0:
+        df = pd.concat(frames)
+    else:
+        return None
+    df['transferFee_value'] = df['transferFee'].apply(lambda x: x['value'])
+    df['transferFee_currency'] = df['transferFee'].apply(lambda x: x['currency'])
+    df['transferMarketValue_value'] = df['transferMarketValue'].apply(lambda x: x['value'])
+    df['transferMarketValue_currency'] = df['transferMarketValue'].apply(lambda x: x['currency'])
+    cols = ['id', 'playerID', 'fromClubID', 'toClubID', 'transferredAt', 'isLoan',
+        'wasLoan', 'season', 'fromCompetitionID', 'toCompetitionID','transferFee_value',
+        'transferFee_currency', 'transferMarketValue_value',
+        'transferMarketValue_currency']
+    df = df[cols]
+    df.rename(columns={'fromClubID': 'from_team_id',
+                    'toClubID': 'to_club_id',
+                    'playerID': 'player_id',
+                    'fromCompetitionID':'from_competition_id',
+                    'toCompetitionID':'to_competition_id'
+                    }, inplace=True)
+    return df
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
 def titles(context) -> pd.DataFrame:
