@@ -378,3 +378,34 @@ def tm_fetch_national_champions(url):
     if result is not None:
         return result.json()['data']
     return None
+
+@op
+def tm_fetch_referees(referee_id):
+    params = {"referee_id":referee_id,"locale":"US"}
+    url = f"{tm_url}referees/profile"
+    response = tm_api_call(url, params)
+    data = response.json()['data']['profile']
+    df = pd.DataFrame.from_dict(data, orient='index').T
+    df['total_appearances'] = df['totalPerformanceSum'].apply(lambda x: x['appearances'])
+    df['total_yellow_cards'] = df['totalPerformanceSum'].apply(lambda x: x['yellow_cards'])
+    df['total_yellow_red_cards'] = df['totalPerformanceSum'].apply(lambda x: x['yellow_red_cards'])
+    df['total_red_cards'] = df['totalPerformanceSum'].apply(lambda x: x['red_cards'])
+    df['total_penaltys'] = df['totalPerformanceSum'].apply(lambda x: x['penaltys'])
+    cols_to_drop = ['totalCompetitionsPerformance','totalPerformanceSeasons', 'totalPerformanceSum']
+    df = df.drop(cols_to_drop,axis=1)
+
+    frames = []
+    for i in data['totalCompetitionsPerformance']:
+        league_id = data['totalCompetitionsPerformance'][i]['competitionID']
+        if league_id in ('ES1','GB1','IT1','FR1','L1'):
+            dic = data['totalCompetitionsPerformance'][i]
+            batch_df = pd.DataFrame.from_dict(dic, orient='index').T
+            batch_df = batch_df.drop('season',axis=1)
+            for col in batch_df.columns:
+                batch_df.rename(columns={col: f"{league_id}_{col}"},inplace=True)
+            frames.append(batch_df)
+    
+    ndf = pd.concat(frames)
+    final_df = pd.concat([df,ndf],axis=1)
+    return final_df
+
