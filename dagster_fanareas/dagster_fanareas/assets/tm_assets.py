@@ -338,7 +338,7 @@ def competition_champions(context) -> pd.DataFrame:
     frames = []
     for league_id in competitions:
         try:
-            data = tm_fetch_competition_champions(i)
+            data = tm_fetch_competition_champions(league_id)
             df = pd.DataFrame(data['champions'])
             df['league_id'] = league_id
             frames.append(df)

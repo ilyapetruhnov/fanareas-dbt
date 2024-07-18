@@ -373,7 +373,7 @@ def tm_fetch_competitions(country_id):
 
 @op
 def tm_fetch_competition_info(competition_id):
-    url = f"{tm_url}countries/competitions"
+    url = f"{tm_url}competitions/info"
     params = {"competition_id":competition_id,"locale":'US'}
     result = tm_api_call(url, params)
     if result is not None:
