@@ -450,7 +450,6 @@ def tm_fetch_referees(referee_id):
     final_df = pd.concat([df,ndf],axis=1)
     return final_df
 
-@op
 def chunk_list(lst, chunk_size):
     """Yield successive chunks from the list."""
     for i in range(0, len(lst), chunk_size):
