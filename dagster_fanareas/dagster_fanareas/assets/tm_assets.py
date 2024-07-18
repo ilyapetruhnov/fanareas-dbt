@@ -1,6 +1,6 @@
 from dagster import asset, Config, MaterializeResult
 import pandas as pd
-from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info, tm_fetch_team_transfers, tm_fetch_titles, tm_fetch_countries, tm_fetch_competitions, tm_fetch_stuff, tm_fetch_transfer_records, tm_fetch_national_champions, tm_api_call,tm_fetch_referees
+from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info, tm_fetch_team_transfers, tm_fetch_titles, tm_fetch_countries, tm_fetch_competitions, tm_fetch_stuff, tm_fetch_transfer_records, tm_fetch_national_champions, tm_api_call,tm_fetch_referees, tm_fetch_rankings, tm_fetch_competition_info
 from dagster_fanareas.constants import tm_url
 
 
@@ -318,6 +318,35 @@ def country() -> pd.DataFrame:
     return pd.concat(frames)
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def competition_info(context) -> pd.DataFrame:
+    competitions_df = context.resources.new_io_manager.load_table(table_name='competitions')
+    competitions = competitions_df['id'].unique()
+    frames = []
+    for i in competitions:
+        try:
+            data = tm_fetch_competition_info(i)
+            result_df = pd.DataFrame.from_dict(data, orient='index').T
+            frames.append(result_df)
+        except Exception as e:
+            context.log.info(f"Error with competition_id {i}")
+    return pd.concat(frames)
+
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def competition_champions(context) -> pd.DataFrame:
+    competitions_df = context.resources.new_io_manager.load_table(table_name='competitions')
+    competitions = competitions_df['id'].unique()
+    frames = []
+    for league_id in competitions:
+        try:
+            data = tm_fetch_competition_champions(i)
+            df = pd.DataFrame(data['champions'])
+            df['league_id'] = league_id
+            frames.append(df)
+        except Exception as e:
+            context.log.info(f"Error with competition_id {i}")
+    return pd.concat(frames)
+
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
 def competitions(context) -> pd.DataFrame:
     existing_df = context.resources.new_io_manager.load_table(table_name='country')
     countries = existing_df['id'].unique()
@@ -367,6 +396,26 @@ def world_champions() -> pd.DataFrame:
     df.rename(columns={'seasonID': 'season_id'},inplace=True)
     df.rename(columns={'successID': 'success_id'},inplace=True)
     df.rename(columns={'coachID': 'coach_id'},inplace=True)
+    for col in df.columns:
+        new_col_name = rename_camel_col(col)
+        df.rename(columns={col: new_col_name},inplace=True)
+    return df
+
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def uefa_ranking() -> pd.DataFrame:
+    url = f"{tm_url}rankings/uefa"
+    data = tm_fetch_rankings(url)
+    df = pd.DataFrame(data['teams'])
+    for col in df.columns:
+        new_col_name = rename_camel_col(col)
+        df.rename(columns={col: new_col_name},inplace=True)
+    return df
+
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def fifa_ranking() -> pd.DataFrame:
+    url = f"{tm_url}rankings/fifa"
+    data = tm_fetch_rankings(url)
+    df = pd.DataFrame(data['teams'])
     for col in df.columns:
         new_col_name = rename_camel_col(col)
         df.rename(columns={col: new_col_name},inplace=True)

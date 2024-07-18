@@ -372,7 +372,33 @@ def tm_fetch_competitions(country_id):
     return None
 
 @op
+def tm_fetch_competition_info(competition_id):
+    url = f"{tm_url}countries/competitions"
+    params = {"competition_id":competition_id,"locale":'US'}
+    result = tm_api_call(url, params)
+    if result is not None:
+        return result.json()['data']
+    return None
+
+@op
+def tm_fetch_competition_champions(competition_id):
+    url = f"{tm_url}competitions/champions"
+    params = {"competition_id":competition_id,"locale":'US'}
+    result = tm_api_call(url, params)
+    if result is not None:
+        return result.json()['data']
+    return None
+
+@op
 def tm_fetch_national_champions(url):
+    params = {"locale":'US'}
+    result = tm_api_call(url, params)
+    if result is not None:
+        return result.json()['data']
+    return None
+
+@op
+def tm_fetch_rankings(url):
     params = {"locale":'US'}
     result = tm_api_call(url, params)
     if result is not None:
