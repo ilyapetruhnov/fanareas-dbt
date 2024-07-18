@@ -484,3 +484,15 @@ def player_images(context) -> pd.DataFrame:
             context.log.info(f"Error with chunk {player_ids}")
     return pd.concat(frames)
 
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def player_images_batch(context) -> pd.DataFrame:
+    player_ids = "282820,282821,319817,33952,39909,43261,214113,3163,61637,75287,184892,33951,38388,41355,186790,45272,3876,9619,32617,37397,258920,285847,4380,57515,63824,127987,164771,73472,241229,110798,128911,3924,245585,3476,7767,21725,28396,82215,46104,124845,88262,166640,167254,177952,115507,3109,4042,143559,182579,4624,195605,265763,15185,26763,226964,284717,7337,29356,70245,89648"
+    url = f"{tm_url}players/images"
+    params = {"player_ids":player_ids,"locale":"US"}
+    response = tm_api_call(url, params)
+    try:
+        df = pd.DataFrame(response.json()['data'])
+    except Exception:
+        context.log.info(f"Error with chunk {player_ids}")
+    return df
+
