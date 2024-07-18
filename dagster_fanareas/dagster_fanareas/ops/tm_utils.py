@@ -406,6 +406,21 @@ def tm_fetch_rankings(url):
     return None
 
 @op
+def tm_fetch_staff_achievements(staff_id):
+    url = "https://transfermarkt-db.p.rapidapi.com/v1/staff/achievements"
+    params = {"staff_id":staff_id,"locale":'US'}
+    result = tm_api_call(url, params)
+    frames = []
+    data = result.json()['data']
+    df = pd.DataFrame(data)
+    for i in range(len(data)):
+        frames.append(pd.DataFrame(data[i]['additionalData']))
+    ndf = pd.concat(frames).reset_index()
+    ndf = ndf.drop('index',axis=1)
+    final_df = pd.concat([df,ndf],axis=1).drop('additionalData',axis=1)
+    return final_df
+
+@op
 def tm_fetch_referees(referee_id):
     params = {"referee_id":referee_id,"locale":"US"}
     url = f"{tm_url}referees/profile"

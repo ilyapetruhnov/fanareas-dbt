@@ -1,6 +1,6 @@
 from dagster import asset, Config, MaterializeResult
 import pandas as pd
-from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info, tm_fetch_team_transfers, tm_fetch_titles, tm_fetch_countries, tm_fetch_competitions, tm_fetch_stuff, tm_fetch_transfer_records, tm_fetch_national_champions, tm_api_call,tm_fetch_referees, tm_fetch_rankings, tm_fetch_competition_info, tm_fetch_competition_champions
+from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info, tm_fetch_team_transfers, tm_fetch_titles, tm_fetch_countries, tm_fetch_competitions, tm_fetch_stuff, tm_fetch_transfer_records, tm_fetch_national_champions, tm_api_call,tm_fetch_referees, tm_fetch_rankings, tm_fetch_competition_info, tm_fetch_competition_champions, tm_fetch_staff_achievements
 from dagster_fanareas.constants import tm_url
 
 
@@ -436,6 +436,29 @@ def referee(context) -> pd.DataFrame:
     df.rename(columns={'personID': 'person_id'},inplace=True)
     df.rename(columns={'clubID': 'club_id'},inplace=True)
     df.rename(columns={'countryID': 'country_id'},inplace=True)
+    for col in df.columns:
+        new_col_name = rename_camel_col(col)
+        df.rename(columns={col: new_col_name},inplace=True)
+    return df
+
+@asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
+def staff_achievements(context) -> pd.DataFrame:
+    staff_df = context.resources.new_io_manager.load_table(table_name='stuff')
+    staff = staff_df['id'].unique()
+    frames = []
+    for i in staff:
+        try:
+            ndf = tm_fetch_staff_achievements(i)
+            frames.append(ndf)
+        except Exception:
+            context.log.info(f"Error with staff {i}")
+    df = pd.concat(frames)
+    df.rename(columns={'achievementID': 'achievement_id'},inplace=True)
+    df.rename(columns={'clubID': 'club_id'},inplace=True)
+    df.rename(columns={'countryID': 'country_id'},inplace=True)
+    df.rename(columns={'seasonID': 'season_id'},inplace=True)
+    df.rename(columns={'competitionID': 'competition_id'},inplace=True)
+    df.rename(columns={'roleID': 'role_id'},inplace=True)
     for col in df.columns:
         new_col_name = rename_camel_col(col)
         df.rename(columns={col: new_col_name},inplace=True)
