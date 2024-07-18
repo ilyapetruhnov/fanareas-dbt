@@ -449,6 +449,7 @@ def staff_achievements(context) -> pd.DataFrame:
     for i in staff:
         try:
             ndf = tm_fetch_staff_achievements(i)
+            ndf['staff_id'] = i
             frames.append(ndf)
         except Exception:
             context.log.info(f"Error with staff {i}")
