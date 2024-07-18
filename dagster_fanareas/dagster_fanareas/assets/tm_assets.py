@@ -1,6 +1,6 @@
 from dagster import asset, Config, MaterializeResult
 import pandas as pd
-from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info, tm_fetch_team_transfers, tm_fetch_titles, tm_fetch_countries, tm_fetch_competitions, tm_fetch_stuff, tm_fetch_transfer_records, tm_fetch_national_champions, tm_api_call,tm_fetch_referees, tm_fetch_rankings, tm_fetch_competition_info, tm_fetch_competition_champions, tm_fetch_staff_achievements
+from dagster_fanareas.ops.tm_utils import tm_fetch_data, rename_camel_col, tm_fetch_squads, tm_fetch_player_performance, tm_fetch_match, tm_fetch_match_stats, tm_fetch_player_profile, tm_fetch_team_profile, tm_fetch_team_info, tm_fetch_team_transfers, tm_fetch_titles, tm_fetch_countries, tm_fetch_competitions, tm_fetch_stuff, tm_fetch_transfer_records, tm_fetch_national_champions, tm_api_call,tm_fetch_referees, tm_fetch_rankings, tm_fetch_competition_info, tm_fetch_competition_champions, tm_fetch_staff_achievements, chunk_list
 from dagster_fanareas.constants import tm_url
 
 
@@ -343,7 +343,7 @@ def competition_champions(context) -> pd.DataFrame:
             df['league_id'] = league_id
             frames.append(df)
         except Exception as e:
-            context.log.info(f"Error with competition_id {i}")
+            context.log.info(f"Error with competition_id {league_id}")
     return pd.concat(frames)
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
@@ -463,17 +463,24 @@ def staff_achievements(context) -> pd.DataFrame:
     for col in df.columns:
         new_col_name = rename_camel_col(col)
         df.rename(columns={col: new_col_name},inplace=True)
-    df['id'] = df.apply(lambda df: eval(f"{df['season_id']}{df['achievement_id']}{df['club_id']}"),axis=1)
+    df['id'] = df.apply(lambda df: eval(f"{df['season_id']}{df['club_id']}"),axis=1)
     return df
 
 @asset(group_name="ingest_v2", compute_kind="pandas", io_manager_key="new_io_manager")
 def player_images(context) -> pd.DataFrame:
     players_df = context.resources.new_io_manager.load_table(table_name='player')
     players = players_df['id'].unique()
-    player_ids = ",".join(players)
-    url = f"{tm_url}players/images"
-    params = {"player_ids":player_ids,"locale":"US"}
-    response = tm_api_call(url, params)
-    df = pd.DataFrame(response.json()['data'])
-    return df
+    chunk_size = 60
+    frames = []
+    for chunk in chunk_list(players, chunk_size):
+        player_ids = ",".join(chunk)
+        url = f"{tm_url}players/images"
+        params = {"player_ids":player_ids,"locale":"US"}
+        response = tm_api_call(url, params)
+        try:
+            df = pd.DataFrame(response.json()['data'])
+            frames.append(df)
+        except Exception:
+            context.log.info(f"Error with chunk {player_ids}")
+    return pd.concat(frames)
 
