@@ -1,6 +1,6 @@
 with player as (
 
-    select * from {{ ref('tm_player') }}
+    select * from {{ ref('stg_tm_player') }}
 
 ),
 
