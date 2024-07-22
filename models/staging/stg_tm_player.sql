@@ -14,7 +14,7 @@ final as (
 select
     player.id                    
     ,player_image
-    ,coalesce(player_images.image, plager.player_image) as img
+    ,coalesce(player_images.image, player.player_image) as img
     ,player_name           
     ,player_full_name      
     ,birthplace            
