@@ -38,6 +38,7 @@ sources:
       - name: match_stats
       - name: matches
       - name: player
+      - name: player_images
       - name: player_performace
       - name: season
       - name: squad
@@ -46,4 +47,5 @@ sources:
       - name: team
       - name: titles
       - name: transfer
+      - name: transfer_records
   
