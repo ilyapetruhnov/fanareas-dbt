@@ -9,9 +9,9 @@ player_images as (
 
     select id,
     case 
-    when player_image = '' then null
-    else player_image 
-    end as player_image
+    when image = '' then null
+    else image 
+    end as image
     from {{ ref('tm_player_images') }}
 ),
 final as (
