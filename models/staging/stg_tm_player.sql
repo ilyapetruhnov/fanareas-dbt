@@ -7,7 +7,11 @@ with player as (
 ),
 player_images as (
 
-    select *
+    select id,
+    case 
+    when player_image = '' then null
+    else player_image 
+    end as player_image
     from {{ ref('tm_player_images') }}
 ),
 final as (
@@ -34,7 +38,12 @@ select
     ,contract_expiry_date  
     ,agent                 
     ,agent_id              
-    ,position_group        
+    ,case
+    when position_group = 'Abwehr' then 'defender'
+    when position_group = 'Torwart' then 'goalkeeper'
+    when position_group = 'Mittelfeld' then 'midfielder'
+    when position_group = 'Sturm' then 'forward'
+    else 'Unknown' end as position_group
     ,player_main_position  
     ,player_second_position
     ,player_third_position 

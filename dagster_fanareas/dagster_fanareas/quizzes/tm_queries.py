@@ -35,3 +35,6 @@ team_query = """
                 """
 
 player_query = """select * from tm_stg_player"""
+
+
+top_value_players_query = """select * from tm_dim_top_players_by_value limit 300"""

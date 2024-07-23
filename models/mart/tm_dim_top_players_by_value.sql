@@ -24,6 +24,7 @@ select
     player_image,
     img,
     player_name,
+    player_shirt_number,
     birthplace_country,
     age,
     height,
