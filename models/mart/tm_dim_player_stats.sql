@@ -54,6 +54,7 @@ player_stats_agg as (
     season_id,
     team_id,
     team.name as team,
+    team.league_name as league_name,
     goals,
     assists,
     own_goals,
@@ -74,6 +75,7 @@ stg_player_stats as (
     season_id,
     team_id,
     team,
+    league_name,
     sum(goals) as goals,
     sum(assists) as assists,
     sum(own_goals) as own_goals,
@@ -86,7 +88,7 @@ stg_player_stats as (
     sum(second_yellow_cards) as second_yellow_cards,
     sum(red_cards) as red_cards
 from player_stats_agg
-group by player_id, season_id, team_id, team
+group by player_id, season_id, team_id, team, league_name
     )
 select
     stg_players.player_id,
@@ -96,6 +98,7 @@ select
     stg_players.captain,
     ARRAY_AGG(DISTINCT stg_player_stats.team_id) as team_id_arr,
     ARRAY_AGG(DISTINCT stg_player_stats.team) as team_arr,
+    ARRAY_AGG(DISTINCT stg_player_stats.league_name) as league_name_arr,
     max(stg_players.position_group) as position_group,
     max(stg_players.position) as position,
     max(stg_players.international_team) as international_team,
