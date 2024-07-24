@@ -96,9 +96,9 @@ select
     stg_players.nationality,
     stg_players.fullname,
     stg_players.captain,
+    stg_player.league_name,
     ARRAY_AGG(DISTINCT stg_player_stats.team_id) as team_id_arr,
     ARRAY_AGG(DISTINCT stg_player_stats.team) as team_arr,
-    ARRAY_AGG(DISTINCT stg_player_stats.league_name) as league_name_arr,
     max(stg_players.position_group) as position_group,
     max(stg_players.position) as position,
     max(stg_players.international_team) as international_team,
@@ -126,6 +126,7 @@ group by
     stg_players.season_id,
     stg_players.nationality,
     stg_players.fullname,
-    stg_players.captain
+    stg_players.captain,
+    stg_player.league_name
 
 
