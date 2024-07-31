@@ -2,7 +2,8 @@ from dagster import asset
 from dagster_fanareas.quizzes.quizzes import Quizzes
 from dagster_fanareas.quizzes.transferQuizzes import TransferQuizzes
 from dagster_fanareas.quizzes.photoQuizzes import PhotoQuizzes
-from dagster_fanareas.quizzes.teamQuizz import TeamQuizz
+from dagster_fanareas.quizzes.teamQuizzes import TeamQuizzes
+from dagster_fanareas.quizzes.playerQuizzes import PlayerQuizzes
 from dagster_fanareas.quizzes.queries import *
 from dagster_fanareas.ops.utils import get_dim_name_and_id
 from dagster_fanareas.quizzes.quiz_collection import validate_team_season, post_guess_team_player_quiz
@@ -97,6 +98,24 @@ def demo_quiz() -> bool:
     quiz_obj.collect_questions(quiz_obj.generate_fewest_points_question())
     quiz_obj.collect_questions(quiz_obj.generate_most_points_question())
     quiz_obj.collect_questions(quiz_obj.generate_relegations_question())
+
+    quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
+    return True
+
+@asset(group_name="quizzes")
+def tm_demo_quiz() -> bool:
+    title = "Demo quiz"
+    description = "Answer 5 questions"
+    quiz_type = -1
+    is_demo = True
+    team_quiz = TeamQuizzes(title, description, quiz_type, is_demo)
+    player_quiz = PlayerQuizzes(title, description, quiz_type, is_demo)
+    quiz_obj = Quizzes(title, description, quiz_type, is_demo)
+    quiz_obj.collect_questions(player_quiz.player_top_league_stats(league_name = 'Premier League',metric='goals'))
+    quiz_obj.collect_questions(player_quiz.goalkeeper_goals())
+    quiz_obj.collect_questions(player_quiz.record_transfer())
+    quiz_obj.collect_questions(team_quiz.never_won_cl())
+    quiz_obj.collect_questions(team_quiz.unbeaten(league_id='GB1'))
 
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True

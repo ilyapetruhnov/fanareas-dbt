@@ -66,6 +66,15 @@ else:
     dbt_manifest_path = dbt_project_dir.joinpath("target", "manifest.json")
 
 
+league_mapping = {
+    'ES1': 'LaLiga',
+    'GB1': 'Premier League',
+    'L1': 'Bundesluga',
+    'IT1': 'Serie A',
+    'FR1': 'Ligue 1'
+}
+
+
 nationality_mapping = {
     "Afghanistan": "Afghan",
     "Albania": "Albanian",
@@ -245,6 +254,7 @@ nationality_mapping = {
     "Tonga": "Tongan",
     "Trinidad and Tobago": "Trinidadian or Tobagonian",
     "Tunisia": "Tunisian",
+    "Türkiye": "Turkish",
     "Turkey": "Turkish",
     "Turkmenistan": "Turkmen",
     "Tuvalu": "Tuvaluan",

@@ -169,5 +169,215 @@ other_goalkeepers_query = """
                         SELECT distinct fullname from tm_dim_goalkeepers_with_goals
                         where goals = 0
                         and fullname != '{}'
-                        and nationality = '{}'
                         limit 20"""
+
+standing_query = """select * from standing where season_id = {} and league_id = '{}'"""
+
+player_for_the_team_query = """select * from tm_dim_top_players_by_value"""
+
+most_titles_won_query = """with titles as (
+select team_id, count(id ) as title_cnt
+from titles
+where competition_id = '{}'
+group by team_id),
+teams as (select id, name from tm_team where league_id = '{}')
+select name, case when title_cnt is null then 0 else title_cnt end as title_cnt from titles
+right join teams
+on teams.id = titles.team_id
+order by title_cnt desc"""
+
+cl_titles_query = """with vw as (
+                    select
+                    t.name as team_name,
+                    t.league_id,
+                    t.league_name,
+                    titles.name title,
+                    case when titles.id in ('4','55') then 'CL'
+                        when titles.id in ('12','11','10','13','14') then 'League'
+                        when titles.id in ('29','27','35','96','94') then 'Cup'
+                        when titles.id in ('7','264') then 'EL'
+                        else 'unknown' end as title_name,
+                    titles.id as title_id,
+                    cast(max(number) as int) as number
+                    from titles
+                    full outer join team t on titles.team_id = t.id
+                    group by t.name,
+                    t.league_id,
+                    t.league_name,
+                    titles.id,
+                    titles.name),
+                    title_vw as (
+                    select team_name,
+                        league_name,
+                        title_name,
+                        sum(number) as number
+                    from vw
+                    group by team_name, league_name, title_name)
+                    SELECT *
+                    from title_vw
+                    WHERE title_name = 'CL'
+                    order by number desc
+                    """
+
+
+el_titles_query = """with vw as (
+                    select
+                    t.name as team_name,
+                    t.league_id,
+                    t.league_name,
+                    titles.name title,
+                    case when titles.id in ('4','55') then 'CL'
+                        when titles.id in ('12','11','10','13','14') then 'League'
+                        when titles.id in ('29','27','35','96','94') then 'Cup'
+                        when titles.id in ('7','264') then 'EL'
+                        else 'unknown' end as title_name,
+                    titles.id as title_id,
+                    cast(max(number) as int) as number
+                    from titles
+                    full outer join team t on titles.team_id = t.id
+                    group by t.name,
+                    t.league_id,
+                    t.league_name,
+                    titles.id,
+                    titles.name),
+                    title_vw as (
+                    select team_name,
+                        league_name,
+                        title_name,
+                        sum(number) as number
+                    from vw
+                    group by team_name, league_name, title_name)
+                    SELECT *
+                    from title_vw
+                    WHERE title_name = 'EL'
+                    order by number desc
+                    """
+
+cup_titles_query = """with vw as (
+                    select
+                    t.name as team_name,
+                    t.league_id,
+                    t.league_name,
+                    titles.name title,
+                    case when titles.id in ('4','55') then 'CL'
+                        when titles.id in ('12','11','10','13','14') then 'League'
+                        when titles.id in ('29','27','35','96','94') then 'Cup'
+                        when titles.id in ('7','264') then 'EL'
+                        else 'unknown' end as title_name,
+                    titles.id as title_id,
+                    cast(max(number) as int) as number
+                    from titles
+                    full outer join team t on titles.team_id = t.id
+                    group by t.name,
+                    t.league_id,
+                    t.league_name,
+                    titles.id,
+                    titles.name),
+                    title_vw as (
+                    select team_name,
+                        league_name,
+                        title_name,
+                        sum(number) as number
+                    from vw
+                    group by team_name, league_name, title_name)
+                    SELECT *
+                    from title_vw
+                    WHERE title_name = 'Cup'
+                    and league_name = '{}'
+                    order by number desc
+                    """
+
+team_coach_query = """
+select coach_name, league_name, tm_team.name as team
+from tm_team
+join standing
+on cast(standing.team_id as int) = cast(tm_team.id as int)
+where league_name = '{}'
+and rank < 6
+and season_id = 2023
+"""
+
+team_stats_query = """with vw as (select team_id,
+       sum(cast(offsides as int)) as offsides,
+       avg(cast(ballpossession as float)) as avg_possession,
+       sum(cast(fouls as int)) as fouls,
+       sum(cast(cornerkicks as int)) as cornerkicks
+from match_stats
+join matches on match_stats.match_id = matches.id
+where season_i_d = '2023'
+group by team_id)
+select league_name, name as team_name, offsides,
+       avg_possession,
+       fouls,
+       cornerkicks
+from vw
+join tm_team
+on tm_team.id = vw.team_id
+where league_name = '{}'"""
+
+
+most_conceded_goals_query = """
+                            select
+                            club_name,
+                            goals_conceded,
+                            season_id,
+                            league_id
+                            from standing
+                            where league_id = '{}'
+                            order by goals_conceded desc
+                            """
+
+most_scored_goals_query = """
+                            select
+                            club_name,
+                            goals,
+                            season_id,
+                            league_id
+                            from standing
+                            where league_id = '{}'
+                            order by goals desc
+                            """
+
+points_query = """
+                            select
+                            club_name,
+                            goals,
+                            season_id,
+                            league_id
+                            from standing
+                            where league_id = '{}'
+                            """
+
+unbeaten_query = """select
+season_id,
+club_name,
+wins,
+draw,
+tm_team.league_id
+from standing
+join tm_team
+on cast(standing.team_id as int) = cast(tm_team.id as int)
+where season_id < 2024
+and losses = 0
+and tm_team.league_id = '{}'
+"""
+
+unbeaten_options_query = """
+select club_name from standing where season_id = 2023 and league_id = '{}'
+and rank < 6
+and club_name != '{}'
+"""
+
+team_logo_options_query = """
+                    select
+                    tm_team.name
+                    from standing
+                    join tm_team
+                    on cast(standing.team_id as int) = cast(tm_team.id as int)
+                    where season_id = 2023
+                    and tm_team.league_id not in ('FR1','FR2','L2','GB2','IT2')
+                    """
+
+logo_select_query = """
+select image from tm_team where name = '{}'
+"""

@@ -30,8 +30,8 @@ class PlayerQuizzes(Quizzes):
         countries = self.nationality_mapping.keys()
         df = df[df['international_team'].isin(countries)]
         ndf = df.groupby('international_team').apply(lambda x: x.sample(1)).reset_index(drop=True)
-        options_df = ndf.sample(4)
         ndf['nationality'] = ndf['international_team'].apply(lambda x: self.nationality_mapping[x])
+        options_df = ndf.sample(4)
         correct_response = options_df['player_name'].iloc[0]
         position_group = options_df['position_group'].iloc[0]
         international_team = options_df['international_team'].iloc[0]
@@ -108,13 +108,13 @@ class PlayerQuizzes(Quizzes):
         countries = self.nationality_mapping.keys()
         df = df[df['international_team'].isin(countries)]
         df['nationality'] = df['international_team'].apply(lambda x: self.nationality_mapping[x])
+        ndf = df.sample(4)
         ndf['year'] = ndf['transfer_date'].apply(lambda x: x.year)
         ndf['month'] = ndf['transfer_date'].apply(lambda x: x.strftime('%B'))
-        ndf = df.sample(4)
-        options = [i for i in ndf['fullname']]
+        options = [i for i in ndf['player_name']]
         correct_df = ndf.iloc[0]
-        correct_response = correct_df['fullname']
-        fee_value = int(correct_df['transfer_fee_value'])
+        correct_response = correct_df['player_name']
+        fee_value = int(correct_df['transfer_fee_value']/1000000)
         season = correct_df['season']
         nationality = correct_df['nationality']
         year = correct_df['year']
@@ -123,7 +123,7 @@ class PlayerQuizzes(Quizzes):
         to_team = correct_df['to_team']
         position_group = correct_df['position_group']
         q_statements = [
-        f"Which player moved from {from_team} to {to_team} in the {season} season for €{fee_value} million transfer fee?",
+        f"Which player moved from {from_team} to {to_team} in the {season} season for a €{fee_value} million transfer fee?",
         f"Which {nationality} {position_group} joined {to_team} in the {season} season?",
         f"Who left {from_team} and joined {to_team} in {year}?",
         f"Which {position_group} transferred to {to_team} from {from_team} in {year}?",
@@ -132,7 +132,7 @@ class PlayerQuizzes(Quizzes):
         f"Which {nationality} {position_group} transferred from {from_team} to {to_team} in {year} for a reported fee of €{fee_value} million?",
         f"Which {nationality} {position_group} joined {to_team} in {year} after playing for {from_team}?",
         f"Which {position_group} made the move from {from_team} to {to_team} in {month} {year}?",
-        f"Who transferred from {from_team} to {to_team} in {year} for €{fee_value} million transfer fee?"
+        f"Who transferred from {from_team} to {to_team} in {year} for a €{fee_value} million transfer fee?"
         ]
         question_statement = random.choice(q_statements)
         question = self.question_template(question_statement, options, correct_response)
@@ -143,11 +143,14 @@ class PlayerQuizzes(Quizzes):
         options = ['Zlatan Ibrahimović', 'Kylian Mbappé', 'Lionel Messi']
         options.append(correct_response)
         question_statement = "Which forward made a record-breaking transfer to Paris Saint-Germain from Barcelona in 2017?"
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"""Neymar moved to Paris Saint-Germain (PSG) for a record €222 million, making it the highest transfer fee ever paid"""
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def played_for_multiple_clubs(self) -> dict:
         df = self.generate_df(played_for_multiple_clubs_query)
+        countries = self.nationality_mapping.keys()
+        df = df[df['international_team'].isin(countries)]
         df['nationality'] = df['international_team'].apply(lambda x: self.nationality_mapping[x])
         ndf = df.sample(4)
         options = [i for i in ndf['fullname']]
@@ -179,7 +182,7 @@ class PlayerQuizzes(Quizzes):
     
     def player_red_yellow_cards_combined(self, league_name) -> dict:
         df = self.generate_df(cards_combined_query.format(league_name))
-        options = df['fullname'].unique()
+        options = list(df['fullname'].unique())
         correct_response = options[0]
         question_statement = f"Who is the player with the highest record of combined total of yellow and red cards in {league_name}?"
         question = self.question_template(question_statement, options, correct_response)
@@ -246,15 +249,16 @@ class PlayerQuizzes(Quizzes):
         options_df = self.generate_df(other_goalkeepers_query.format(correct_response, country)).sample(3)
         options = list(options_df.sample(3)['fullname'].unique())
         options.append(correct_response)
-        question_statement = f"Which {nationality} goalkeeper scored {goals} goals in his professional football career?"
-        question = self.question_template(question_statement, options, correct_response)
+        question_statement = f"Which goalkeeper scored {goals} goals in his professional football career?"
+        description = f"{nationality} goalkeeper {correct_response} scored {goals} goals during his career, including penalties and free kicks"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def player_top_league_stats(self, league_name, metric) -> dict:
         df = self.generate_df(most_stats_in_a_league_query.format(league_name, metric))
         metric_num = int(df.iloc[0][metric])
         correct_response = df.iloc[0]['fullname']
-        options = df.iloc[0:4]['fullname'].unique()
+        options = list(df.iloc[0:4]['fullname'].unique())
         if metric == 'goals':
             question_statement = f"Which player is the all-time topscorer in {league_name}?"
         elif metric == 'assists':
@@ -271,8 +275,8 @@ class PlayerQuizzes(Quizzes):
         return question
     
     def player_top_league_stats_comparison(self, league_name, metric, metric_top_limit) -> dict:
-        metric_options_top_limit = int(metric_top_limit - 5)
-        metric_options_bottom_limit = int(metric_options_top_limit - 20)
+        metric_options_top_limit = int(metric_top_limit - 15)
+        metric_options_bottom_limit = int(metric_options_top_limit - 30)
         variables = [league_name, 
                      metric, metric_top_limit, 
                      league_name, metric, 
@@ -287,7 +291,7 @@ class PlayerQuizzes(Quizzes):
             q1 = f"Who is known for providing more than {metric_top_limit} assists in his {league_name} career?"
             q2 = f"Which player delivered more than {metric_top_limit} assists in his {league_name} career?"
         df = self.generate_df(comparison_query.format(*variables))
-        options = df['fullname'].unique()
+        options = list(df['fullname'].unique())
         correct_response = df[df[metric]>metric_top_limit]['fullname'].iloc[0]
         question_statement = random.choice([q1,q2])
         question = self.question_template(question_statement, options, correct_response)
