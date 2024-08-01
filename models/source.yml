@@ -55,4 +55,17 @@ sources:
       - name: tm_dim_goalkeepers_with_goals
       - name: dim_player_transfers
       - name: played_for_multiple_clubs
+      - name: world_champions
+      - name: tm_team
+      - name: tm_player
+      - name: tm_squad
+      - name: tm_player_performace
+      - name: staff_achievements
+      - name: euro_champions
+      - name: competition_champions
+      - name: stg_tm_player
+
+
+
+
   

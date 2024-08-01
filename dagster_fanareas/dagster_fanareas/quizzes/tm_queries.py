@@ -52,7 +52,7 @@ own_goals_query = """select * from tm_dim_top_league_players
                         limit 1"""
 
 own_goals_options_query = """
-select * from tm_dim_top_league_players
+select * public.from tm_dim_top_league_players
                         where goals > own_goals
                         and league = '{}'
                         and own_goals > 0
@@ -60,13 +60,13 @@ select * from tm_dim_top_league_players
                         limit 50
 """
 
-player_position_performance_query = """select * from tm_dim_top_league_players
+player_position_performance_query = """select * from public.tm_dim_top_league_players
                                         where league = '{}'
                                         and position_group = '{}'
                                         order by {} desc
                                         limit 50"""
 
-player_position_performance_options_query = """select * from tm_dim_top_league_players
+player_position_performance_options_query = """select * public.from tm_dim_top_league_players
                                                 where league = '{}'
                                                 and position_group = '{}'
                                                 and appearances > 200
@@ -76,7 +76,7 @@ player_position_performance_options_query = """select * from tm_dim_top_league_p
 
 
 
-most_stats_in_a_league_query = """select * from tm_dim_top_league_players
+most_stats_in_a_league_query = """select * from public.tm_dim_top_league_players
                                     where league = '{}' 
                                     order by {} desc"""
 
