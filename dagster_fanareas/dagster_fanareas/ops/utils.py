@@ -27,7 +27,7 @@ def create_db_session():
     pwd = os.getenv("POSTGRES_PWD")
     server = os.getenv("POSTGRES_HOST")
     port = "25060"
-    db = os.getenv("POSTGRES_DBNAME")
+    db = os.getenv("TM_POSTGRES_DBNAME")
     url = f"postgresql://{uid}:{pwd}@{server}:{port}/{db}"
     engine = sqlalchemy.create_engine(url)
     return engine
