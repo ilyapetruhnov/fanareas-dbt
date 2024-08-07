@@ -1,20 +1,18 @@
 national_champions_query = """with vw as (
-                            select *, 'UEFA European Championship' as title from euro_champions
-                            union select *, 'FIFA World Cup' as title from world_champions)
-                            select *, 
-                            cast(season as int) as season,
-                            cast(season_id as int) as season_id
+                            select country_name, coach_name, cast(season_id as int) as season_id, cast(season as int) as season, 'UEFA European Championship' as title from euro_champions
+                            union select country_name, coach_name, cast(season_id as int) as season_id, cast(season as int) as season, 'FIFA World Cup' as title from world_champions
+    )
+                            select *
                             from vw
                             where title = '{}'
                             order by season
                             """
 
 both_national_cups_query = """with vw as (
-                            select *, 'UEFA European Championship' as title from euro_champions
-                            union select *, 'FIFA World Cup' as title from world_champions)
-                            select *, 
-                            cast(season as int) as season,
-                            cast(season_id as int) as season_id
+                            select country_name, success_id, cast(season_id as int) as season_id, cast(season as int) as season, 'UEFA European Championship' as title from euro_champions
+                            union select country_name, success_id, cast(season_id as int) as season_id, cast(season as int) as season, 'FIFA World Cup' as title from world_champions
+    )
+                            select *
                             from vw
                             order by season
                             """
@@ -101,10 +99,12 @@ comparison_query = """with correct as (select * from tm_dim_top_league_players
                             select * from options"""
 
 cards_combined_query = """
-                            with vw as (select *, (red_cards+second_yellow_cards+yellow_cards) as combined_cards
+              with vw as (select *, (red_cards+second_yellow_cards+yellow_cards) as combined_cards
                                     from tm_dim_player_stats
                                     )
-                            select player_id, fullname, league_name, cast(sum(combined_cards) as int) combined_cards
+                            select player_id, fullname, league_name,
+                                   cast(sum(red_cards) as int) as red_cards,
+                                   cast(sum(combined_cards) as int) as combined_cards
                             from vw
                             where league_name = '{}'
                             group by player_id, fullname, league_name
@@ -277,9 +277,10 @@ cup_titles_query = """with vw as (
                     select team_name,
                         league_name,
                         title_name,
+                        title,
                         sum(number) as number
                     from vw
-                    group by team_name, league_name, title_name)
+                    group by team_name, league_name, title_name, title)
                     SELECT *
                     from title_vw
                     WHERE title_name = 'Cup'
@@ -342,10 +343,12 @@ points_query = """
                             select
                             club_name,
                             goals,
+                            points,
                             season_id,
                             league_id
                             from standing
                             where league_id = '{}'
+                            and season_id != 2024 
                             """
 
 unbeaten_query = """select

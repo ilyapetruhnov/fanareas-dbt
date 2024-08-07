@@ -45,13 +45,18 @@ class PlayerQuizzes(Quizzes):
         question_statement4 = f"A {nationality} {position_group}, who is now playing at {team_name}. Who is this player?"
         question_statement5 = f"Which {nationality} {position_group} plays for {team_name}?"
 
-        question_statement = random.choice([question_statement1,
-                                            question_statement2, 
-                                            question_statement3, 
-                                            question_statement4, 
-                                            question_statement5])
+        question_statement = random.choice(
+            [
+                question_statement1,
+                question_statement2,
+                question_statement3,
+                question_statement4, 
+                question_statement5
+            ]
+                                            )
 
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"""{team_name}{position_group}{correct_response} represents {international_team} national team"""
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def player_shirt_number(self) -> dict:
@@ -72,7 +77,8 @@ class PlayerQuizzes(Quizzes):
             options = [i for i in options_df['player_name']]
             question_statement = f"Who is the {team_name} number ten?"
 
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"""{correct_response} wears the number {shirt_number} shirt for {team_name}"""
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
 
 
@@ -98,8 +104,9 @@ class PlayerQuizzes(Quizzes):
             question_statement3 = f"Who is the {team_name} {player_main_position}?"
             question_statement4 = f"Which {player_main_position} represents {team_name}?" 
 
+        description = f"""{correct_response} plays for {team_name} as {player_main_position}"""
         question_statement = random.choice([question_statement1,question_statement2, question_statement3, question_statement4])
-        question = self.question_template(question_statement, options, correct_response)
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
         
 
@@ -135,7 +142,9 @@ class PlayerQuizzes(Quizzes):
         f"Who transferred from {from_team} to {to_team} in {year} for a €{fee_value} million transfer fee?"
         ]
         question_statement = random.choice(q_statements)
-        question = self.question_template(question_statement, options, correct_response)
+
+        description = f"""{correct_response} transferred from {from_team} to {to_team} in {year} for a €{fee_value} million transfer fee"""
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def record_transfer(self) -> dict:
@@ -165,6 +174,8 @@ class PlayerQuizzes(Quizzes):
             q2 = "Which {} player has played for {}, {}, and {}?".format(*variables)
             q3 = "Who represents {} national team and also played for {}, {}, and {}?".format(*variables)
             question_statement = random.choice([q1,q2,q3])
+            variables.insert(0, correct_response)
+            description = "{} has played for {}, {} and {}?".format(*variables)
         elif len(variables) == 2:
             variables.insert(0, nationality)
             variables.insert(1, position)
@@ -172,20 +183,27 @@ class PlayerQuizzes(Quizzes):
             q2 = "Which {} {} has had a career at {} and {}?".format(*variables)
             q3 = "Which {} {} has graced the fields for {} and {}?".format(*variables)
             question_statement = random.choice([q1,q2,q3])
+            variables.insert(0, correct_response)
+            description = "{} has played for {} and {}?".format(*variables)
         else:
             q1 = "Who played for {}, {}, {} and {} in his career?".format(*variables)
             q2 = "Which player has played for {}, {}, {} and {}?".format(*variables)
             q3 = "Which player has been a part of {}, {}, {} and {}?".format(*variables)
             question_statement = random.choice([q1,q2,q3])
-        question = self.question_template(question_statement, options, correct_response)
+            variables.insert(0, correct_response)
+            description = "{} has played for {}, {}, {} and {}?".format(*variables)
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def player_red_yellow_cards_combined(self, league_name) -> dict:
         df = self.generate_df(cards_combined_query.format(league_name))
+        combined_cards = df['combined_cards'].iloc[0]
+        red_cards = df['red_cards'].iloc[0]
         options = list(df['fullname'].unique())
         correct_response = options[0]
         question_statement = f"Who is the player with the highest record of combined total of yellow and red cards in {league_name}?"
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"{correct_response} has received a total of {combined_cards} cards including {red_cards} red cards"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
 
     def player_played_in_4_leagues(self) -> dict:
@@ -197,14 +215,18 @@ class PlayerQuizzes(Quizzes):
         correct_response = correct_df.sample(1)['fullname'].iloc[0]
         options = list(options_df.sample(3)['fullname'].unique())
         options.append(correct_response)
-        question = self.question_template(question_statement, options, correct_response)
+        variables = league_names
+        variables.insert(0, correct_response)
+        description = "{} played in 4 major European leagues including {}, {}, {} and {}".format(*variables)
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def player_played_in_all_major_leagues(self) -> dict:
         question_statement = f"Which player has played in all 5 major european leagues: Premier League, La Liga, Serie A, Bundesliga and Ligue 1?"
         options = ['Justin Kluivert','Edinson Cavani','Hélder Postiga', 'Zlatan Ibrahimović']
         correct_response = 'Justin Kluivert'
-        question = self.question_template(question_statement, options, correct_response)
+        description = "Only Justin Kluivert played in 5 major european football leagues"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
 
     def player_position_club_performance(self, league_name, position_group, metric) -> dict:
@@ -218,6 +240,7 @@ class PlayerQuizzes(Quizzes):
             options.append(correct_response)
             q1 = f"Which player scored {own_goals} own goals in the {league_name}, while scoring just {goals} goals for his team?"
             q2 = f"This player scored more own goals ({own_goals}) than goals for his team ({goals}) in his {league_name} career"
+            description = f"{correct_response} is well-known for having scored more own goals than regular goals"
         elif metric == 'goals':
             df = self.generate_df(player_position_performance_query.format(league_name, position_group, metric))
             goals = int(df['goals'].iloc[0])
@@ -227,6 +250,7 @@ class PlayerQuizzes(Quizzes):
             options.append(correct_response)
             q1 = f"Who is the {league_name}'s highest-scoring {position_group}, with {goals} goals?"
             q2 = f"Who is the {league_name}'s all-time top-scoring {position_group},  with {goals} goals?"
+            description = f"{correct_response} is a famously known {league_name} player who scored a record amount of goals for a {position_group}"
         elif metric == 'assists':
             df = self.generate_df(player_position_performance_query.format(league_name, position_group, metric))
             assists = int(df['assists'].iloc[0])
@@ -236,8 +260,9 @@ class PlayerQuizzes(Quizzes):
             options.append(correct_response)
             q1 = f"Which {position_group} has provided the most in assists in {league_name}'s history?"
             q2 = f"Who holds the record for the highest number of assists in {league_name} for a {position_group},  with {assists} assists?"
+            description = f"{correct_response} is until today the {league_name} top-assistant"
         question_statement = random.choice([q1,q2])
-        question = self.question_template(question_statement, options, correct_response)
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def goalkeeper_goals(self) -> dict:
@@ -258,20 +283,29 @@ class PlayerQuizzes(Quizzes):
         df = self.generate_df(most_stats_in_a_league_query.format(league_name, metric))
         metric_num = int(df.iloc[0][metric])
         correct_response = df.iloc[0]['fullname']
+        country = df.iloc[0]['nationality'].iloc[0]
+        position_group = df.iloc[0]['position_group'].iloc[0]
+        nationality = self.nationality_mapping[country]
         options = list(df.iloc[0:4]['fullname'].unique())
         if metric == 'goals':
             question_statement = f"Which player is the all-time topscorer in {league_name}?"
+            description = f"{nationality} {position_group} {correct_response} holds a record of {metric_num} {metric} in {league_name}"
         elif metric == 'assists':
-            question_statement = f"Who holds the record for the most assists ({metric_num}) in {league_name} history?"
+            question_statement = f"Who holds the record for the most assists in {league_name} history?"
+            description = f"{nationality} {position_group} {correct_response} holds a record of {metric_num} {metric} in {league_name}"
         elif metric == 'yellow_cards':
-            question_statement = f"Who has the most number of bookings in {league_name}, having a record of {metric_num} yellow cards?"
+            question_statement = f"Who has the most number of bookings (yellow cards) in {league_name}?"
+            description = f"{nationality} {position_group} {correct_response} holds a record of {metric_num} yellow cards in {league_name}"
         elif metric == 'red_cards':
-            question_statement = f"Which player has been sent off the most times in {league_name} history, having a record of {metric_num} red cards?"
+            question_statement = f"Which player has been sent off the most times in {league_name} history, ?"
+            description = f"{nationality} {position_group} {correct_response} received {metric_num} red cards which is a record in {league_name}"
         elif metric == 'appearances':
             question_statement = f"Who holds the record for the most appearances in the {league_name}, with {metric_num} matches played?"
+            description = f"{nationality} {position_group} {correct_response} played {metric_num} matches which is a record in {league_name}"
         elif metric == 'own_goals':
-            question_statement = f"Which player holds the record for the most own goals in {league_name} history, having scored {metric_num} own goals?"
-        question = self.question_template(question_statement, options, correct_response)
+            question_statement = f"Which player holds the record for the most own goals in {league_name} history?"
+            description = f"{nationality} {position_group} {correct_response} has scored {metric_num} own goals which is a record in {league_name}"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def player_top_league_stats_comparison(self, league_name, metric, metric_top_limit) -> dict:
@@ -284,17 +318,24 @@ class PlayerQuizzes(Quizzes):
                      metric, 
                      metric_options_bottom_limit
                      ]
-        if metric == 'goals':
-            q1 = f"Which player scored more than {metric_top_limit} in {league_name}?"
-            q2 = f"Which player is famous for scoring more than {metric_top_limit} during his {league_name} career?"
-        elif metric == 'assists':
-            q1 = f"Who is known for providing more than {metric_top_limit} assists in his {league_name} career?"
-            q2 = f"Which player delivered more than {metric_top_limit} assists in his {league_name} career?"
         df = self.generate_df(comparison_query.format(*variables))
         options = list(df['fullname'].unique())
         correct_response = df[df[metric]>metric_top_limit]['fullname'].iloc[0]
+        goals = int(df[df[metric]>metric_top_limit]['goals'].iloc[0])
+        assists = int(df[df[metric]>metric_top_limit]['assists'].iloc[0])
+        position_group = df[df[metric]>metric_top_limit]['position_group'].iloc[0]
+        country = df[df[metric]>metric_top_limit]['nationality'].iloc[0]
+        nationality = self.nationality_mapping[country]
+        if metric == 'goals':
+            q1 = f"Which player scored more than {metric_top_limit} goals in {league_name}?"
+            q2 = f"Which player is famous for scoring more than {metric_top_limit} goals during his {league_name} career?"
+            description = f"{nationality} {position_group} {correct_response} has scored {goals} goals in {league_name}"
+        elif metric == 'assists':
+            q1 = f"Who is known for providing more than {metric_top_limit} assists in his {league_name} career?"
+            q2 = f"Which player delivered more than {metric_top_limit} assists in his {league_name} career?"
+            description = f"{nationality} {position_group} {correct_response} has delivered {assists} assists in {league_name}"
         question_statement = random.choice([q1,q2])
-        question = self.question_template(question_statement, options, correct_response)
+        question = self.question_template(question_statement, options, correct_response, description)
         return question 
 
     

@@ -111,7 +111,9 @@ class StadiumQuizzes(Quizzes):
         df = self.generate_df(team_query)
         df = df.head(4)
         correct_response = df.iloc[0]['stadium_name']
+        total_capacity = int(df.iloc[0]['total_capacity'])
         options = df['stadium_name'].unique()
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"{correct_response} is the largest stadium in Europe with a total capacity of {total_capacity}"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
             

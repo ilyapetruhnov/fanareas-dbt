@@ -71,6 +71,11 @@ class Quizzes:
     def get_season(self):
         seasons = ['2020/2021', '2021/2022', '2022/2023', '2023/2024']
         return random.choice(seasons)
+    
+    def get_season_name(self, season_id):
+        season = int(season_id)
+        return f"{season}/{season+1}"
+
 
     @staticmethod
     def format_metric(metric: str) -> str:

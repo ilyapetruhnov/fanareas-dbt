@@ -110,24 +110,15 @@ class TeamQuizzes(Quizzes):
                    'Manchester United']
         correct_response = 'Liverpool'
         question_statement = "Which club staged a remarkable comeback in the 2005 UEFA Champions League final, coming from 3-0 down at halftime to win the match?"
-        question = self.question_template(question_statement, options, correct_response)
-        return question
-    
-    def non_league_team_won_fa_cup(self):
-        options = [
-            'Aston Villa',
-            'Wimbledon',
-            'Hereford United',
-            'Blackpool'
-            ]
-        correct_response = 'Wimbledon'
-        question_statement = "Which club is the only non-league team to have won the FA Cup?"
-        question = self.question_template(question_statement, options, correct_response)
+        description = "Liverpool won the Champions League final against AC Milan on penalties after a dramatic 3-3 draw"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def first_to_reach_100_points_in_league(self, league_id):
         league_name = self.league_mapping[league_id]
         df = self.generate_df(points_query.format(league_id)).sort_values('points',ascending=False)
+        season_id = df['season_id'].iloc[0]
+        season_name = self.get_season_name(season_id)
         if league_id == 'ES':
             correct_response = 'Real Madrid'
         else:
@@ -137,57 +128,73 @@ class TeamQuizzes(Quizzes):
         options = random.sample(option_teams, 3)
         options.append(correct_response)
         question_statement = "Which club was the first to achieve 100 points in a single {} season?".format(league_name)
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"{correct_response} was the first club to achieve 100 points in a single {league_name} season, accomplishing this milestone during the {season_name} season"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
 
-    
     def most_points(self, league_id):
         league_name = self.league_mapping[league_id]
         df = self.generate_df(points_query.format(league_id)).sort_values('points',ascending=False)
+        season_id = df['season_id'].iloc[0]
+        season_name = self.get_season_name(season_id)
+        points = int(df['points'].iloc[0])
         correct_response = df['club_name'].iloc[0]
         option_teams = list(df['club_name'].unique())
         option_teams.remove(correct_response)
         options = random.sample(option_teams, 3)
         options.append(correct_response)
         question_statement = "Which team achieved the most points in a single {} season?".format(league_name)
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"{correct_response} achieved the most points in {league_name}, accumulating {points} points during the {season_name} season"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def fewest_points(self, league_id):
         league_name = self.league_mapping[league_id]
         df = self.generate_df(points_query.format(league_id)).sort_values('points')
+        season_id = df['season_id'].iloc[0]
+        season_name = self.get_season_name(season_id)
+        points = int(df['points'].iloc[0])
         correct_response = df['club_name'].iloc[0]
         option_teams = list(df['club_name'].unique())
         option_teams.remove(correct_response)
         options = random.sample(option_teams, 3)
         options.append(correct_response)
         question_statement = "Which team earned the fewest points in a single {} season?".format(league_name)
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"{correct_response} achieved the fewest points in {league_name}, accumulating {points} points during the {season_name} season"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def scored_most_goals(self, league_id):
         league_name = self.league_mapping[league_id]
         df = self.generate_df(most_scored_goals_query.format(league_id))
+        season_id = df['season_id'].iloc[0]
+        season_name = self.get_season_name(season_id)
+        goals = int(df['goals'].iloc[0])
         correct_response = df['club_name'].iloc[0]
         option_teams = list(df['club_name'].unique())
         option_teams.remove(correct_response)
         options = random.sample(option_teams, 3)
         options.append(correct_response)
         question_statement = "Which team scored the most goals in a single {} season?".format(league_name)
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"{correct_response} scored the most goals in a single season, netting {goals} goals during the {season_name} {league_name} season"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     
     def conceded_most_goals(self, league_id):
         league_name = self.league_mapping[league_id]
         df = self.generate_df(most_conceded_goals_query.format(league_id))
+        season_id = df['season_id'].iloc[0]
+        season_name = self.get_season_name(season_id)
+        goals_conceded = int(df['goals_conceded'].iloc[0])
         correct_response = df['club_name'].iloc[0]
         option_teams = list(df['club_name'].unique())
         option_teams.remove(correct_response)
         options = random.sample(option_teams, 3)
         options.append(correct_response)
         question_statement = "Which team conceded the most goals in a single {} season?".format(league_name)
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"{correct_response} conceded {goals_conceded} goals in {season_name} season which is a {league_name} record for conceding the most goals in a season"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
 
     def most_fouls(self, league_name):
@@ -198,8 +205,9 @@ class TeamQuizzes(Quizzes):
         option_teams.remove(correct_response)
         options = random.sample(option_teams, 3)
         options.append(correct_response)
-        question_statement = "Which team committed the most fouls in the {} during the 2023/2024 season?".format(league_name)
-        question = self.question_template(question_statement, options, correct_response)
+        question_statement = "Which team committed the highest number fouls in the {} during the 2023/2024 season?".format(league_name)
+        description = f"{correct_response} committed the most fouls in the {league_name} during the 2023/2024 season, showcasing their aggressive and physical style of play"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def most_corners(self, league_name):
@@ -211,7 +219,8 @@ class TeamQuizzes(Quizzes):
         options = random.sample(option_teams, 3)
         options.append(correct_response)
         question_statement = "Which club earned the highest number of corner kicks in the 2023/2024 {} season?".format(league_name)
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"{correct_response} earned the most corner kicks in the {league_name} during the 2023/2024 season, reflecting their persistent attacking strategy and ability to apply continuous pressure on their opponents"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def most_offsides(self, league_name):
@@ -223,7 +232,8 @@ class TeamQuizzes(Quizzes):
         options = random.sample(option_teams, 3)
         options.append(correct_response)
         question_statement = "Which team was caught offside the most times in the {} during the 2023/2024 season?".format(league_name)
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"{correct_response} was caught offside the most times in the {league_name} during the 2023-2024 season, which highlights their aggressive forward play and attempts to break through opposition defenses"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def highest_avg_possesion(self, league_name):
@@ -235,7 +245,8 @@ class TeamQuizzes(Quizzes):
         options = random.sample(option_teams, 3)
         options.append(correct_response)
         question_statement = "Which club recorded the highest average possession percentage in the {} for the 2023/2024 season?".format(league_name)
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"{correct_response} had the highest average ball possession during the 2023/2024 {league_name} season. This dominance in possession underscores their control-oriented style of play and ability to dictate the tempo of matches"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
 
     def club_coach(self, league_name):
@@ -245,7 +256,8 @@ class TeamQuizzes(Quizzes):
         options = list(df['team'].unique())
         options.append(correct_response)
         question_statement = "Which team is coached by {}?".format(coach_name)
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"{coach_name} is the head coach of {correct_response}"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
         
     def first_cl_win(self):
@@ -255,7 +267,8 @@ class TeamQuizzes(Quizzes):
                    'Barcelona']
         correct_response = 'Real Madrid'
         question_statement = "Which club was the first to win the European Cup (now the UEFA Champions League) in 1956?"
-        question = self.question_template(question_statement, options, correct_response)
+        description = "Real Madrid won the first European Cup title in 1956"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def oldest_club(self):
@@ -265,7 +278,8 @@ class TeamQuizzes(Quizzes):
                         'Middlesbrough FC']
         correct_response = 'Sheffield FC'
         question_statement = "Which is the oldest football club in the world?"
-        question = self.question_template(question_statement, options, correct_response)
+        description = "Sheffield FC, founded in 1857, is recognized as the oldest football club in the world still in existence"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def never_won_cl(self):
@@ -288,7 +302,8 @@ class TeamQuizzes(Quizzes):
         correct_response = df['team_name'].iloc[0]
         options = list(df['team_name'].unique())
         question_statement = "Which club has won the most UEFA Champions League titles?"
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"""{correct_response} holds the record for the most UEFA Champions League titles, having won the competition 15 times. AC Milan has won the title 7 times. Liverpool FC and Bayern Munich 6 times each"""
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def most_el_titles(self):
@@ -296,7 +311,8 @@ class TeamQuizzes(Quizzes):
         correct_response = df['team_name'].iloc[0]
         options = list(df['team_name'].unique())
         question_statement = "Which club has won the most Europe League titles?"
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"""{correct_response} holds the record for the most Europe League titles, having won the competition 7 times. Inter Milan, Liverpool FC and Atlético de Madrid have won the title 3 times each"""
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def never_won_el(self):
@@ -320,19 +336,23 @@ class TeamQuizzes(Quizzes):
         s = title_name_from_dataset.split()
         title_name = ' '.join(s[:-1])
         correct_response = df['team_name'].iloc[0]
+        number = int(df['number'].iloc[0])
         options = list(df['team_name'].unique())
         question_statement = f"Which club has won the most {title_name} titles?"
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"{correct_response} holds the record for winning the most {title_name} titles having won the tournament {number} times"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
 
     def most_domestic_championship_titles(self, league_id):
         league_name = self.league_mapping[league_id]
-        df = self.generate_df(most_titles_won_query).format(league_id, league_id)
+        df = self.generate_df(most_titles_won_query.format(league_id, league_id))
         ndf = df.head(4)
         correct_response = ndf['team'].iloc[0]
+        number = int(ndf['title_cnt'].iloc[0])
         options = list(ndf['team'].unique())
         question_statement = "Which club has won the most {} titles?".format(league_name)
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"{correct_response} is a {number}-times {league_name} champion which is a current record"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def never_won_domestic_championship_title(self, league_id):
@@ -342,8 +362,10 @@ class TeamQuizzes(Quizzes):
         correct_df = df[df['title_cnt']==0].sample(1)
         correct_response = correct_df['name'].iloc[0]
         options = list(options_df['name'].unique())
+        options.append(correct_response)
         question_statement = "Which club has never won the {} title?".format(league_name)
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"As of 2024, {correct_response} has never been a {league_name} champion"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
 
     def player_from_team(self):

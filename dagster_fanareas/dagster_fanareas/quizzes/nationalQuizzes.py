@@ -9,45 +9,63 @@ class NationalTeamQuizzes(Quizzes):
         self.players = []
         self.quiz_collection = []
     
-    def first_winner_question(self) -> dict:
-        title = random.choice(['UEFA European Championship','FIFA World Cup'])
-        df = self.generate_df(national_champions_query).format(title)
-        df = df.tail(4)
-        correct_response = df['country_name'].iloc[3]
-        season = df['season'].iloc[3]
-        options = [i for i in df['country_name']]
+    def first_winner_question(self, title_name) -> dict:
+        if title_name == 'euro':
+            title = 'UEFA European Championship'
+            options = ['Italy','Spain','Germany']
+        else:
+            title = 'FIFA World Cup'
+            options = ['Argentina','Brazil','Germany']
+        df = self.generate_df(national_champions_query.format(title)).sort_values('season')
+        df = df.head(4)
+        correct_response = df['country_name'].iloc[0]
+        options.append(correct_response)
+        season = df['season'].iloc[0]
         question_statement = f"Which country won the first {title} in {season}?"
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"{correct_response} was the first team to win the {title}"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
-    def most_title_question(self) -> dict:
-        title = random.choice(['UEFA European Championship','FIFA World Cup'])
-        df = self.generate_df(national_champions_query).format(title)
-        df = df.groupby('country_name').count().reset_index().sort_values('id',ascending=False).head(4)
+    def most_title_question(self, title_name) -> dict:
+        if title_name == 'euro':
+            title = 'UEFA European Championship'
+        else:
+            title = 'FIFA World Cup'
+        df = self.generate_df(national_champions_query.format(title))
+        df = df.groupby('country_name').count().reset_index().sort_values('season',ascending=False).head(4)
+        number = int(df['season'].iloc[0])
         correct_response = df['country_name'].iloc[0]
         options = [i for i in df['country_name']]
         question_statement = f"Which country has won the most {title} titles?"
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"{correct_response} holds the record for the most {title} titles, having won the tournament {number} times"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
-    def nation_first_title_question(self) -> dict:
-        title = random.choice(['UEFA European Championship','FIFA World Cup'])
-        df = self.generate_df(national_champions_query).format(title)
+    def nation_first_title_question(self, title_name) -> dict:
+        if title_name == 'euro':
+            title = 'UEFA European Championship'
+        else:
+            title = 'FIFA World Cup'
+        df = self.generate_df(national_champions_query.format(title))
         country_name = random.choice(df['country_name'].unique())
-        df = df[df['country_name']==country_name].sort_values('season_id')
-        correct_response = df['season'].iloc[0]
+        ndf = df[df['country_name']==country_name].sort_values('season_id')
+        correct_response = ndf['season'].iloc[0]
         df = df[df['season'] != correct_response]
         options = random.sample(list(df['season'].unique()),3)
         options.append(correct_response)
         question_statement = f"In which year did {country_name} win their first {title}?"
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"{country_name} had their first {title} triumph in {correct_response}"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
-    def year_single_time_winner_question(self) -> dict:
-        title = random.choice(['UEFA European Championship','FIFA World Cup'])
-        df = self.generate_df(national_champions_query).format(title)
-        ndf = df.groupby('country_name').count().reset_index().sort_values('id',ascending=False)
-        countries = ndf[ndf['id']==1]['country_name'].unique()
+    def year_single_time_winner_question(self, title_name) -> dict:
+        if title_name == 'euro':
+            title = 'UEFA European Championship'
+        else:
+            title = 'FIFA World Cup'
+        df = self.generate_df(national_champions_query.format(title))
+        ndf = df.groupby('country_name').count().reset_index().sort_values('season_id',ascending=False)
+        countries = ndf[ndf['season_id']==1]['country_name'].unique()
         country_name = random.choice(countries)
         correct_response = df[df['country_name']==country_name]['season'].iloc[0]
 
@@ -57,12 +75,16 @@ class NationalTeamQuizzes(Quizzes):
         options.append(correct_response)
 
         question_statement = f"In which year did {country_name} win the {title}?"
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"{country_name} won the {title} in {correct_response}"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
-    def winner_coach_question(self) -> dict:
-        title = random.choice(['UEFA European Championship','FIFA World Cup'])
-        df = self.generate_df(national_champions_query).format(title)
+    def winner_coach_question(self, title_name) -> dict:
+        if title_name == 'euro':
+            title = 'UEFA European Championship'
+        else:
+            title = 'FIFA World Cup'
+        df = self.generate_df(national_champions_query.format(title))
         df = df[df['season']>1985].sample(4)
 
         correct_response = df['coach_name'].iloc[0]
@@ -70,22 +92,26 @@ class NationalTeamQuizzes(Quizzes):
         season = df['season'].iloc[0]
 
         options = [i for i in df['coach_name']]
-        question_statement = f"Who was the coach of the {country_name} when they won {title} {season}?"
-        question = self.question_template(question_statement, options, correct_response)
+        question_statement = f"Who was the coach of {country_name} when they won {title} {season}?"
+        description = f"{correct_response} was the coach of {country_name} when they won the {title} 2004, leading the team to a historic victory"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
-    def never_won_question(self) -> dict:
-        title = random.choice(['UEFA European Championship','FIFA World Cup'])
-        df = self.generate_df(national_champions_query).format(title)
-        if title == 'UEFA European Championship':
+    def never_won_question(self, title_name) -> dict:
+        if title_name == 'euro':
+            title = 'UEFA European Championship'
+            df = self.generate_df(national_champions_query.format(title))
             correct_response = random.choice(['England','Croatia','Switzerland','Turkey'])
             options = random.sample(list(df['country_name'].unique()),3)
         else:
+            title = 'FIFA World Cup'
+            df = self.generate_df(national_champions_query.format(title))
             correct_response = random.choice(['Portugal','Belgium','Netherlands','Japan'])
             options = random.sample(list(df['country_name'].unique()),3)
         options.append(correct_response)
         question_statement = f"Which team has never won the {title}"
-        question = self.question_template(question_statement, options, correct_response)
+        description = f"As of 2024, {correct_response} has never been the {title} champion"
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
     
     def both_cups_winner_question(self) -> dict:
@@ -94,26 +120,15 @@ class NationalTeamQuizzes(Quizzes):
         correct_response = random.choice(grouped_df['country_name'].unique())
         options = random.sample(['Portugal','England','Netherlands','Denmark'],3)
         options.append(correct_response)
+        description_df = df[df['country_name'] == correct_response]
+        world_seasons = list(description_df[description_df['title'] == 'FIFA World Cup']['season'].unique())
+        euro_seasons = list(description_df[description_df['title'] == 'UEFA European Championship']['season'].unique())
+        world_str = ", ".join(str(x) for x in world_seasons)
+        euro_str = ", ".join(str(x) for x in euro_seasons)
         question_statement = "Which country has won both FIFA World Cup and UEFA European Championship titles?"
-        question = self.question_template(question_statement, options, correct_response)
+        description = "{} is the country that has won both the FIFA World Cup and the UEFA European Championship titles. They won the World Cup in {}, and the European Championship in {}".format(correct_response, world_str, euro_str)
+        question = self.question_template(question_statement, options, correct_response, description)
         return question
-
-    
-    def get_question(self):
-        i = random.randint(1,2)
-        if i == 1:
-            question = self.generate_player_transfer_question(clubs_played=False)
-
-        elif i == 2:
-            question = self.generate_player_transfer_question(clubs_played=True)
-
-        # elif i == 3:
-        #     question = self.generate_player_left_joined_question(joined=False)
-
-        # elif i == 4:
-        #     question = self.generate_player_left_joined_question(joined=True)
-            
-        return question 
     
     def fill_quiz_with_questions(self):
         while len(self.quiz_collection) < 10:
