@@ -18,8 +18,8 @@ class StadiumQuizzes(Quizzes):
             question_statement = options_df['image_path'].iloc[0]
             question_statement = "What is the name of this stadium?" # to be adjusted
             options = [i for i in options_df['stadium_name']]
-            img = options_df['stadium_image'].iloc[0]
-            question = self.question_template(question_statement, options, correct_response)
+            image_url = options_df['stadium_image'].iloc[0]
+            question = self.question_template(question_statement, options, image_url, correct_response)
             return question
         except Exception:
             return None
