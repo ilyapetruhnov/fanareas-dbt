@@ -136,7 +136,7 @@ def team_quiz_1() -> bool:
     quiz_obj.collect_questions(stadium_quiz.largest_stadium())
     quiz_obj.collect_questions(team_quiz.player_from_team())
     quiz_obj.collect_questions(team_quiz.never_won_cl())
-    quiz_obj.collect_questions(national_quiz.most_title_question('world')))
+    quiz_obj.collect_questions(national_quiz.most_title_question('world'))
 
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
