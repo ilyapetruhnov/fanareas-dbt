@@ -3,6 +3,7 @@ from dagster_fanareas.quizzes.quizzes import Quizzes
 from dagster_fanareas.quizzes.transferQuizzes import TransferQuizzes
 from dagster_fanareas.quizzes.photoQuizzes import PhotoQuizzes
 from dagster_fanareas.quizzes.teamQuizzes import TeamQuizzes
+from dagster_fanareas.quizzes.teamQuizz import TeamQuizz
 from dagster_fanareas.quizzes.playerQuizzes import PlayerQuizzes
 from dagster_fanareas.quizzes.nationalQuizzes import NationalTeamQuizzes
 from dagster_fanareas.quizzes.stadiumQuizzes import StadiumQuizzes
@@ -40,47 +41,47 @@ def transfers_quiz() -> bool:
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
-# @asset(group_name="quizzes")
-# def guess_the_team_quiz() -> bool:
-#     title = f"Guess the Premier League team"
-#     description = f"Guess 5 Premier League teams"
-#     quiz_type = 3
-#     is_demo = False
-#     quiz_obj = TeamQuizz(title, description, quiz_type, is_demo)
-#     quiz_obj.fill_quiz_with_questions()
-#     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
-#     return True
+@asset(group_name="quizzes")
+def guess_the_team_quiz() -> bool:
+    title = f"Guess the Premier League team"
+    description = f"Guess 5 Premier League teams"
+    quiz_type = 3
+    is_demo = False
+    quiz_obj = TeamQuizz(title, description, quiz_type, is_demo)
+    quiz_obj.fill_quiz_with_questions()
+    quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
+    return True
 
-# @asset(group_name="quizzes")
-# def photo_quiz() -> bool:
-#     title = "Daily guess the player by photo"
-#     description = "Guess 5 Premier League players by photo"
-#     quiz_type = 2
-#     is_demo = False
-#     quiz_obj = PhotoQuizzes(title, description, quiz_type, is_demo)
-#     quiz_obj.fill_quiz_with_questions()
-#     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
-#     return True
+@asset(group_name="quizzes")
+def photo_quiz() -> bool:
+    title = "Daily guess the player by photo"
+    description = "Guess 5 Premier League players by photo"
+    quiz_type = 2
+    is_demo = False
+    quiz_obj = PhotoQuizzes(title, description, quiz_type, is_demo)
+    quiz_obj.fill_quiz_with_questions()
+    quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
+    return True
 
 
-# @asset(group_name="quizzes")
-# def small_demo_quiz() -> bool:
-#     title = "English Premier League"
-#     description = "Answer 5 questions about Premier League"
-#     quiz_type = -1
-#     is_demo = True
-#     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
+@asset(group_name="quizzes")
+def small_demo_quiz() -> bool:
+    title = "English Premier League"
+    description = "Answer 5 questions about Premier League"
+    quiz_type = -1
+    is_demo = True
+    quiz_obj = Quizzes(title, description, quiz_type, is_demo)
 
-#     quiz_obj.collect_questions(quiz_obj.generate_venue_question())
-#     quiz_obj.collect_questions(quiz_obj.generate_player_played_for_team_question())
+    quiz_obj.collect_questions(quiz_obj.generate_venue_question())
+    quiz_obj.collect_questions(quiz_obj.generate_player_played_for_team_question())
 
-#     quiz_obj.collect_questions(quiz_obj.generate_capacity_question())
-#     quiz_obj.collect_questions(quiz_obj.generate_fewest_points_question())
+    quiz_obj.collect_questions(quiz_obj.generate_capacity_question())
+    quiz_obj.collect_questions(quiz_obj.generate_fewest_points_question())
 
-#     quiz_obj.collect_questions(quiz_obj.generate_player_shirt_number_question())
+    quiz_obj.collect_questions(quiz_obj.generate_player_shirt_number_question())
 
-#     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
-#     return True
+    quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
+    return True
 
 
 @asset(group_name="quizzes")
