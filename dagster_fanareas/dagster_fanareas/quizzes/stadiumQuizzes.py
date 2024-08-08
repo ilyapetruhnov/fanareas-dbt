@@ -24,10 +24,10 @@ class StadiumQuizzes(Quizzes):
         except Exception:
             return None
     
-    def home_stadium_question(self) -> dict:
+    def home_stadium_question(self, league_name) -> dict:
         df = self.generate_df(team_query)
         leagues = ['Bundesliga','Premier League','Serie A','LaLiga','Ligue 1']
-        league_name = random.choice(leagues)
+        #league_name = random.choice(leagues)
         ndf = df[df['league_name']==league_name]
         gr = ndf.groupby(['stadium_name','team_name']).max('total_capacity').reset_index().sort_values('total_capacity',ascending=False).head(6)
         correct_df = gr.sample(1)
@@ -55,43 +55,63 @@ class StadiumQuizzes(Quizzes):
         question = self.question_template(question_statement, options, correct_response)
         return question
     
-    def specific_team_stadium_question(self) -> dict:
-        option_lst = ['Camp Nou',
-                    'Santiago Bernabéu',
-                    'Allianz Arena',
-                    'Old Trafford',
-                    'Olimpico di Roma',
-                    'Civitas Metropolitano',
-                    'Orange Vélodrome',
-                    'London Stadium',
-                    'Veltins-Arena',
-                    'Anfield',
-                    'Benito Villamarín',
-                    'Emirates Stadium',
-                    'San Nicola']
+    def specific_team_stadium_question(self, q: int) -> dict:
+        option_lst = [
+            'Camp Nou',
+            'Santiago Bernabéu',
+            'Allianz Arena',
+            'Old Trafford',
+            'Olimpico di Roma',
+            'Civitas Metropolitano',
+            'Orange Vélodrome',
+            'London Stadium',
+            'Veltins-Arena',
+            'Anfield',
+            'Benito Villamarín',
+            'Emirates Stadium',
+            'San Nicola'
+                    ]
         question_statement1 = {"Which stadium is famously known for its 'Yellow Wall'?": 'Signal Iduna Park'}
         question_statement2 = {"Which English stadium is known as 'The Home of Football'?":'Wembley Stadium'}
         question_statement3 = {"Which stadium is built on a hill and is home to Athletic Bilbao?" : 'San Mamés'}
         question_statement4 = {"What is the name of the stadium that hosts the annual FA Cup final in England?":'Wembley Stadium'}
         question_statement5 = {"What is the oldest stadium in England?": 'Bramall Lane'}
         question_statement6 = {"Which stadium located in Milan is shared by two major Italian football clubs?":'San Siro'}
-        question_dict = random.choice([question_statement1,
-                                            question_statement2,
-                                            question_statement3,
-                                            question_statement4,
-                                            question_statement5,
-                                            question_statement6])
-        for question_statement, correct_response in question_dict.items():
-            options = random.sample(option_lst,3)
-            options.append(correct_response)
-            question = self.question_template(question_statement, options, correct_response)
-            return question
+        # question_dict = random.choice(
+        #     [
+        #         question_statement1,
+        #         question_statement2,
+        #         question_statement3,
+        #         question_statement4,
+        #         question_statement5,
+        #         question_statement6
+        #     ]
+        #         )
+        #for question_statement, correct_response in question_dict.items():
+        if q == 1:
+            question = question_statement1
+        elif q == 2:
+            question = question_statement2
+        elif q == 3:
+            question = question_statement3
+        elif q == 4:
+            question = question_statement4
+        elif q == 5:
+            question = question_statement5
+        elif q == 6:
+            question = question_statement6
+        correct_response = str(question.value())
+        question_statement = str(question.key())
+        options = random.sample(option_lst,3)
+        options.append(correct_response)
+        question = self.question_template(question_statement, options, correct_response)
+        return question
     
-    def stadium_capacity_question(self) -> dict:
+    def stadium_capacity_question(self, league_name, metric) -> dict:
         df = self.generate_df(team_query)
         leagues = ['Bundesliga','Premier League','Serie A','LaLiga','Ligue 1']
-        metric = random.choice(['largest','smalles'])
-        league_name = random.choice(leagues)
+        #metric = random.choice(['largest','smalles'])
+        #league_name = random.choice(leagues)
         ndf = df[df['league_name']==league_name]
         ndf = ndf.groupby('stadium_name').max('total_capacity').reset_index().sort_values('total_capacity')
         if metric == 'largest':

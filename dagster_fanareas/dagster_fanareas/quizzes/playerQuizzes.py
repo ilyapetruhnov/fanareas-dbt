@@ -17,10 +17,10 @@ class PlayerQuizzes(Quizzes):
         try:
             options_df = df.sample(4)
             correct_response = options_df['player_name'].iloc[0]
-            question_statement = options_df['img'].iloc[0]
+            image_url = options_df['img'].iloc[0]
             question_statement = "What is the name of this player?" # to be adjusted
             options = [i for i in options_df['player_name']]
-            question = self.question_template(question_statement, options, correct_response)
+            question = self.question_template(question_statement, options, image_url, correct_response)
             return question
         except Exception:
             return None

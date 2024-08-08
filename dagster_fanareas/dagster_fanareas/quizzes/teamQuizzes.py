@@ -39,7 +39,7 @@ class TeamQuizzes(Quizzes):
         option_teams = [i for i in all_teams if i not in teams]
         team_name = random.choice(teams)
         df = self.generate_df(logo_select_query)
-        team_logo_link = df['image'].iloc[0]
+        image_url = df['image'].iloc[0]
         correct_response = team_name
         options = random.sample(option_teams, 3)
         options.append(correct_response)
@@ -50,7 +50,7 @@ class TeamQuizzes(Quizzes):
         q5 = "Which team's emblem is this?"
         question_statement = random.choice([q1,q2,q3,q4,q5])
         correct_response = team_name
-        question = self.question_template(question_statement, options, correct_response)
+        question = self.question_template(question_statement, options, image_url, correct_response)
         return question
     
     def club_nickname(self, club_name):
@@ -375,8 +375,8 @@ class TeamQuizzes(Quizzes):
         correct_response = ndf['team'].iloc[0]
         player = ndf['player_name'].iloc[0]
         options = list(ndf['team'].unique())
-        question_statement = "Which team does {} currently play for?".format(player)
-        description = f"""{player} represents {correct_response}"""
+        question_statement = "As of 23/24 season, which team did {} play for?".format(player)
+        description = f"""{player} played for {correct_response} in 23/24 season"""
         question = self.question_template(question_statement, options, correct_response, description)
         return question
     
