@@ -100,8 +100,9 @@ class StadiumQuizzes(Quizzes):
             question = question_statement5
         elif q == 6:
             question = question_statement6
-        correct_response = str(question.value())
-        question_statement = str(question.key())
+        for key, value in question.items():
+            correct_response = value
+            question_statement = key
         options = random.sample(option_lst,3)
         options.append(correct_response)
         question = self.question_template(question_statement, options, correct_response)

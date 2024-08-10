@@ -77,7 +77,6 @@ class Quizzes:
         season = int(season_id)
         return f"{season}/{season+1}"
 
-
     @staticmethod
     def format_metric(metric: str) -> str:
         if metric == 'penalties':

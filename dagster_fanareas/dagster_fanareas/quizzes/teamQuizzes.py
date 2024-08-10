@@ -37,8 +37,8 @@ class TeamQuizzes(Quizzes):
             'SC Freiburg'
         ]
         option_teams = [i for i in all_teams if i not in teams]
-        team_name = random.choice(teams)
-        df = self.generate_df(logo_select_query)
+        # team_name = random.choice(teams)
+        df = self.generate_df(logo_select_query.format(team_name))
         image_url = df['image'].iloc[0]
         correct_response = team_name
         options = random.sample(option_teams, 3)
@@ -375,8 +375,8 @@ class TeamQuizzes(Quizzes):
         correct_response = ndf['team'].iloc[0]
         player = ndf['player_name'].iloc[0]
         options = list(ndf['team'].unique())
-        question_statement = "As of 23/24 season, which team did {} play for?".format(player)
-        description = f"""{player} played for {correct_response} in 23/24 season"""
+        question_statement = "As of August 2024, which team does {} play for?".format(player)
+        description = f"""{player} represents {correct_response}"""
         question = self.question_template(question_statement, options, correct_response, description)
         return question
     
