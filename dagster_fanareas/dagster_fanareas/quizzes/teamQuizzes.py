@@ -50,7 +50,10 @@ class TeamQuizzes(Quizzes):
         q5 = "Which team's emblem is this?"
         question_statement = random.choice([q1,q2,q3,q4,q5])
         correct_response = team_name
-        question = self.question_template(question_statement, options, image_url, correct_response)
+        question = self.question_template(question_statement = question_statement, 
+                                          options = options, 
+                                          correct_response = correct_response,
+                                          image_url = image_url)
         return question
     
     def club_nickname(self, club_name):
@@ -254,7 +257,6 @@ class TeamQuizzes(Quizzes):
         coach_name = df['coach_name'].iloc[0]
         correct_response = df['team'].iloc[0]
         options = list(df['team'].unique())
-        options.append(correct_response)
         question_statement = "Which team is coached by {}?".format(coach_name)
         description = f"{coach_name} is the head coach of {correct_response}"
         question = self.question_template(question_statement, options, correct_response, description)
@@ -347,9 +349,9 @@ class TeamQuizzes(Quizzes):
         league_name = self.league_mapping[league_id]
         df = self.generate_df(most_titles_won_query.format(league_id, league_id))
         ndf = df.head(4)
-        correct_response = ndf['team'].iloc[0]
+        correct_response = ndf['name'].iloc[0]
         number = int(ndf['title_cnt'].iloc[0])
-        options = list(ndf['team'].unique())
+        options = list(ndf['name'].unique())
         question_statement = "Which club has won the most {} titles?".format(league_name)
         description = f"{correct_response} is a {number}-times {league_name} champion which is a current record"
         question = self.question_template(question_statement, options, correct_response, description)

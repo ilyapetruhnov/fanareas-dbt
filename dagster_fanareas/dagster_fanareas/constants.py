@@ -69,7 +69,7 @@ else:
 league_mapping = {
     'ES1': 'LaLiga',
     'GB1': 'Premier League',
-    'L1': 'Bundesluga',
+    'L1': 'Bundesliga',
     'IT1': 'Serie A',
     'FR1': 'Ligue 1'
 }

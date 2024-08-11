@@ -12,17 +12,17 @@ class StadiumQuizzes(Quizzes):
     def stadium_photo_question(self) -> dict:
         df = self.generate_df(team_query)
         df = df.head(30)
-        try:
-            options_df = df.sample(4)
-            correct_response = options_df['stadium_name'].iloc[0]
-            question_statement = options_df['image_path'].iloc[0]
-            question_statement = "What is the name of this stadium?" # to be adjusted
-            options = [i for i in options_df['stadium_name']]
-            image_url = options_df['stadium_image'].iloc[0]
-            question = self.question_template(question_statement, options, image_url, correct_response)
-            return question
-        except Exception:
-            return None
+        options_df = df.sample(4)
+        correct_response = options_df['stadium_name'].iloc[0]
+        question_statement = "Which stadium is shown on the photo?" # to be adjusted
+        options = [i for i in options_df['stadium_name']]
+        image_url = options_df['stadium_image'].iloc[0]
+        question = self.question_template(question_statement = question_statement, 
+                                          options = options, 
+                                          correct_response = correct_response,
+                                          image_url = image_url)
+        return question
+
     
     def home_stadium_question(self, league_name) -> dict:
         df = self.generate_df(team_query)

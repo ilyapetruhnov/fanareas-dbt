@@ -340,7 +340,7 @@ def team_quiz_12() -> bool:
     quiz_obj.collect_questions(team_quiz.player_from_team())
     quiz_obj.collect_questions(team_quiz.most_points(league_id='IT1'))
     quiz_obj.collect_questions(team_quiz.club_nickname('Inter Milan'))
-    quiz_obj.collect_questions(team_quiz.highest_avg_possesion('GB1'))
+    quiz_obj.collect_questions(team_quiz.highest_avg_possesion('Premier League'))
 
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
@@ -454,7 +454,7 @@ def team_quiz_18() -> bool:
     quiz_obj.collect_questions(national_quiz.nation_first_title_question('euro'))
     quiz_obj.collect_questions(team_quiz.team_position(season=2023,league_id='GB1',title_won=False))
     quiz_obj.collect_questions(team_quiz.player_from_team())
-    quiz_obj.collect_questions(team_quiz.most_offsides('ES1'))
+    quiz_obj.collect_questions(team_quiz.most_offsides('LaLiga'))
     quiz_obj.collect_questions(team_quiz.team_logo('Villarreal CF'))
 
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)

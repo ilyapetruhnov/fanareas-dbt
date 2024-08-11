@@ -50,7 +50,7 @@ class Quizzes:
 
         return json_data
     
-    def question_template(self, question_statement, options, correct_response, image_url = None, description=None) -> dict:
+    def question_template(self, question_statement, options, correct_response,  description=None, image_url = None) -> dict:
         if len(options) < 4:
             result = None
         else:
