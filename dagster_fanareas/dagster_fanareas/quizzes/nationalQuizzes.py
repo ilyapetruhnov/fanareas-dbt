@@ -71,7 +71,7 @@ class NationalTeamQuizzes(Quizzes):
 
         df = df[df['season'] != correct_response]
 
-        options = [i for i in df['season'].sample(3)]
+        options = [str(i) for i in df['season'].sample(3)]
         options.append(correct_response)
 
         question_statement = f"In which year did {country_name} win the {title}?"

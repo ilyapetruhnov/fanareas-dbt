@@ -123,7 +123,7 @@ def tm_demo_quiz() -> bool:
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
-@asset(group_name="quizzes")
+@asset(group_name="new_quizzes")
 def team_quiz_1() -> bool:
     title = "Team quiz"
     description = "Answer 5 questions"
@@ -142,7 +142,7 @@ def team_quiz_1() -> bool:
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
-@asset(group_name="quizzes")
+@asset(group_name="new_quizzes")
 def team_quiz_2() -> bool:
     title = "Team quiz"
     description = "Answer 5 questions"
@@ -159,7 +159,7 @@ def team_quiz_2() -> bool:
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
-@asset(group_name="quizzes")
+@asset(group_name="new_quizzes")
 def team_quiz_3() -> bool:
     title = "Team quiz"
     description = "Answer 5 questions"
@@ -177,7 +177,7 @@ def team_quiz_3() -> bool:
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
-@asset(group_name="quizzes")
+@asset(group_name="new_quizzes")
 def team_quiz_4() -> bool:
     title = "Team quiz"
     description = "Answer 5 questions"
@@ -196,7 +196,7 @@ def team_quiz_4() -> bool:
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
-@asset(group_name="quizzes")
+@asset(group_name="new_quizzes")
 def team_quiz_5() -> bool:
     title = "Team quiz"
     description = "Answer 5 questions"
@@ -215,7 +215,7 @@ def team_quiz_5() -> bool:
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
-@asset(group_name="quizzes")
+@asset(group_name="new_quizzes")
 def team_quiz_6() -> bool:
     title = "Team quiz"
     description = "Answer 5 questions"
@@ -234,7 +234,7 @@ def team_quiz_6() -> bool:
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
-@asset(group_name="quizzes")
+@asset(group_name="new_quizzes")
 def team_quiz_7() -> bool:
     title = "Team quiz"
     description = "Answer 5 questions"
@@ -253,7 +253,7 @@ def team_quiz_7() -> bool:
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
-@asset(group_name="quizzes")
+@asset(group_name="new_quizzes")
 def team_quiz_8() -> bool:
     title = "Team quiz"
     description = "Answer 5 questions"
@@ -270,7 +270,7 @@ def team_quiz_8() -> bool:
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
-@asset(group_name="quizzes")
+@asset(group_name="new_quizzes")
 def team_quiz_9() -> bool:
     title = "Team quiz"
     description = "Answer 5 questions"
@@ -289,7 +289,7 @@ def team_quiz_9() -> bool:
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
-@asset(group_name="quizzes")
+@asset(group_name="new_quizzes")
 def team_quiz_10() -> bool:
     title = "Team quiz"
     description = "Answer 5 questions"
@@ -308,7 +308,7 @@ def team_quiz_10() -> bool:
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
-@asset(group_name="quizzes")
+@asset(group_name="new_quizzes")
 def team_quiz_11() -> bool:
     title = "Team quiz"
     description = "Answer 5 questions"
@@ -327,7 +327,7 @@ def team_quiz_11() -> bool:
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
-@asset(group_name="quizzes")
+@asset(group_name="new_quizzes")
 def team_quiz_12() -> bool:
     title = "Team quiz"
     description = "Answer 5 questions"
@@ -345,7 +345,7 @@ def team_quiz_12() -> bool:
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
-@asset(group_name="quizzes")
+@asset(group_name="new_quizzes")
 def team_quiz_13() -> bool:
     title = "Team quiz"
     description = "Answer 5 questions"
@@ -364,7 +364,7 @@ def team_quiz_13() -> bool:
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
-@asset(group_name="quizzes")
+@asset(group_name="new_quizzes")
 def team_quiz_14() -> bool:
     title = "Team quiz"
     description = "Answer 5 questions"
@@ -383,7 +383,7 @@ def team_quiz_14() -> bool:
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
 
-@asset(group_name="quizzes")
+@asset(group_name="new_quizzes")
 def team_quiz_15() -> bool:
     title = "Team quiz"
     description = "Answer 5 questions"
@@ -403,7 +403,7 @@ def team_quiz_15() -> bool:
     return True
 
 
-@asset(group_name="quizzes")
+@asset(group_name="new_quizzes")
 def team_quiz_16() -> bool:
     title = "Team quiz"
     description = "Answer 5 questions"
@@ -422,7 +422,7 @@ def team_quiz_16() -> bool:
     return True
 
 
-@asset(group_name="quizzes")
+@asset(group_name="new_quizzes")
 def team_quiz_17() -> bool:
     title = "Team quiz"
     description = "Answer 5 questions"
@@ -441,21 +441,73 @@ def team_quiz_17() -> bool:
     return True
 
 
-@asset(group_name="quizzes")
+@asset(group_name="new_quizzes")
 def team_quiz_18() -> bool:
     title = "Team quiz"
     description = "Answer 5 questions"
     quiz_type = 3
     is_demo = False
     team_quiz = TeamQuizzes(title, description, quiz_type, is_demo)
-    national_quiz = NationalTeamQuizzes(title, description, quiz_type, is_demo)
-    stadium_quiz = StadiumQuizzes(title, description, quiz_type, is_demo)
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
-    quiz_obj.collect_questions(national_quiz.nation_first_title_question('euro'))
+    quiz_obj.collect_questions(team_quiz.highest_avg_possesion('Bundesliga'))
     quiz_obj.collect_questions(team_quiz.team_position(season=2023,league_id='GB1',title_won=False))
     quiz_obj.collect_questions(team_quiz.player_from_team())
     quiz_obj.collect_questions(team_quiz.most_offsides('LaLiga'))
     quiz_obj.collect_questions(team_quiz.team_logo('Villarreal CF'))
+
+    quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
+    return True
+
+@asset(group_name="new_quizzes")
+def team_quiz_19() -> bool:
+    title = "Team quiz"
+    description = "Answer 5 questions"
+    quiz_type = 3
+    is_demo = False
+    team_quiz = TeamQuizzes(title, description, quiz_type, is_demo)
+    stadium_quiz = StadiumQuizzes(title, description, quiz_type, is_demo)
+    quiz_obj = Quizzes(title, description, quiz_type, is_demo)
+    quiz_obj.collect_questions(team_quiz.club_nickname('AC Milan'))
+    quiz_obj.collect_questions(team_quiz.club_coach('Serie A'))
+    quiz_obj.collect_questions(team_quiz.most_fouls('LaLiga'))
+    quiz_obj.collect_questions(team_quiz.most_points('GB1'))
+    quiz_obj.collect_questions(stadium_quiz.stadium_capacity_question(league_name='Serie A',metric='largest'))
+
+    quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
+    return True
+
+@asset(group_name="new_quizzes")
+def team_quiz_20() -> bool:
+    title = "Team quiz"
+    description = "Answer 5 questions"
+    quiz_type = 3
+    is_demo = False
+    team_quiz = TeamQuizzes(title, description, quiz_type, is_demo)
+    stadium_quiz = StadiumQuizzes(title, description, quiz_type, is_demo)
+    quiz_obj = Quizzes(title, description, quiz_type, is_demo)
+    quiz_obj.collect_questions(stadium_quiz.home_stadium_question('Bundesliga'))
+    quiz_obj.collect_questions(team_quiz.fewest_points('IT1'))
+    quiz_obj.collect_questions(team_quiz.team_position(season=2023, league_id='IT1', title_won=False))
+    quiz_obj.collect_questions(team_quiz.conceded_most_goals('ES1'))
+    quiz_obj.collect_questions(team_quiz.never_won_domestic_championship_title('L1'))
+
+    quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
+    return True
+
+@asset(group_name="new_quizzes")
+def team_quiz_21() -> bool:
+    title = "Team quiz"
+    description = "Answer 5 questions"
+    quiz_type = 3
+    is_demo = False
+    team_quiz = TeamQuizzes(title, description, quiz_type, is_demo)
+    stadium_quiz = StadiumQuizzes(title, description, quiz_type, is_demo)
+    quiz_obj = Quizzes(title, description, quiz_type, is_demo)
+    quiz_obj.collect_questions(team_quiz.team_logo('Sevilla FC'))
+    quiz_obj.collect_questions(stadium_quiz.stadium_photo_question())
+    quiz_obj.collect_questions(stadium_quiz.stadium_city_question())
+    quiz_obj.collect_questions(team_quiz.most_corners('ES1'))
+    quiz_obj.collect_questions(team_quiz.cup_titles('Bundesliga'))
 
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
