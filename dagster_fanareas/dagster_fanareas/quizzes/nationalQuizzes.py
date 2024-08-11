@@ -51,6 +51,7 @@ class NationalTeamQuizzes(Quizzes):
         ndf = df[df['country_name']==country_name].sort_values('season_id')
         correct_response = ndf['season'].iloc[0]
         df = df[df['season'] != correct_response]
+        df['season'] = df['season'].astype('str')
         options = random.sample(list(df['season'].unique()),3)
         options.append(correct_response)
         question_statement = f"In which year did {country_name} win their first {title}?"

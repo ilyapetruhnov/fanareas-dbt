@@ -257,7 +257,7 @@ class TeamQuizzes(Quizzes):
         coach_name = df['coach_name'].iloc[0]
         correct_response = df['team'].iloc[0]
         options = list(df['team'].unique())
-        question_statement = "Which team is coached by {}?".format(coach_name)
+        question_statement = "As of August 2024, which team is coached by {}?".format(coach_name)
         description = f"{coach_name} is the head coach of {correct_response}"
         question = self.question_template(question_statement, options, correct_response, description)
         return question
@@ -371,13 +371,16 @@ class TeamQuizzes(Quizzes):
         return question
 
     def player_from_team(self):
-        df = self.generate_df(player_for_the_team_query)
+        df = self.generate_df(player_for_the_team_query).head(150)
         ndf = df.groupby('team').apply(lambda x: x.sample(1)).reset_index(drop=True)
         ndf = ndf.sample(4)
         correct_response = ndf['team'].iloc[0]
         player = ndf['player_name'].iloc[0]
         options = list(ndf['team'].unique())
-        question_statement = "As of August 2024, which team does {} play for?".format(player)
+        question_statement1 = "Which national team does {} play for?".format(player)
+        question_statement2 = "Which national team is {} a member of?".format(player)
+        question_statement3 = "For which national team does {} play?".format(player)
+        question_statement = random.choice([question_statement1,question_statement2,question_statement3])
         description = f"""{player} represents {correct_response}"""
         question = self.question_template(question_statement, options, correct_response, description)
         return question

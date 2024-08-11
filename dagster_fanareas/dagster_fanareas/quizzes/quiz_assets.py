@@ -506,8 +506,83 @@ def team_quiz_21() -> bool:
     quiz_obj.collect_questions(team_quiz.team_logo('Sevilla FC'))
     quiz_obj.collect_questions(stadium_quiz.stadium_photo_question())
     quiz_obj.collect_questions(stadium_quiz.stadium_city_question())
-    quiz_obj.collect_questions(team_quiz.most_corners('ES1'))
+    quiz_obj.collect_questions(team_quiz.most_corners('LaLiga'))
     quiz_obj.collect_questions(team_quiz.cup_titles('Bundesliga'))
+
+    quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
+    return True
+
+@asset(group_name="new_quizzes")
+def team_quiz_22() -> bool:
+    title = "Team quiz"
+    description = "Answer 5 questions"
+    quiz_type = 3
+    is_demo = False
+    team_quiz = TeamQuizzes(title, description, quiz_type, is_demo)
+    stadium_quiz = StadiumQuizzes(title, description, quiz_type, is_demo)
+    national_quiz = NationalTeamQuizzes(title, description, quiz_type, is_demo)
+    quiz_obj = Quizzes(title, description, quiz_type, is_demo)
+    quiz_obj.collect_questions(team_quiz.player_from_team())
+    quiz_obj.collect_questions(stadium_quiz.home_stadium_question('Premier League'))
+    quiz_obj.collect_questions(national_quiz.year_single_time_winner_question('world'))
+    quiz_obj.collect_questions(team_quiz.most_fouls('Bundesliga'))
+    quiz_obj.collect_questions(national_quiz.nation_first_title_question('euro'))
+
+    quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
+    return True
+
+@asset(group_name="new_quizzes")
+def team_quiz_23() -> bool:
+    title = "Team quiz"
+    description = "Answer 5 questions"
+    quiz_type = 3
+    is_demo = False
+    team_quiz = TeamQuizzes(title, description, quiz_type, is_demo)
+    stadium_quiz = StadiumQuizzes(title, description, quiz_type, is_demo)
+    national_quiz = NationalTeamQuizzes(title, description, quiz_type, is_demo)
+    quiz_obj = Quizzes(title, description, quiz_type, is_demo)
+    quiz_obj.collect_questions(team_quiz.team_position(season=2023,league_id='GB1',title_won=False))
+    quiz_obj.collect_questions(stadium_quiz.home_stadium_question('LaLiga'))
+    quiz_obj.collect_questions(team_quiz.club_nickname('Newcastle United'))
+    quiz_obj.collect_questions(national_quiz.never_won_question('world'))
+    quiz_obj.collect_questions(team_quiz.scored_most_goals('L1'))
+
+    quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
+    return True
+
+@asset(group_name="new_quizzes")
+def team_quiz_24() -> bool:
+    title = "Team quiz"
+    description = "Answer 5 questions"
+    quiz_type = 3
+    is_demo = False
+    team_quiz = TeamQuizzes(title, description, quiz_type, is_demo)
+    stadium_quiz = StadiumQuizzes(title, description, quiz_type, is_demo)
+    quiz_obj = Quizzes(title, description, quiz_type, is_demo)
+    quiz_obj.collect_questions(stadium_quiz.stadium_photo_question())
+    quiz_obj.collect_questions(stadium_quiz.stadium_capacity_question('Ligue 1'))
+    quiz_obj.collect_questions(team_quiz.team_logo('Atlético de Madrid'))
+    quiz_obj.collect_questions(team_quiz.club_coach('Ligue 1'))
+    quiz_obj.collect_questions(team_quiz.highest_avg_possesion('LaLiga'))
+
+    quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
+    return True
+
+@asset(group_name="new_quizzes")
+def team_quiz_25() -> bool:
+    title = "Team quiz"
+    description = "Answer 5 questions"
+    quiz_type = 3
+    is_demo = False
+    team_quiz = TeamQuizzes(title, description, quiz_type, is_demo)
+    stadium_quiz = StadiumQuizzes(title, description, quiz_type, is_demo)
+    national_quiz = NationalTeamQuizzes(title, description, quiz_type, is_demo)
+    quiz_obj = Quizzes(title, description, quiz_type, is_demo)
+    quiz_obj.collect_questions(national_quiz.both_cups_winner_question())
+    quiz_obj.collect_questions(team_quiz.player_from_team())
+    quiz_obj.collect_questions(national_quiz.year_single_time_winner_question('euro'))
+    quiz_obj.collect_questions(team_quiz.team_position(season=2023,league_id='FR1',title_won=True))
+    quiz_obj.collect_questions(stadium_quiz.specific_team_stadium_question(q=5))
 
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
