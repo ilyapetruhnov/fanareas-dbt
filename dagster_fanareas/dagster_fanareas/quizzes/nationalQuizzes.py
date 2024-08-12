@@ -53,7 +53,7 @@ class NationalTeamQuizzes(Quizzes):
         df = df[df['season'] != correct_response]
         df['season'] = df['season'].astype('str')
         options = random.sample(list(df['season'].unique()),3)
-        options.append(correct_response)
+        options.append(str(correct_response))
         question_statement = f"In which year did {country_name} win their first {title}?"
         description = f"{country_name} had their first {title} triumph in {correct_response}"
         question = self.question_template(question_statement, options, correct_response, description)
@@ -73,7 +73,7 @@ class NationalTeamQuizzes(Quizzes):
         df = df[df['season'] != correct_response]
 
         options = [str(i) for i in df['season'].sample(3)]
-        options.append(correct_response)
+        options.append(str(correct_response))
 
         question_statement = f"In which year did {country_name} win the {title}?"
         description = f"{country_name} won the {title} in {correct_response}"
@@ -94,7 +94,7 @@ class NationalTeamQuizzes(Quizzes):
 
         options = [i for i in df['coach_name']]
         question_statement = f"Who was the coach of {country_name} when they won {title} {season}?"
-        description = f"{correct_response} was the coach of {country_name} when they won the {title} 2004, leading the team to a historic victory"
+        description = f"{correct_response} was the coach of {country_name} when they won the {title} {season}, leading the team to a historic victory"
         question = self.question_template(question_statement, options, correct_response, description)
         return question
     

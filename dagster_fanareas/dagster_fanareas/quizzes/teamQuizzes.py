@@ -138,14 +138,12 @@ class TeamQuizzes(Quizzes):
     def most_points(self, league_id):
         league_name = self.league_mapping[league_id]
         df = self.generate_df(points_query.format(league_id)).sort_values('points',ascending=False)
+        options_df = df.groupby(['club_name'])['points'].max().reset_index().sort_values('points',ascending=False).head(4)
         season_id = df['season_id'].iloc[0]
         season_name = self.get_season_name(season_id)
         points = int(df['points'].iloc[0])
         correct_response = df['club_name'].iloc[0]
-        option_teams = list(df['club_name'].unique())
-        option_teams.remove(correct_response)
-        options = random.sample(option_teams, 3)
-        options.append(correct_response)
+        options = [i for i in options_df['club_name']]
         question_statement = "Which team achieved the most points in a single {} season?".format(league_name)
         description = f"{correct_response} achieved the most points in {league_name}, accumulating {points} points during the {season_name} season"
         question = self.question_template(question_statement, options, correct_response, description)
@@ -154,14 +152,12 @@ class TeamQuizzes(Quizzes):
     def fewest_points(self, league_id):
         league_name = self.league_mapping[league_id]
         df = self.generate_df(points_query.format(league_id)).sort_values('points')
+        options_df = df.groupby(['club_name'])['points'].max().reset_index().sort_values('points',ascending=True).head(4)
         season_id = df['season_id'].iloc[0]
         season_name = self.get_season_name(season_id)
         points = int(df['points'].iloc[0])
         correct_response = df['club_name'].iloc[0]
-        option_teams = list(df['club_name'].unique())
-        option_teams.remove(correct_response)
-        options = random.sample(option_teams, 3)
-        options.append(correct_response)
+        options = [i for i in options_df['club_name']]
         question_statement = "Which team earned the fewest points in a single {} season?".format(league_name)
         description = f"{correct_response} achieved the fewest points in {league_name}, accumulating {points} points during the {season_name} season"
         question = self.question_template(question_statement, options, correct_response, description)
@@ -170,14 +166,12 @@ class TeamQuizzes(Quizzes):
     def scored_most_goals(self, league_id):
         league_name = self.league_mapping[league_id]
         df = self.generate_df(most_scored_goals_query.format(league_id))
+        options_df = df.groupby(['club_name'])['goals'].max().reset_index().sort_values('goals',ascending=False).head(4)
         season_id = df['season_id'].iloc[0]
         season_name = self.get_season_name(season_id)
         goals = int(df['goals'].iloc[0])
         correct_response = df['club_name'].iloc[0]
-        option_teams = list(df['club_name'].unique())
-        option_teams.remove(correct_response)
-        options = random.sample(option_teams, 3)
-        options.append(correct_response)
+        options = [i for i in options_df['club_name']]
         question_statement = "Which team scored the most goals in a single {} season?".format(league_name)
         description = f"{correct_response} scored the most goals in a single season, netting {goals} goals during the {season_name} {league_name} season"
         question = self.question_template(question_statement, options, correct_response, description)
@@ -187,14 +181,12 @@ class TeamQuizzes(Quizzes):
     def conceded_most_goals(self, league_id):
         league_name = self.league_mapping[league_id]
         df = self.generate_df(most_conceded_goals_query.format(league_id))
+        options_df = df.groupby(['club_name'])['goals'].max().reset_index().sort_values('goals_conceded',ascending=False).head(4)
         season_id = df['season_id'].iloc[0]
         season_name = self.get_season_name(season_id)
         goals_conceded = int(df['goals_conceded'].iloc[0])
         correct_response = df['club_name'].iloc[0]
-        option_teams = list(df['club_name'].unique())
-        option_teams.remove(correct_response)
-        options = random.sample(option_teams, 3)
-        options.append(correct_response)
+        options = [i for i in options_df['club_name']]
         question_statement = "Which team conceded the most goals in a single {} season?".format(league_name)
         description = f"{correct_response} conceded {goals_conceded} goals in {season_name} season which is a {league_name} record for conceding the most goals in a season"
         question = self.question_template(question_statement, options, correct_response, description)
@@ -372,11 +364,11 @@ class TeamQuizzes(Quizzes):
 
     def player_from_team(self):
         df = self.generate_df(player_for_the_team_query).head(150)
-        ndf = df.groupby('team').apply(lambda x: x.sample(1)).reset_index(drop=True)
+        ndf = df.groupby('international_team').apply(lambda x: x.sample(1)).reset_index(drop=True)
         ndf = ndf.sample(4)
-        correct_response = ndf['team'].iloc[0]
+        correct_response = ndf['international_team'].iloc[0]
         player = ndf['player_name'].iloc[0]
-        options = list(ndf['team'].unique())
+        options = list(ndf['international_team'].unique())
         question_statement1 = "Which national team does {} play for?".format(player)
         question_statement2 = "Which national team is {} a member of?".format(player)
         question_statement3 = "For which national team does {} play?".format(player)

@@ -30,6 +30,8 @@ class StadiumQuizzes(Quizzes):
         #league_name = random.choice(leagues)
         ndf = df[df['league_name']==league_name]
         ndf = ndf[ndf['team_name']!='Tottenham Hotspur']
+        ndf = ndf[ndf['team_name']!='VfB Stuttgart']
+        ndf = ndf[ndf['team_name']!='Cardiff City']
         gr = ndf.groupby(['stadium_name','team_name']).max('total_capacity').reset_index().sort_values('total_capacity',ascending=False).head(10)
         correct_df = gr.sample(1)
         correct_response = correct_df['stadium_name'].iloc[0]
@@ -109,7 +111,7 @@ class StadiumQuizzes(Quizzes):
         question = self.question_template(question_statement, options, correct_response)
         return question
     
-    def stadium_capacity_question(self, league_name, metric) -> dict:
+    def stadium_capacity_question(self, league_name) -> dict:
         df = self.generate_df(team_query)
         leagues = ['Bundesliga','Premier League','Serie A','LaLiga','Ligue 1']
         countries = ['Germany', 'England', 'Italy', 'Spain', 'France']
@@ -117,16 +119,12 @@ class StadiumQuizzes(Quizzes):
         ndf = df[df['league_name']==league_name]
         country = d[league_name]
         ndf = ndf.groupby('stadium_name').max('total_capacity').reset_index().sort_values('total_capacity')
-        if metric == 'largest':
-            correct_response = ndf.tail(1)['stadium_name'].iloc[0]
-            total_capacity = int(ndf.tail(1)['total_capacity'])
-            options = list(ndf[:-1].sample(3)['stadium_name'].unique())
-            options.append(correct_response)
-        elif metric == 'smallest':
-            correct_response = ndf.head(1)['stadium_name'].iloc[0]
-            total_capacity = int(ndf.head(1)['total_capacity'])
-            options = list(ndf[1:].sample(3)['stadium_name'].unique())
-            options.append(correct_response)
+        metric = 'largest'
+        correct_response = ndf.tail(1)['stadium_name'].iloc[0]
+        total_capacity = int(ndf.tail(1)['total_capacity'])
+        options = list(ndf[:-1].sample(3)['stadium_name'].unique())
+        options.append(correct_response)
+
         question_statement = f"Which stadium is the {metric} in {country} by capacity?"
         description = f"{correct_response} is the {metric} stadium in {country} with a capacity of approximately {total_capacity}"
         question = self.question_template(question_statement, options, correct_response, description)
