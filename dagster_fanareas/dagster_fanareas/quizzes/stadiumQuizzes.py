@@ -6,7 +6,7 @@ from dagster_fanareas.quizzes.quizzes import Quizzes
 class StadiumQuizzes(Quizzes):
     def __init__(self, title: str, description: str, quiz_type: int, is_demo: bool) -> None:
         super().__init__(title, description, quiz_type, is_demo)
-        self.players = []
+        self.stadiums = []
         self.quiz_collection = []
     
     def stadium_photo_question(self) -> dict:
@@ -14,13 +14,17 @@ class StadiumQuizzes(Quizzes):
         df = df.head(30)
         options_df = df.sample(4)
         correct_response = options_df['stadium_name'].iloc[0]
-        question_statement = "Which stadium is shown on the photo?" # to be adjusted
-        options = [i for i in options_df['stadium_name']]
-        image_url = options_df['stadium_image'].iloc[0]
-        question = self.question_template(question_statement = question_statement, 
-                                          options = options, 
-                                          correct_response = correct_response,
-                                          image_url = image_url)
+        if correct_response not in self.stadiums:
+            self.stadiums.append(correct_response)
+            question_statement = "Which stadium is shown on the photo?" # to be adjusted
+            options = [i for i in options_df['stadium_name']]
+            image_url = options_df['stadium_image'].iloc[0]
+            question = self.question_template(question_statement = question_statement, 
+                                            options = options, 
+                                            correct_response = correct_response,
+                                            image_url = image_url)
+        else:
+            self.stadium_photo_question()
         return question
 
     
