@@ -49,7 +49,7 @@ class NationalTeamQuizzes(Quizzes):
         df = self.generate_df(national_champions_query.format(title))
         country_name = random.choice(df['country_name'].unique())
         ndf = df[df['country_name']==country_name].sort_values('season_id')
-        correct_response = ndf['season'].iloc[0]
+        correct_response = str(ndf['season'].iloc[0])
         df = df[df['season'] != correct_response]
         df['season'] = df['season'].astype('str')
         options = random.sample(list(df['season'].unique()),3)
@@ -68,12 +68,12 @@ class NationalTeamQuizzes(Quizzes):
         ndf = df.groupby('country_name').count().reset_index().sort_values('season_id',ascending=False)
         countries = ndf[ndf['season_id']==1]['country_name'].unique()
         country_name = random.choice(countries)
-        correct_response = df[df['country_name']==country_name]['season'].iloc[0]
+        correct_response = str(df[df['country_name']==country_name]['season'].iloc[0])
 
         df = df[df['season'] != correct_response]
 
         options = [str(i) for i in df['season'].sample(3)]
-        options.append(str(correct_response))
+        options.append(correct_response)
 
         question_statement = f"In which year did {country_name} win the {title}?"
         description = f"{country_name} won the {title} in {correct_response}"

@@ -181,7 +181,7 @@ class TeamQuizzes(Quizzes):
     def conceded_most_goals(self, league_id):
         league_name = self.league_mapping[league_id]
         df = self.generate_df(most_conceded_goals_query.format(league_id))
-        options_df = df.groupby(['club_name'])['goals'].max().reset_index().sort_values('goals_conceded',ascending=False).head(4)
+        options_df = df.groupby(['club_name'])['goals_conceded'].max().reset_index().sort_values('goals_conceded',ascending=False).head(4)
         season_id = df['season_id'].iloc[0]
         season_name = self.get_season_name(season_id)
         goals_conceded = int(df['goals_conceded'].iloc[0])
