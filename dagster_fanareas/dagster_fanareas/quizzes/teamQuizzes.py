@@ -431,3 +431,47 @@ class TeamQuizzes(Quizzes):
             options = [correct_response, team1, team2, team4]
         question = self.question_template(question_statement, options, correct_response, description)
         return question
+    
+    def maradonna_club(self):
+        options = ['AC Milan',
+                   'SSC Napoli',
+                   'Inter Milan',
+                   'Juventus FC']
+        correct_response = 'SSC Napoli'
+        question_statement = "Which club did Diego Maradona famously play for, leading them to two Serie A titles in the late 1980s?"
+        description = "Maradona is considered a football icon in Naples, and his time at the club is one of the most celebrated periods in its history"
+        question = self.question_template(question_statement, options, correct_response, description)
+        return question
+    
+    def ronaldihno_club(self):
+        options = ['AC Milan',
+                   'FC Barcelona',
+                   'Inter Milan',
+                   'Real Madrid']
+        correct_response = 'FC Barcelona'
+        question_statement = "Which club did Ronaldinho play for when he won the FIFA World Player of the Year award twice in 2004 and 2005?"
+        description = "Ronaldinho joined the club in 2003 and became one of the most influential players in their history, winning two La Liga titles (2004-05, 2005-06) and the UEFA Champions League in 2005-06"
+        question = self.question_template(question_statement, options, correct_response, description)
+        return question
+    
+    def maldini_club(self):
+        options = ['AC Milan',
+                   'Juventus FC',
+                   'Inter Milan',
+                   'Real Madrid']
+        correct_response = 'AC Milan'
+        question_statement = "Which club did Paolo Maldini spend his entire career at, winning five UEFA Champions League titles?"
+        description = "Paolo Maldini spent his entire professional career playing for AC Milan. Maldini played for AC Milan from 1984 to 2009, making over 900 appearances"
+        question = self.question_template(question_statement, options, correct_response, description)
+        return question
+    
+    def henry_club(self):
+        options = ['Arsenal FC',
+                   'Manchester United',
+                   'Chelsea FC',
+                   'Liverpool FC']
+        correct_response = 'Arsenal FC'
+        question_statement = "Which club did Thierry Henry lead to an unbeaten Premier League season in 2003/2004, earning them the title 'The Invincibles'"
+        description = "Thierry Henry is one of the Arsenal's most iconic players. His impact at Arsenal made him a legend at the club and in English football"
+        question = self.question_template(question_statement, options, correct_response, description)
+        return question

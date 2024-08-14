@@ -50,7 +50,7 @@ class NationalTeamQuizzes(Quizzes):
         country_name = random.choice(df['country_name'].unique())
         ndf = df[df['country_name']==country_name].sort_values('season_id')
         correct_response = str(ndf['season'].iloc[0])
-        df = df[df['season'] != correct_response]
+        df = df[df['season'] != int(correct_response)]
         df['season'] = df['season'].astype('str')
         options = random.sample(list(df['season'].unique()),3)
         options.append(str(correct_response))
@@ -59,15 +59,15 @@ class NationalTeamQuizzes(Quizzes):
         question = self.question_template(question_statement, options, correct_response, description)
         return question
     
-    def year_single_time_winner_question(self, title_name) -> dict:
+    def year_single_time_winner_question(self, title_name, country_name) -> dict:
         if title_name == 'euro':
             title = 'UEFA European Championship'
         else:
             title = 'FIFA World Cup'
         df = self.generate_df(national_champions_query.format(title))
-        ndf = df.groupby('country_name').count().reset_index().sort_values('season_id',ascending=False)
-        countries = ndf[ndf['season_id']==1]['country_name'].unique()
-        country_name = random.choice(countries)
+        # ndf = df.groupby('country_name').count().reset_index().sort_values('season_id',ascending=False)
+        # countries = ndf[ndf['season_id']==1]['country_name'].unique()
+        # country_name = random.choice(countries)
         correct_response = str(df[df['country_name']==country_name]['season'].iloc[0])
 
         df = df[df['season'] != int(correct_response)]

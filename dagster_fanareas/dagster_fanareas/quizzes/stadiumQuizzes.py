@@ -48,6 +48,7 @@ class StadiumQuizzes(Quizzes):
     def stadium_city_question(self) -> dict:
         df = self.generate_df(team_query)
         df = df.head(30)
+        df = df[df['team_name']!='Hertha BSC']
         correct_df = df.sample(1)
         correct_response = correct_df['city'].iloc[0]
         stadium_name = correct_df['stadium_name'].iloc[0]
