@@ -70,7 +70,7 @@ class NationalTeamQuizzes(Quizzes):
         country_name = random.choice(countries)
         correct_response = str(df[df['country_name']==country_name]['season'].iloc[0])
 
-        df = df[df['season'] != correct_response]
+        df = df[df['season'] != int(correct_response)]
 
         options = [str(i) for i in df['season'].sample(3)]
         options.append(correct_response)
