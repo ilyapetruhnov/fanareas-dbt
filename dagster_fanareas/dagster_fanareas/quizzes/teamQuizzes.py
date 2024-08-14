@@ -1,6 +1,6 @@
 import random
 from dagster_fanareas.constants import league_mapping
-from dagster_fanareas.quizzes.tm_queries import standing_query, player_for_the_team_query, most_titles_won_query, cl_titles_query, cup_titles_query, team_coach_query, team_stats_query, most_conceded_goals_query, most_scored_goals_query, el_titles_query, points_query, unbeaten_query, unbeaten_options_query, team_logo_options_query, logo_select_query
+from dagster_fanareas.quizzes.tm_queries import standing_query, player_for_the_team_query, most_titles_won_query, cl_titles_query, cup_titles_query, team_coach_query, team_stats_query, most_conceded_goals_query, most_scored_goals_query, el_titles_query, points_query, unbeaten_query, unbeaten_options_query, team_logo_options_query, logo_select_query, won_league_with_fewest_points_query
 from dagster_fanareas.quizzes.quizzes import Quizzes
 
 
@@ -58,27 +58,35 @@ class TeamQuizzes(Quizzes):
     
     def club_nickname(self, club_name):
         club_mapping = {
-            'Manchester United':'The Red Devils',
-            'Inter Milan':'The Nerazzurri',
-            'Everton':'The Toffees',
-            'AC Milan':'The Rossoneri',
-            'Arsenal':'The Gunners',
-            'Newcastle United':'The Magpies',
+            'Manchester United':'Red Devils',
+            'Inter Milan':'Nerazzurri',
+            'Everton':'Toffees',
+            'AC Milan':'Rossoneri',
+            'Arsenal':'Gunners',
+            'Newcastle United':'Magpies',
             'Real Madrid':'Los Blancos',
-            'Atletico Madrid':'Los Colchoneros'  
+            'Atletico Madrid':'Los Colchoneros',
+            'Manchester City': 'Citizens',
+            'Stoke City': 'Potters',
+            'Tottenham': 'Spurs',
+            'Southampton': 'Saints',
+            'AFC Bournemouth': 'Cherries'
                }
         option_teams = ['Barcelona',
-                   'Tottenham',
+                   'West Ham',
                    'Chelsea',
                    'Fiorentina',
                    'Aston Villa',
                    'Fulham',
+                   'Brentford',
+                   'Nottingham Forest',
                    'Sevilla FC',
                    'Valencia',
                    'Liverpool FC',
                    'Athletic Bilbao',
                    'Villarreal CF',
-                   'Manchester City'
+                   'Paris Saint-Germain',
+                   'Crystal Palace'
                    ]
         club_nickname = club_mapping[club_name]
         correct_response = club_name
@@ -120,16 +128,14 @@ class TeamQuizzes(Quizzes):
     def first_to_reach_100_points_in_league(self, league_id):
         league_name = self.league_mapping[league_id]
         df = self.generate_df(points_query.format(league_id)).sort_values('points',ascending=False)
+        options_df = df.groupby(['club_name'])['points'].max().reset_index().sort_values('points',ascending=False).head(4)
         season_id = df['season_id'].iloc[0]
         season_name = self.get_season_name(season_id)
         if league_id == 'ES':
             correct_response = 'Real Madrid'
         else:
             correct_response = df['club_name'].iloc[0]
-        option_teams = list(df['club_name'].unique())
-        option_teams.remove(correct_response)
-        options = random.sample(option_teams, 3)
-        options.append(correct_response)
+        options = [i for i in options_df['club_name']]
         question_statement = "Which club was the first to achieve 100 points in a single {} season?".format(league_name)
         description = f"{correct_response} was the first club to achieve 100 points in a single {league_name} season, accomplishing this milestone during the {season_name} season"
         question = self.question_template(question_statement, options, correct_response, description)
@@ -281,13 +287,32 @@ class TeamQuizzes(Quizzes):
         option_teams = ['AS Roma',
                         'Arsenal FC',
                         'Paris Saint-Germain',
-                        'Sevilla FC']
+                        'Sevilla FC',
+                        'Atletico Madrid',
+                        'Tottenham']
         champion_teams = list(df['team_name'].unique())
         correct_response = random.choice(option_teams)
         options = random.sample(champion_teams, 3)
         options.append(correct_response)
         question_statement = "Which club has never won the Champions League title?"
         description = f"""{correct_response} has never won the UEFA Champions League"""
+        question = self.question_template(question_statement, options, correct_response, description)
+        return question
+    
+    def winner_with_fewest_points(self, league_id):
+        league_name = self.league_mapping[league_id]
+        df = self.generate_df(won_league_with_fewest_points_query.format(league_id))
+        correct_df = df.iloc[0]
+        correct_response = correct_df['name']
+        points = correct_df['points']
+        season = correct_df['season_id']
+        season_name = f"{season}/{season+1}"
+        teams = list(df['name'].unique())
+        teams.remove(correct_response)
+        options = teams[:3]
+        options.append(correct_response)
+        question_statement = f"Which {league_name} team won the title with the fewest points in a 38-game season?"
+        description = f"{correct_response} won the {league_name} title in the {season_name} season with {points} points, the lowest total for a 38-game season"
         question = self.question_template(question_statement, options, correct_response, description)
         return question
     
@@ -394,8 +419,9 @@ class TeamQuizzes(Quizzes):
             description = f"""{correct_response} secured the title with an impressive performance throughout the season"""
             options = [correct_response, team1, team2, team3]
         else:
-            correct_response = df['club_name'].iloc[5]
-            correct_val = df['rank'].iloc[5]
+            rank = random.choice([4,5,6,7])
+            correct_response = df['club_name'].iloc[rank]
+            correct_val = df['rank'].iloc[rank]
             team1 = df['club_name'].iloc[0]
             team2 = df['club_name'].iloc[1]
             team3 = df['club_name'].iloc[2]

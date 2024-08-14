@@ -384,3 +384,14 @@ team_logo_options_query = """
 logo_select_query = """
 select image from tm_team where name = '{}'
 """
+
+won_league_with_fewest_points_query = """
+select standing.points, standing.season_id, tm_team.* from standing
+                                  join tm_team
+                                  on cast(tm_team.id as int) = standing.team_id
+where standing.rank = 1
+and standing.matches = 38
+and standing.league_id = '{}'
+and standing.season_id < 2024
+order by standing.points
+"""

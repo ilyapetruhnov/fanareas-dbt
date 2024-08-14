@@ -14,24 +14,20 @@ class StadiumQuizzes(Quizzes):
         df = df.head(30)
         options_df = df.sample(4)
         correct_response = options_df['stadium_name'].iloc[0]
-        if correct_response not in self.stadiums:
-            self.stadiums.append(correct_response)
-            question_statement = "Which stadium is shown on the photo?" # to be adjusted
-            options = [i for i in options_df['stadium_name']]
-            image_url = options_df['stadium_image'].iloc[0]
-            question = self.question_template(question_statement = question_statement, 
+        question_statement = "Which stadium is shown on the photo?" # to be adjusted
+        options = [i for i in options_df['stadium_name']]
+        image_url = options_df['stadium_image'].iloc[0]
+        question = self.question_template(question_statement = question_statement, 
                                             options = options, 
                                             correct_response = correct_response,
-                                            image_url = image_url)
-        else:
-            self.stadium_photo_question()
+                                            image_url = image_url,
+                                            image_size = 1)
         return question
 
     
     def home_stadium_question(self, league_name) -> dict:
         df = self.generate_df(team_query)
-        leagues = ['Bundesliga','Premier League','Serie A','LaLiga','Ligue 1']
-        #league_name = random.choice(leagues)
+
         ndf = df[df['league_name']==league_name]
         ndf = ndf[ndf['team_name']!='Tottenham Hotspur']
         ndf = ndf[ndf['team_name']!='VfB Stuttgart']
@@ -70,10 +66,9 @@ class StadiumQuizzes(Quizzes):
             'Old Trafford',
             'Olimpico di Roma',
             'Civitas Metropolitano',
-            'Orange Vélodrome',
+            'Parc des Princes',
             'Stamford Bridge',
             'Veltins-Arena',
-            'Anfield',
             'Benito Villamarín',
             'Emirates Stadium',
             'San Nicola'
@@ -84,17 +79,10 @@ class StadiumQuizzes(Quizzes):
         question_statement4 = {"What is the name of the stadium that hosts the annual FA Cup final in England?":'Wembley Stadium'}
         question_statement5 = {"What is the oldest stadium in England?": 'Bramall Lane'}
         question_statement6 = {"Which stadium located in Milan is shared by two major Italian football clubs?":'San Siro'}
-        # question_dict = random.choice(
-        #     [
-        #         question_statement1,
-        #         question_statement2,
-        #         question_statement3,
-        #         question_statement4,
-        #         question_statement5,
-        #         question_statement6
-        #     ]
-        #         )
-        #for question_statement, correct_response in question_dict.items():
+        question_statement7 = {"Which stadium located in Marseille is famously known for its distinctive design and passionate fans support?":'Orange Vélodrome'}
+        question_statement8 = {"Which stadium is famously known for the passionate atmosphere created by fans, particularly the famous 'You'll Never Walk Alone' anthem?":'Anfield'}
+        question_statement9 = {"Which stadium is known for its historical significance, including hosting the 1936 Olympics, and as a major venue for German football?":'Olympiastadion'}
+
         if q == 1:
             question = question_statement1
         elif q == 2:
@@ -107,6 +95,12 @@ class StadiumQuizzes(Quizzes):
             question = question_statement5
         elif q == 6:
             question = question_statement6
+        elif q == 7:
+            question = question_statement7
+        elif q == 8:
+            question = question_statement8
+        elif q == 9:
+            question = question_statement9
         for key, value in question.items():
             correct_response = value
             question_statement = key
