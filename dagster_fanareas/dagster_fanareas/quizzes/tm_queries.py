@@ -173,7 +173,10 @@ other_goalkeepers_query = """
 
 standing_query = """select * from standing where season_id = {} and league_id = '{}'"""
 
-player_for_the_team_query = """select * from tm_dim_top_players_by_value"""
+player_for_the_team_query = """select * from tm_dim_top_players_by_value
+                                where international_team != ''
+                                order by tm_market_value desc
+                                """
 
 most_titles_won_query = """with titles as (
 select team_id, count(id ) as title_cnt
