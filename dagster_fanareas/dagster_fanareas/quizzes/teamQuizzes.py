@@ -407,14 +407,11 @@ class TeamQuizzes(Quizzes):
         df = self.generate_df(standing_query.format(season, league_id))
         df = df.sort_values('rank', ascending = True)[['club_name', 'rank']]
         season_name = f"{season}/{season+1}"
-        df_size = len(df) - 1
         if title_won:
             correct_response = df['club_name'].iloc[0]
-            positions = random.sample(range(1, df_size), 3)
-            positions.sort()
-            team1 = df['club_name'].iloc[positions[0]]
-            team2 = df['club_name'].iloc[positions[1]]
-            team3 = df['club_name'].iloc[positions[2]]
+            team1 = df['club_name'].iloc[1]
+            team2 = df['club_name'].iloc[2]
+            team3 = df['club_name'].iloc[3]
             question_statement = "Who won the {} title in the {} season?".format(league_name, season_name)
             description = f"""{correct_response} secured the title with an impressive performance throughout the season"""
             options = [correct_response, team1, team2, team3]

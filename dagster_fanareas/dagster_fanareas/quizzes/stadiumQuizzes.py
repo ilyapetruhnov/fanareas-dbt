@@ -125,7 +125,7 @@ class StadiumQuizzes(Quizzes):
         options.append(correct_response)
 
         question_statement = f"Which stadium is the {metric} in {country} by capacity?"
-        description = f"{correct_response} is the {metric} stadium in {country} with a capacity of approximately {total_capacity}"
+        description = f"{correct_response} is the {metric} stadium in {country} with a capacity of {total_capacity}"
         question = self.question_template(question_statement, options, correct_response, description)
         return question
     
