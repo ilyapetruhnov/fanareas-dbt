@@ -159,12 +159,13 @@ class TeamQuizzes(Quizzes):
         league_name = self.league_mapping[league_id]
         df = self.generate_df(points_query.format(league_id)).sort_values('points')
         df = df[df['club_name'] != 'Juventus']
-        options_df = df.groupby(['club_name'])['points'].max().reset_index().sort_values('points',ascending=True).head(4)
-        season_id = options_df['season_id'].iloc[0]
+        options_df = df.groupby(['club_name'])['points'].max().reset_index().sort_values('points',ascending=True).head(3)
+        season_id = df['season_id'].iloc[0]
         season_name = self.get_season_name(season_id)
         points = int(df['points'].iloc[0])
         correct_response = options_df['club_name'].iloc[0]
         options = [i for i in options_df['club_name']]
+        options.append(correct_response)
         question_statement = "Which team earned the fewest points in a single {} season?".format(league_name)
         description = f"{correct_response} achieved the fewest points in {league_name}, accumulating {points} points during the {season_name} season"
         question = self.question_template(question_statement, options, correct_response, description)
