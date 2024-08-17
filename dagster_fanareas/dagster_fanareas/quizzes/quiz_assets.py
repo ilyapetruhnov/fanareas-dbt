@@ -152,7 +152,7 @@ def team_quiz_2() -> bool:
     stadium_quiz = StadiumQuizzes(title, description, quiz_type, is_demo)
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
     quiz_obj.collect_questions(team_quiz.unbeaten('L1'))
-    quiz_obj.collect_questions(stadium_quiz.home_stadium_question('Bundesliga'))
+    quiz_obj.collect_questions(team_quiz.oldest_club())
     quiz_obj.collect_questions(team_quiz.never_won_el())
     quiz_obj.collect_questions(team_quiz.team_logo('Fulham FC'))
     quiz_obj.collect_questions(stadium_quiz.stadium_photo_question())
@@ -184,10 +184,11 @@ def team_quiz_4() -> bool:
     quiz_type = 3
     is_demo = False
     team_quiz = TeamQuizzes(title, description, quiz_type, is_demo)
+    stadium_quiz = StadiumQuizzes(title, description, quiz_type, is_demo)
     national_quiz = NationalTeamQuizzes(title, description, quiz_type, is_demo)
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
     quiz_obj.collect_questions(team_quiz.most_el_titles())
-    quiz_obj.collect_questions(team_quiz.player_from_team())
+    quiz_obj.collect_questions(stadium_quiz.home_stadium_question('Bundesliga'))
     quiz_obj.collect_questions(national_quiz.year_single_time_winner_question('euro','Czechoslovakia'))
     quiz_obj.collect_questions(team_quiz.first_to_reach_100_points_in_league('GB1'))
     quiz_obj.collect_questions(team_quiz.team_logo('UC Sampdoria'))
@@ -262,7 +263,7 @@ def team_quiz_8() -> bool:
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
     quiz_obj.collect_questions(team_quiz.most_cl_titles())
     quiz_obj.collect_questions(team_quiz.club_coach('Bundesliga'))
-    quiz_obj.collect_questions(team_quiz.oldest_club())
+    quiz_obj.collect_questions(team_quiz.player_from_team())
     quiz_obj.collect_questions(team_quiz.team_logo('SV Werder Bremen'))
     quiz_obj.collect_questions(team_quiz.most_offsides('Premier League'))
 
@@ -296,12 +297,11 @@ def team_quiz_10() -> bool:
     is_demo = False
     team_quiz = TeamQuizzes(title, description, quiz_type, is_demo)
     national_quiz = NationalTeamQuizzes(title, description, quiz_type, is_demo)
-    stadium_quiz = StadiumQuizzes(title, description, quiz_type, is_demo)
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
     quiz_obj.collect_questions(team_quiz.first_cl_win())
     quiz_obj.collect_questions(team_quiz.most_corners('Premier League'))
     quiz_obj.collect_questions(team_quiz.team_position(season=2023, league_id='ES1', title_won=True))
-    quiz_obj.collect_questions(stadium_quiz.home_stadium_question('LaLiga'))
+    quiz_obj.collect_questions(team_quiz.player_from_team())
     quiz_obj.collect_questions(national_quiz.winner_coach_question('euro'))
 
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
@@ -377,7 +377,7 @@ def team_quiz_14() -> bool:
     quiz_obj.collect_questions(national_quiz.winner_coach_question('world'))
     quiz_obj.collect_questions(stadium_quiz.stadium_capacity_question(league_name='LaLiga'))
     quiz_obj.collect_questions(team_quiz.club_coach('LaLiga'))
-    quiz_obj.collect_questions(team_quiz.team_position(season=2023, league_id='ES1', title_won=True))
+    quiz_obj.collect_questions(team_quiz.team_position(season=2023, league_id='ES1', title_won=False))
 
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
@@ -447,11 +447,12 @@ def team_quiz_18() -> bool:
     quiz_type = 3
     is_demo = False
     team_quiz = TeamQuizzes(title, description, quiz_type, is_demo)
+    stadium_quiz = StadiumQuizzes(title, description, quiz_type, is_demo)
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
     quiz_obj.collect_questions(team_quiz.highest_avg_possesion('Bundesliga'))
     quiz_obj.collect_questions(team_quiz.team_position(season=2023,league_id='GB1',title_won=False))
-    quiz_obj.collect_questions(team_quiz.player_from_team())
     quiz_obj.collect_questions(team_quiz.most_offsides('LaLiga'))
+    quiz_obj.collect_questions(stadium_quiz.home_stadium_question('LaLiga'))
     quiz_obj.collect_questions(team_quiz.team_logo('Villarreal CF'))
 
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
@@ -523,9 +524,9 @@ def team_quiz_22() -> bool:
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
     quiz_obj.collect_questions(team_quiz.player_from_team())
     quiz_obj.collect_questions(stadium_quiz.home_stadium_question('Premier League'))
-    quiz_obj.collect_questions(national_quiz.year_single_time_winner_question('euro','Greece'))
+    quiz_obj.collect_questions(national_quiz.year_single_time_winner_question('euro','Greece')) # greece 
     quiz_obj.collect_questions(team_quiz.most_fouls('Bundesliga'))
-    quiz_obj.collect_questions(national_quiz.nation_first_title_question('euro'))
+    quiz_obj.collect_questions(national_quiz.nation_first_title_question('world'))
 
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
@@ -557,10 +558,9 @@ def team_quiz_24() -> bool:
     is_demo = False
     team_quiz = TeamQuizzes(title, description, quiz_type, is_demo)
     stadium_quiz = StadiumQuizzes(title, description, quiz_type, is_demo)
-    national_quiz = NationalTeamQuizzes(title, description, quiz_type, is_demo)
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
     quiz_obj.collect_questions(stadium_quiz.stadium_photo_question())
-    quiz_obj.collect_questions(national_quiz.nation_first_title_question('world'))
+    quiz_obj.collect_questions(team_quiz.player_from_team())
     quiz_obj.collect_questions(team_quiz.team_position(season=2023,league_id='FR1',title_won=False))
     quiz_obj.collect_questions(team_quiz.club_coach('Ligue 1'))
     quiz_obj.collect_questions(team_quiz.highest_avg_possesion('LaLiga'))
@@ -579,9 +579,9 @@ def team_quiz_25() -> bool:
     national_quiz = NationalTeamQuizzes(title, description, quiz_type, is_demo)
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
     quiz_obj.collect_questions(national_quiz.both_cups_winner_question())
-    quiz_obj.collect_questions(team_quiz.player_from_team())
+    quiz_obj.collect_questions(stadium_quiz.stadium_city_question())
     quiz_obj.collect_questions(national_quiz.year_single_time_winner_question('euro','Netherlands'))
-    quiz_obj.collect_questions(team_quiz.team_position(season=2023,league_id='ES1',title_won=True))
+    quiz_obj.collect_questions(team_quiz.team_position(season=2023,league_id='ES1',title_won=False))
     quiz_obj.collect_questions(stadium_quiz.specific_team_stadium_question(q=5))
 
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
@@ -708,7 +708,7 @@ def team_quiz_32() -> bool:
     national_quiz = NationalTeamQuizzes(title, description, quiz_type, is_demo)
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
     quiz_obj.collect_questions(stadium_quiz.stadium_photo_question())
-    quiz_obj.collect_questions(national_quiz.nation_first_title_question('euro'))
+    quiz_obj.collect_questions(team_quiz.never_won_cl())
     quiz_obj.collect_questions(national_quiz.winner_coach_question('world'))
     quiz_obj.collect_questions(team_quiz.fewest_points('FR1'))
     quiz_obj.collect_questions(team_quiz.player_from_team())
@@ -924,9 +924,10 @@ def team_quiz_44() -> bool:
     is_demo = False
     team_quiz = TeamQuizzes(title, description, quiz_type, is_demo)
     stadium_quiz = StadiumQuizzes(title, description, quiz_type, is_demo)
+    national_quiz = NationalTeamQuizzes(title, description, quiz_type, is_demo)
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
     quiz_obj.collect_questions(stadium_quiz.stadium_photo_question())
-    quiz_obj.collect_questions(stadium_quiz.stadium_city_question())
+    quiz_obj.collect_questions(national_quiz.nation_first_title_question('euro'))
     quiz_obj.collect_questions(team_quiz.team_logo('Eintracht Frankfurt'))
     quiz_obj.collect_questions(team_quiz.player_from_team())
     quiz_obj.collect_questions(team_quiz.scored_most_goals('ES1'))
@@ -1034,13 +1035,15 @@ def team_quiz_50() -> bool:
     is_demo = False
     team_quiz = TeamQuizzes(title, description, quiz_type, is_demo)
     stadium_quiz = StadiumQuizzes(title, description, quiz_type, is_demo)
+    national_quiz = NationalTeamQuizzes(title, description, quiz_type, is_demo)
     quiz_obj = Quizzes(title, description, quiz_type, is_demo)
     quiz_obj.collect_questions(team_quiz.team_logo('SC Freiburg'))
     quiz_obj.collect_questions(team_quiz.player_from_team())
     quiz_obj.collect_questions(stadium_quiz.specific_team_stadium_question(q=9))
-    quiz_obj.collect_questions(team_quiz.never_won_cl())
+    quiz_obj.collect_questions(national_quiz.nation_first_title_question('euro'))
     quiz_obj.collect_questions(team_quiz.team_position(season=2023,league_id='FR1',title_won=False))
 
     quiz_obj.post_quiz(questions = quiz_obj.quiz_collection)
     return True
+
 
