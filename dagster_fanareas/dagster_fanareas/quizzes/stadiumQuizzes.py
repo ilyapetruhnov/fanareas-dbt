@@ -12,6 +12,7 @@ class StadiumQuizzes(Quizzes):
     def stadium_photo_question(self) -> dict:
         df = self.generate_df(team_query)
         df = df.head(49)
+        df = df[df['team_name']!='Hertha BSC']
         options_df = df.sample(4)
         correct_response = options_df['stadium_name'].iloc[0]
         question_statement = "Which stadium is shown on the photo?" # to be adjusted

@@ -35,24 +35,22 @@ team_query = """
 player_query = """select * from tm_stg_player"""
 
 
-top_value_players_query = """select * from tm_dim_top_players_by_value limit 300"""
+top_value_players_query = """select * from tm_dim_top_players_by_value order by tm_market_value desc limit 450"""
 
 played_for_multiple_clubs_query = """select * from played_for_multiple_clubs"""
 
-player_transfers_over_million_query = """select * from  dim_player_transfers where international_team != '' and transfer_fee_value > 9999999"""
+player_transfers_over_fifty_million_query = """select * from  dim_player_transfers where international_team != '' and transfer_fee_value > 49999999"""
 
 
 own_goals_query = """select * from tm_dim_top_league_players
                         where own_goals > goals
-                        and league = '{}'
                         and goals >0
                         order by own_goals desc
-                        limit 1"""
+                        limit 5"""
 
 own_goals_options_query = """
 select * public.from tm_dim_top_league_players
                         where goals > own_goals
-                        and league = '{}'
                         and own_goals > 0
                         order by yellow_cards desc
                         limit 50
@@ -163,7 +161,9 @@ with agg_vw as (
 
 goalkeeper_stats_query = """SELECT fullname, nationality, sum(goals) as goals from tm_dim_goalkeepers_with_goals
                             where goals > 1
-                            group by fullname, nationality"""
+                            and fullname != 'Andreas Köpke'
+                            group by fullname, nationality
+                            order by goals desc"""
 
 other_goalkeepers_query = """
                         SELECT distinct fullname from tm_dim_goalkeepers_with_goals

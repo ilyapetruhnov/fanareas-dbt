@@ -1,4 +1,6 @@
 from dagster import asset
+import random
+import time
 from dagster_fanareas.quizzes.quizzes import Quizzes
 from dagster_fanareas.quizzes.transferQuizzes import TransferQuizzes
 from dagster_fanareas.quizzes.photoQuizzes import PhotoQuizzes
@@ -10,6 +12,25 @@ from dagster_fanareas.quizzes.stadiumQuizzes import StadiumQuizzes
 from dagster_fanareas.quizzes.queries import *
 from dagster_fanareas.ops.utils import get_dim_name_and_id
 from dagster_fanareas.quizzes.quiz_collection import validate_team_season, post_guess_team_player_quiz
+
+
+
+@asset(group_name="quizzes")
+def new_guess_the_player_quiz(context) -> bool:
+    title = "Guess the player"
+    description = "Answer 5 questions about football players"
+    quiz_type = 0
+    is_demo = False
+    player_quiz = PlayerQuizzes(title, description, quiz_type, is_demo)
+    result = player_quiz.create_quiz()
+    # Generate 50 batches with 5 items each
+    batches = [result[i:i + 5] for i in range(0, len(result), 5)]
+    random.shuffle(batches)
+    for idx, batch in enumerate(batches, start=1):
+        context.log.info(f"generated quiz {idx}")
+        player_quiz.post_quiz(batch)
+        time.sleep(5)
+    return True
 
 @asset(group_name="quizzes")
 def guess_team_player_quiz() -> bool:

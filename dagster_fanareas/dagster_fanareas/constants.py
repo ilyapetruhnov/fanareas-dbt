@@ -127,6 +127,7 @@ nationality_mapping = {
     "Ecuador": "Ecuadorian",
     "Egypt": "Egyptian",
     "El Salvador": "Salvadoran",
+    "England": "English",
     "Equatorial Guinea": "Equatoguinean",
     "Eritrea": "Eritrean",
     "Estonia": "Estonian",
@@ -227,6 +228,7 @@ nationality_mapping = {
     "San Marino": "Sammarinese",
     "Sao Tome and Principe": "Sao Tomean",
     "Saudi Arabia": "Saudi",
+    "Scotland": "Scottish",
     "Senegal": "Senegalese",
     "Serbia": "Serbian",
     "Seychelles": "Seychellois",
@@ -269,6 +271,7 @@ nationality_mapping = {
     "Vatican City": "Vatican",
     "Venezuela": "Venezuelan",
     "Vietnam": "Vietnamese",
+    "Wales": "Welsh",
     "Yemen": "Yemeni",
     "Zambia": "Zambian",
     "Zimbabwe": "Zimbabwean"
