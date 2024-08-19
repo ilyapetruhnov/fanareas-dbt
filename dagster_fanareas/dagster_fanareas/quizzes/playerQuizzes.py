@@ -248,14 +248,16 @@ class PlayerQuizzes(Quizzes):
     
     def played_for_multiple_clubs(self, q_num) -> list:
         questions = []
-        df = self.generate_df(played_for_multiple_clubs_query).sample(q_num)
-        selected_players = list(df['fullname'].unique())
+        df = self.generate_df(played_for_multiple_clubs_query)
+        selected_df = df.sample(q_num)
+        selected_players = list(selected_df['fullname'].unique())
+        others_df = df[~df['fullname'].isin(selected_players)]
         countries = self.nationality_mapping.keys()
         df = df[df['international_team'].isin(countries)]
         df['nationality'] = df['international_team'].apply(lambda x: self.nationality_mapping[x])
         for i in range(len(df)):
             correct_df = df.iloc[i]
-            options_df = df[~df['fullname'].isin(selected_players)].sample(3)
+            options_df = others_df.sample(3)
             options = [i for i in options_df['fullname']]
             correct_response = correct_df['fullname']
             nationality = correct_df['nationality']
