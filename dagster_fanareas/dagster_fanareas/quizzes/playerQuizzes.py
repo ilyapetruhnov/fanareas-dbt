@@ -70,7 +70,11 @@ class PlayerQuizzes(Quizzes):
             q3 = "Who is shown on the photo?"
             question_statement = random.choice([q1,q2,q3 ])
             options = [i for i in options_df['player_name']]
-            question = self.question_template(question_statement, options, image_url = image_url, image_size = 1)
+            question = self.question_template(question_statement = question_statement,
+                                              correct_response = correct_response,
+                                              options = options, 
+                                              image_url = image_url, 
+                                              image_size = 1)
             questions.append(question)
             q_num -= 1
              
