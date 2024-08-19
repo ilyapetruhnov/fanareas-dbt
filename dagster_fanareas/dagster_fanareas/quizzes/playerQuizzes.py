@@ -402,7 +402,7 @@ class PlayerQuizzes(Quizzes):
             time.sleep(10)
         return questions
     
-    def goalkeeper_goals(self) -> list:
+    def goalkeeper_goals(self, q_num) -> list:
         questions = []
         df = self.generate_df(goalkeeper_stats_query)
         for i in range(len(df)):
