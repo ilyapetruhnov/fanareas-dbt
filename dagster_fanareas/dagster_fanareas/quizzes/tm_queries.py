@@ -39,7 +39,7 @@ top_value_players_query = """select * from tm_dim_top_players_by_value order by 
 
 played_for_multiple_clubs_query = """select * from played_for_multiple_clubs"""
 
-player_transfers_over_fifty_million_query = """select * from  dim_player_transfers where international_team != '' and transfer_fee_value > 49999999"""
+player_transfers_over_fifty_million_query = """select * from dim_player_transfers where international_team != '' and transfer_fee_value > 49999999"""
 
 
 own_goals_query = """select * from tm_dim_top_league_players
@@ -49,20 +49,20 @@ own_goals_query = """select * from tm_dim_top_league_players
                         limit 5"""
 
 own_goals_options_query = """
-select * public.from tm_dim_top_league_players
+select * from tm_dim_top_league_players
                         where goals > own_goals
                         and own_goals > 0
                         order by yellow_cards desc
                         limit 50
 """
 
-player_position_performance_query = """select * from public.tm_dim_top_league_players
+player_position_performance_query = """select * from tm_dim_top_league_players
                                         where league = '{}'
                                         and position_group = '{}'
                                         order by {} desc
                                         limit 50"""
 
-player_position_performance_options_query = """select * public.from tm_dim_top_league_players
+player_position_performance_options_query = """select * from tm_dim_top_league_players
                                                 where league = '{}'
                                                 and position_group = '{}'
                                                 and appearances > 200
@@ -72,7 +72,7 @@ player_position_performance_options_query = """select * public.from tm_dim_top_l
 
 
 
-most_stats_in_a_league_query = """select * from public.tm_dim_top_league_players
+most_stats_in_a_league_query = """select * from tm_dim_top_league_players
                                     where league = '{}' 
                                     order by {} desc"""
 
