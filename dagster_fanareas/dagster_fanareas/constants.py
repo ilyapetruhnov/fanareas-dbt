@@ -114,6 +114,7 @@ nationality_mapping = {
     "China": "Chinese",
     "Colombia": "Colombian",
     "Comoros": "Comoran",
+    "Cote d'Ivoire": "Ivorian",
     "Democratic Republic of the Congo": "Congolese",
     "Costa Rica": "Costa Rican",
     "Croatia": "Croatian",

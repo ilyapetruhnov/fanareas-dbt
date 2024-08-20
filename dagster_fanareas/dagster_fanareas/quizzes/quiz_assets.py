@@ -19,7 +19,7 @@ from dagster_fanareas.quizzes.quiz_collection import validate_team_season, post_
 def new_guess_the_player_quiz(context) -> bool:
     title = "Guess the player"
     description = "Answer 5 questions about football players"
-    quiz_type = 0
+    quiz_type = 2
     is_demo = False
     player_quiz = PlayerQuizzes(title, description, quiz_type, is_demo)
     result = player_quiz.create_quiz()
