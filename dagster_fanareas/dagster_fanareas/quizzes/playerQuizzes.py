@@ -127,6 +127,7 @@ class PlayerQuizzes(Quizzes):
     
     def player_shirt_number(self, q_num) -> list:
         df = self.generate_df(top_value_players_query)
+        time.sleep(15)
         questions = []
         while q_num > 0:
             shirt_number = random.choice(['9','10'])
@@ -160,6 +161,7 @@ class PlayerQuizzes(Quizzes):
 
     def player_position_question(self, q_num) -> list:
         df = self.generate_df(top_value_players_query)
+        time.sleep(15)
         questions = []
         while q_num > 0:
             ndf = df.groupby('position_group').apply(lambda x: x.sample(1)).reset_index(drop=True)
@@ -196,6 +198,7 @@ class PlayerQuizzes(Quizzes):
 
     def transfer_and_club_question(self, q_num) -> list:
         df = self.generate_df(player_transfers_over_fifty_million_query)
+        time.sleep(15)
         questions = []
         countries = self.nationality_mapping.keys()
         df = df[df['international_team'].isin(countries)]
@@ -296,6 +299,7 @@ class PlayerQuizzes(Quizzes):
         leagues = ['Premier League', 'LaLiga', 'Serie A','Ligue 1', 'Bundesliga']
         for league_name in leagues:
             df = self.generate_df(cards_combined_query.format(league_name))
+            time.sleep(15)
             combined_cards = df['combined_cards'].iloc[0]
             red_cards = df['red_cards'].iloc[0]
             options = list(df['fullname'].unique())
@@ -304,7 +308,6 @@ class PlayerQuizzes(Quizzes):
             description = f"{correct_response} has received a total of {combined_cards} cards including {red_cards} red cards"
             question = self.question_template(question_statement, options, correct_response, description)
             questions.append(question)
-            time.sleep(5)
         return questions
 
     def player_played_in_4_leagues(self, q_num) -> list:
@@ -313,7 +316,9 @@ class PlayerQuizzes(Quizzes):
             leagues = ['Premier League', 'LaLiga', 'Serie A','Ligue 1', 'Bundesliga']
             league_names = random.sample(leagues, 4)
             options_df = self.generate_df(played_in_less_4_leagues_query)
+            time.sleep(15)
             correct_df = self.generate_df(played_in_4_major_leagues.format(*league_names))
+            time.sleep(15)
             question_statement = "Which player has played in the {}, {}, {}, and {}?".format(*league_names)
             correct_response = correct_df.sample(1)['fullname'].iloc[0]
             if correct_response in self.players:
@@ -326,7 +331,6 @@ class PlayerQuizzes(Quizzes):
             question = self.question_template(question_statement, options, correct_response, description)
             questions.append(question)
             q_num -= 1
-            time.sleep(10)
             if q_num == 0:
                 break
         return questions
@@ -343,12 +347,14 @@ class PlayerQuizzes(Quizzes):
         questions = []
         df = self.generate_df(own_goals_query)
         for i in range(len(df)):
+            time.sleep(5)
             correct_df = df.iloc[i]
             correct_response = correct_df['fullname']
             league_name = correct_df['league']
             own_goals = int(correct_df['own_goals'])
             goals = int(correct_df['goals'])
             options_df = self.generate_df(own_goals_options_query).sample(3)
+            time.sleep(15)
             options = list(options_df['fullname'].unique())
             options.append(correct_response)
             q1 = f"Which player scored {own_goals} own goals in the {league_name}, while scoring just {goals} goals for his team?"
@@ -374,12 +380,14 @@ class PlayerQuizzes(Quizzes):
             ('LaLiga', 'midfielder', 'assists'),
         ]
         for i in combinations:
+            time.sleep(15)
             league_name = i[0]
             position_group = i[1]
             metric =  i[2]
 
             if metric == 'goals':
                 df = self.generate_df(player_position_performance_query.format(league_name, position_group, metric))
+                time.sleep(15)
                 goals = int(df['goals'].iloc[0])
                 correct_response = df['fullname'].iloc[0]
                 options_df = self.generate_df(player_position_performance_options_query.format(league_name, position_group, metric))
@@ -390,6 +398,7 @@ class PlayerQuizzes(Quizzes):
                 description = f"{correct_response} is a famously known {league_name} player who scored a record amount of goals for a {position_group}"
             elif metric == 'assists':
                 df = self.generate_df(player_position_performance_query.format(league_name, position_group, metric))
+                time.sleep(15)
                 assists = int(df['assists'].iloc[0])
                 correct_response = df['fullname'].iloc[0]
                 options_df = self.generate_df(player_position_performance_options_query.format(league_name, position_group, metric))
@@ -401,7 +410,7 @@ class PlayerQuizzes(Quizzes):
             question_statement = random.choice([q1,q2])
             question = self.question_template(question_statement, options, correct_response, description)
             questions.append(question)
-            time.sleep(10)
+            
         return questions
     
     def goalkeeper_goals(self, q_num) -> list:
@@ -413,6 +422,7 @@ class PlayerQuizzes(Quizzes):
             goals = int(correct_df['goals'])
             country = correct_df['nationality']
             nationality = self.nationality_mapping[country]
+            time.sleep(15)
             options_df = self.generate_df(other_goalkeepers_query.format(correct_response, country)).sample(3)
             options = list(options_df.sample(3)['fullname'].unique())
             options.append(correct_response)
@@ -431,6 +441,7 @@ class PlayerQuizzes(Quizzes):
             league_name = i[0]
             metric =  i[1]
             df = self.generate_df(most_stats_in_a_league_query.format(league_name, metric))
+            time.sleep(15)
             metric_num = int(df.iloc[0][metric])
             correct_response = df.iloc[0]['fullname']
             country = df.iloc[0]['nationality']
@@ -457,7 +468,7 @@ class PlayerQuizzes(Quizzes):
                 description = f"{nationality} {position_group} {correct_response} has scored {metric_num} own goals which is a record in {league_name}"
             question = self.question_template(question_statement, options, correct_response, description)
             questions.append(question)
-            time.sleep(5)
+            
         return questions
     
     def player_top_league_stats_comparison(self, q_num) -> list:
@@ -467,6 +478,7 @@ class PlayerQuizzes(Quizzes):
         combinations = list(itertools.product(leagues, metrics))
 
         for i in combinations:
+            time.sleep(15)
             league_name = i[0]
             metric =  i[1]
             metric_top_limit = 100
@@ -499,7 +511,6 @@ class PlayerQuizzes(Quizzes):
             question_statement = random.choice([q1,q2])
             question = self.question_template(question_statement, options, correct_response, description)
             questions.append(question)
-            time.sleep(5)
         return questions
 
     
