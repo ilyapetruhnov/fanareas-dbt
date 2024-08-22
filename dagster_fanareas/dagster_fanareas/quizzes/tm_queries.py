@@ -35,9 +35,13 @@ team_query = """
 player_query = """select * from tm_stg_player"""
 
 
-top_value_players_query = """select * from tm_dim_top_players_by_value order by tm_market_value desc limit 450"""
+top_value_players_query = """select * from tm_dim_top_players_by_value
+                                where team != 'Without Club'
+                                order by tm_market_value desc limit 450"""
 
-played_for_multiple_clubs_query = """select * from played_for_multiple_clubs"""
+played_for_multiple_clubs_query = """select * from played_for_multiple_clubs
+                                        order by teams_len desc
+                                        limit 150"""
 
 player_transfers_over_fifty_million_query = """select * from dim_player_transfers where international_team != '' and transfer_fee_value > 49999999"""
 
@@ -115,6 +119,7 @@ with agg_vw as (
     select player_id,fullname,
     array_agg(distinct league_name) as played_leagues
     from tm_dim_player_stats
+    where fullname != 'Justin Kluivert'
     group by player_id,fullname
 
 ),

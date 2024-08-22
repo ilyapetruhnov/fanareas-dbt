@@ -18,18 +18,19 @@ from dagster_fanareas.quizzes.quiz_collection import validate_team_season, post_
 @asset(group_name="quizzes")
 def new_guess_the_player_quiz(context) -> bool:
     title = "Guess the player"
-    description = "Answer 5 questions about football players"
+    description = "5 questions about football players"
     quiz_type = 2
     is_demo = False
     player_quiz = PlayerQuizzes(title, description, quiz_type, is_demo)
     result = player_quiz.create_quiz()
+    random.shuffle(result)
     # Generate 50 batches with 5 items each
     batches = [result[i:i + 5] for i in range(0, len(result), 5)]
     random.shuffle(batches)
     for idx, batch in enumerate(batches, start=1):
         context.log.info(f"generated quiz {idx}")
         player_quiz.post_quiz(batch)
-        time.sleep(5)
+        time.sleep(3)
     return True
 
 @asset(group_name="quizzes")
