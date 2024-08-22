@@ -254,7 +254,7 @@ class PlayerQuizzes(Quizzes):
         query_df = self.generate_df(played_for_multiple_clubs_query)
         df = query_df.sample(q_num)
         selected_players = list(df['fullname'].unique())
-        others_df = df[~df['fullname'].isin(selected_players)]
+        others_df = query_df[~query_df['fullname'].isin(selected_players)]
         countries = self.nationality_mapping.keys()
         df = df[df['international_team'].isin(countries)]
         df['nationality'] = df['international_team'].apply(lambda x: self.nationality_mapping[x])
