@@ -87,37 +87,45 @@ class PlayerQuizzes(Quizzes):
         questions = []
         countries = self.nationality_mapping.keys()
         df = df[df['international_team'].isin(countries)]
-        ndf = df.groupby('international_team').apply(lambda x: x.sample(1)).reset_index(drop=True)
-        ndf['nationality'] = ndf['international_team'].apply(lambda x: self.nationality_mapping[x])
-        
-        while q_num > 0:
-            options_df = ndf.sample(4)
-            correct_response = options_df['player_name'].iloc[0]
-            if correct_response in self.players:
-                continue        
-            position_group = options_df['position_group'].iloc[0]
-            international_team = options_df['international_team'].iloc[0]
-            nationality = options_df['nationality'].iloc[0]
-            team_name = options_df['team'].iloc[0]
-            options = [i for i in options_df['player_name']]
+        # ndf = df.groupby('international_team').apply(lambda x: x.sample(1)).reset_index(drop=True)
+        df['nationality'] = df['international_team'].apply(lambda x: self.nationality_mapping[x])
+        nationality_df = df.groupby('international_team').count().sort_values('id').reset_index()
+        nationality_df = nationality_df[nationality_df['id']>3]
+        countries = list(nationality_df['international_team'])
+        for i in countries:
+            if i == 'Croatia':
+                country_df = nationality_df[nationality_df['international_team']==i]
+                correct_response = country_df['player_name'].iloc[0]
+                position_group = country_df['position_group'].iloc[0]
+                international_team = country_df['international_team'].iloc[0]
+                nationality = country_df['nationality'].iloc[0]
+                team_name = country_df['team'].iloc[0]
+                options = ['Josko Gvardiol', 'Luca Modric', 'Josip Stanisic', 'Lovro Majer']
+            else:
+                country_df = nationality_df[nationality_df['international_team']==i].drop_duplicates(subset='team').sample(4)
+                correct_response = country_df['player_name'].iloc[0]
+                league_name = country_df['league'].iloc[0]   
+                position_group = country_df['position_group'].iloc[0]
+                international_team = country_df['international_team'].iloc[0]
+                nationality = country_df['nationality'].iloc[0]
+                team_name = country_df['team'].iloc[0]
+                options = [i for i in country_df['player_name']]
 
-            question_statement1 = f"Which player represents {international_team} national team and currently plays for {team_name}?"
-            question_statement2 = f"A key player for the national team of {international_team}, he also plays for {team_name}. Who is this player?"
-            question_statement3 = f"Representing {international_team}, this {position_group} plays for {team_name}. Who is he?"
-            question_statement4 = f"A {nationality} {position_group}, who is now playing at {team_name}. Who is this player?"
-            question_statement5 = f"Which {nationality} {position_group} plays for {team_name}?"
+            question_statement1 = f"Which player represents {international_team} national team and played for {team_name} in the 23/24 season?"
+            question_statement2 = f"A key player for the national team of {international_team}, he also played for {team_name} in the 23/24 season. Who is this player?"
+            question_statement3 = f"Representing {international_team}, this {position_group} was part of {team_name} in the 23/24 season?. Who is he?"
+            question_statement4 = f"A {nationality} {position_group}, who was playing at {team_name} in the 23/24 season. Who is this player?"
 
             question_statement = random.choice(
                 [
                     question_statement1,
                     question_statement2,
                     question_statement3,
-                    question_statement4, 
-                    question_statement5
+                    question_statement4
                 ]
                                                 )
 
-            description = f"""{team_name} {position_group} {correct_response} represents {international_team}"""
+            description = f"""{correct_response} represents {international_team}, he was in the {team_name} roster in the 23/24 {league_name} season"""
             question = self.question_template(question_statement, options, correct_response, description)
             questions.append(question)
             q_num -= 1
@@ -127,7 +135,7 @@ class PlayerQuizzes(Quizzes):
     
     def player_shirt_number(self, q_num) -> list:
         df = self.generate_df(top_value_players_query)
-        time.sleep(15)
+        time.sleep(5)
         questions = []
         while q_num > 0:
             shirt_number = random.choice(['9','10'])
@@ -139,7 +147,10 @@ class PlayerQuizzes(Quizzes):
                     continue   
                 team_name = options_df['team'].iloc[0]
                 options = [i for i in options_df['player_name']]
-                question_statement = f"Who is the {team_name} number nine?"
+                q1 = f"Who was the {team_name} number nine in the 23/24 season?"
+                q2 = f"Who weared the number nine jersey for {team_name} in the 23/24 season?"
+                question_statement = random.choice([q1, q2])
+
             else:
                 ndf = df[df['player_shirt_number']=='10']
                 options_df = ndf.sample(4)
@@ -148,7 +159,9 @@ class PlayerQuizzes(Quizzes):
                     continue   
                 team_name = options_df['team'].iloc[0]
                 options = [i for i in options_df['player_name']]
-                question_statement = f"Who is the {team_name} number ten?"
+                q1 = f"Who was the {team_name} number ten in the 23/24 season?"
+                q2 = f"Who weared the number ten jersey for {team_name} in the 23/24 season?"
+                question_statement = random.choice([q1, q2])
 
             description = f"""{correct_response} wears the number {shirt_number} shirt for {team_name}"""
             question = self.question_template(question_statement, options, correct_response, description)
@@ -161,32 +174,36 @@ class PlayerQuizzes(Quizzes):
 
     def player_position_question(self, q_num) -> list:
         df = self.generate_df(top_value_players_query)
-        time.sleep(15)
+        time.sleep(5)
         questions = []
         while q_num > 0:
             ndf = df.groupby('position_group').apply(lambda x: x.sample(1)).reset_index(drop=True)
-            options_df = ndf.sample(4)
-            correct_response = options_df['player_name'].iloc[0]
+            selected_df = ndf.sample(1)
+            correct_response = selected_df['player_name'].iloc[0]
             if correct_response in self.players:
                 continue
-            position_group = options_df['position_group'].iloc[0]
-            player_main_position = options_df['player_main_position'].iloc[0]
-            team_name = options_df['team'].iloc[0]
-            options = [i for i in options_df['player_name']]
+            position_group = selected_df['position_group'].iloc[0]
+            player_main_position = selected_df['player_main_position'].iloc[0]
+            team_name = selected_df['team'].iloc[0]
 
+            options_df = df[df['position_group'] == position_group]
+            options_df = options_df[options_df['team'] != team_name].sample(3)
+
+            options = [i for i in options_df['player_name']]
+            options.append(correct_response)
 
             if position_group == 'midfielder':
-                question_statement1 = f"Which {position_group}er, known for his playmaking abilities and vision, plays for {team_name}?"
-                question_statement2 = f"Which palyer plays as {player_main_position}er at {team_name}?"
-                question_statement3 = f"Who occupies the {player_main_position} position at {team_name}?"
-                question_statement4 = f"Which midfielder is on the {team_name} roster?"
+                question_statement1 = f"Which {position_group}er, known for his playmaking abilities and vision, plays for {team_name} in the 23/24 season?"
+                question_statement2 = f"Which palyer played as {player_main_position}er at {team_name} in the 23/24 season?"
+                question_statement3 = f"Who occupied the {player_main_position} position at {team_name} in the 23/24 season?"
+                question_statement4 = f"Which midfielder was on the {team_name} roster in the 23/24 season?"
             else:
-                question_statement1 = f"Which {player_main_position} plays for {team_name}?"
-                question_statement2 = f"Which {player_main_position} is part of {team_name} squad?"
-                question_statement3 = f"Who is the {team_name} {player_main_position}?"
-                question_statement4 = f"Which {player_main_position} represents {team_name}?" 
+                question_statement1 = f"Which {player_main_position} played for {team_name} in the 23/24 season?"
+                question_statement2 = f"Which {player_main_position} was part of {team_name} squad in the 23/24 season?"
+                question_statement3 = f"Who was the {team_name} {player_main_position} in the 23/24 season?"
+                question_statement4 = f"Which {player_main_position} represented {team_name} in the 23/24 season?" 
 
-            description = f"""{correct_response} plays for {team_name} as {player_main_position}"""
+            description = f"""{correct_response} played for {team_name} in 23/24 season"""
             question_statement = random.choice([question_statement1,question_statement2, question_statement3, question_statement4])
             question = self.question_template(question_statement, options, correct_response, description)
             questions.append(question)
@@ -198,7 +215,7 @@ class PlayerQuizzes(Quizzes):
 
     def transfer_and_club_question(self, q_num) -> list:
         df = self.generate_df(player_transfers_over_fifty_million_query)
-        time.sleep(15)
+        time.sleep(5)
         questions = []
         countries = self.nationality_mapping.keys()
         df = df[df['international_team'].isin(countries)]
@@ -264,23 +281,19 @@ class PlayerQuizzes(Quizzes):
             options = [i for i in options_df['fullname']]
             correct_response = correct_df['fullname']
             options.append(correct_response)
-            nationality = correct_df['nationality']
             position = correct_df['position_group']
             variables = correct_df['teams']
             if len(variables) == 3:
-                variables.insert(0, nationality)
-                q1 = "Which {} international has played for  {}, {}, and {}?".format(*variables)
-                q2 = "Which {} player has played for {}, {}, and {}?".format(*variables)
-                q3 = "Who represents {} national team and also played for {}, {}, and {}?".format(*variables)
-                question_statement = random.choice([q1,q2,q3])
+                q1 = "Which player has played for  {}, {}, and {}?".format(*variables)
+                q2 = "Who played for {}, {}, and {} in his career?".format(*variables)
+                question_statement = random.choice([q1,q2])
                 variables.insert(0, correct_response)
                 description = "{} has played for {}, {} and {}?".format(*variables)
             elif len(variables) == 2:
-                variables.insert(0, nationality)
-                variables.insert(1, position)
-                q1 = "Which {} {}'s career includes playing for {} and {}?".format(*variables)
-                q2 = "Which {} {} has had a career at {} and {}?".format(*variables)
-                q3 = "Which {} {} has graced the fields for {} and {}?".format(*variables)
+                variables.insert(0, position)
+                q1 = "Which {}'s career includes playing for {} and {}?".format(*variables)
+                q2 = "Which {} had a career at {} and {}?".format(*variables)
+                q3 = "Which {} has graced the fields for {} and {}?".format(*variables)
                 question_statement = random.choice([q1,q2,q3])
                 variables.insert(0, correct_response)
                 description = "{} has played for {} and {}?".format(*variables)
@@ -455,7 +468,7 @@ class PlayerQuizzes(Quizzes):
                 question_statement = f"Who has the most number of bookings (yellow cards) in {league_name}?"
                 description = f"{nationality} {position_group} {correct_response} holds a record of {metric_num} yellow cards in {league_name}"
             elif metric == 'red_cards':
-                question_statement = f"Which player has been sent off the most times in {league_name} history, ?"
+                question_statement = f"Which player has been sent off the most times in {league_name} history?"
                 description = f"{nationality} {position_group} {correct_response} received {metric_num} red cards which is a record in {league_name}"
             elif metric == 'appearances':
                 question_statement = f"Who holds the record for the most appearances in the {league_name}, with {metric_num} matches played?"

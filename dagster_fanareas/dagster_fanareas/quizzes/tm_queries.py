@@ -37,7 +37,16 @@ player_query = """select * from tm_stg_player"""
 
 top_value_players_query = """select * from tm_dim_top_players_by_value
                                 where team != 'Without Club'
-                                order by tm_market_value desc limit 450"""
+                                and international_team not in ('',
+                                                               'England U21',
+                                                               'England U20',
+                                                               'France U21',
+                                                               'France U23',
+                                                               'Germany U21',
+                                                               'Italy U21',
+                                                               'Portugal U21',
+                                                               'Spain U21',
+                                                              'France U20')"""
 
 played_for_multiple_clubs_query = """select * from played_for_multiple_clubs
                                         order by teams_len desc

@@ -51,7 +51,7 @@ class Quizzes:
         return json_data
     
     def question_template(self, question_statement, options, correct_response,  description=None, image_url = None, image_size = 0) -> dict:
-        if len(options) < 4:
+        if len(options) != 4:
             result = None
         else:
             random.shuffle(options)
