@@ -24,13 +24,16 @@ def new_guess_the_player_quiz(context) -> bool:
     player_quiz = PlayerQuizzes(title, description, quiz_type, is_demo)
     result = player_quiz.create_quiz()
     random.shuffle(result)
+    context.log.info(f"generated {len(result)} questions")
     # Generate 50 batches with 5 items each
     batches = [result[i:i + 5] for i in range(0, len(result), 5)]
+    context.log.info(f"generated {len(batches)} batches")
     random.shuffle(batches)
     for idx, batch in enumerate(batches, start=1):
         context.log.info(f"generated quiz {idx}")
+        context.log.info(f"batch size {len(batch)}")
         player_quiz.post_quiz(batch)
-        time.sleep(3)
+        time.sleep(10)
     return True
 
 @asset(group_name="quizzes")
