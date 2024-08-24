@@ -85,8 +85,6 @@ class PlayerQuizzes(Quizzes):
     def player_national_team_and_club(self, q_num) -> list:
         df = self.generate_df(top_value_players_query)
         questions = []
-        countries = self.nationality_mapping.keys()
-        df = df[df['international_team'].isin(countries)]
         # ndf = df.groupby('international_team').apply(lambda x: x.sample(1)).reset_index(drop=True)
         df['nationality'] = df['international_team'].apply(lambda x: self.nationality_mapping[x])
         nationality_df = df.groupby('international_team').count().sort_values('id').reset_index()
@@ -94,7 +92,7 @@ class PlayerQuizzes(Quizzes):
         countries = list(nationality_df['international_team'])
         for i in countries:
             if i == 'Croatia':
-                country_df = nationality_df[nationality_df['international_team']==i]
+                country_df = df[df['international_team']==i]
                 correct_response = country_df['player_name'].iloc[0]
                 position_group = country_df['position_group'].iloc[0]
                 international_team = country_df['international_team'].iloc[0]
@@ -102,7 +100,7 @@ class PlayerQuizzes(Quizzes):
                 team_name = country_df['team'].iloc[0]
                 options = ['Josko Gvardiol', 'Luca Modric', 'Josip Stanisic', 'Lovro Majer']
             else:
-                country_df = nationality_df[nationality_df['international_team']==i].drop_duplicates(subset='team').sample(4)
+                country_df = df[df['international_team']==i].drop_duplicates(subset='team').sample(4)
                 correct_response = country_df['player_name'].iloc[0]
                 league_name = country_df['league'].iloc[0]   
                 position_group = country_df['position_group'].iloc[0]
@@ -128,9 +126,7 @@ class PlayerQuizzes(Quizzes):
             description = f"""{correct_response} represents {international_team}, he was in the {team_name} roster in the 23/24 {league_name} season"""
             question = self.question_template(question_statement, options, correct_response, description)
             questions.append(question)
-            q_num -= 1
-            if q_num == 0:
-                break
+
         return questions
     
     def player_shirt_number(self, q_num) -> list:
