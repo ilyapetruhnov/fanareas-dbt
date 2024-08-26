@@ -146,7 +146,7 @@ with agg_vw as (
                 and '{}' = ANY(played_leagues)
                 and '{}' = ANY(played_leagues)
                 and '{}' = ANY(played_leagues)
-                order by fullname desc
+                order by leagues_len
 """
 
 played_in_less_4_leagues_query = """

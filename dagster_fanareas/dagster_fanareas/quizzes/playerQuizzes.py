@@ -32,16 +32,16 @@ class PlayerQuizzes(Quizzes):
     def create_quiz(self):
         categories = {
         "player_shirt_number": 10,
-        "player_played_in_4_leagues": 3,
+        "player_played_in_4_leagues": 5,
         "player_national_team_and_club": 30,
-        "player_photo_question": 50,
+        "player_photo_question": 55,
         "player_position_question": 30,
         "transfer_and_club_question": 40,
         "player_top_league_stats": 30,
         "player_top_league_stats_comparison": 10,
         "goalkeeper_goals": 5,
         "player_position_club_performance": 15,
-        "played_for_multiple_clubs": 20,
+        "played_for_multiple_clubs": 25,
         "player_played_in_all_major_leagues": 1,
         "player_red_yellow_cards_combined": 5,
         "record_transfer": 1,
@@ -67,8 +67,7 @@ class PlayerQuizzes(Quizzes):
             image_url = options_df['img'].iloc[0]
             q1 = "Who is on the photo?"
             q2 = "Which player is on the photo?"
-            q3 = "Who is shown on the photo?"
-            question_statement = random.choice([q1,q2,q3 ])
+            question_statement = random.choice([q1,q2])
             options = [i for i in options_df['player_name']]
             question = self.question_template(question_statement = question_statement,
                                               correct_response = correct_response,
@@ -85,7 +84,6 @@ class PlayerQuizzes(Quizzes):
     def player_national_team_and_club(self, q_num) -> list:
         df = self.generate_df(top_value_players_query)
         questions = []
-        # ndf = df.groupby('international_team').apply(lambda x: x.sample(1)).reset_index(drop=True)
         df['nationality'] = df['international_team'].apply(lambda x: self.nationality_mapping[x])
         nationality_df = df.groupby('international_team').count().sort_values('id').reset_index()
         nationality_df = nationality_df[nationality_df['id']>3]
@@ -159,7 +157,7 @@ class PlayerQuizzes(Quizzes):
                 q2 = f"Who weared the number ten jersey for {team_name} in the 23/24 season?"
                 question_statement = random.choice([q1, q2])
 
-            description = f"""{correct_response} wears the number {shirt_number} shirt for {team_name}"""
+            description = f"""{correct_response} played under number {shirt_number} for {team_name} in the 23/24 season"""
             question = self.question_template(question_statement, options, correct_response, description)
             questions.append(question)
             q_num -= 1
@@ -189,7 +187,7 @@ class PlayerQuizzes(Quizzes):
             options.append(correct_response)
 
             if position_group == 'midfielder':
-                question_statement1 = f"Which {position_group}er, known for his playmaking abilities and vision, plays for {team_name} in the 23/24 season?"
+                question_statement1 = f"Which midfielder played for {team_name} in the 23/24 season?"
                 question_statement2 = f"Which palyer played as {player_main_position}er at {team_name} in the 23/24 season?"
                 question_statement3 = f"Who occupied the {player_main_position} position at {team_name} in the 23/24 season?"
                 question_statement4 = f"Which midfielder was on the {team_name} roster in the 23/24 season?"
@@ -280,11 +278,11 @@ class PlayerQuizzes(Quizzes):
             position = correct_df['position_group']
             variables = correct_df['teams']
             if len(variables) == 3:
-                q1 = "Which player has played for  {}, {}, and {}?".format(*variables)
+                q1 = "Which player played for  {}, {}, and {}?".format(*variables)
                 q2 = "Who played for {}, {}, and {} in his career?".format(*variables)
                 question_statement = random.choice([q1,q2])
                 variables.insert(0, correct_response)
-                description = "{} has played for {}, {} and {}?".format(*variables)
+                description = "{} played for {}, {} and {}?".format(*variables)
             elif len(variables) == 2:
                 variables.insert(0, position)
                 q1 = "Which {}'s career includes playing for {} and {}?".format(*variables)
@@ -295,8 +293,8 @@ class PlayerQuizzes(Quizzes):
                 description = "{} has played for {} and {}?".format(*variables)
             else:
                 q1 = "Who played for {}, {}, {} and {} in his career?".format(*variables)
-                q2 = "Which player has played for {}, {}, {} and {}?".format(*variables)
-                q3 = "Which player has been a part of {}, {}, {} and {}?".format(*variables)
+                q2 = "Which player played for {}, {}, {} and {}?".format(*variables)
+                q3 = "Which player has been a part of {}, {}, {} and {} in his career?".format(*variables)
                 question_statement = random.choice([q1,q2,q3])
                 variables.insert(0, correct_response)
                 description = "{} has played for {}, {}, {} and {}?".format(*variables)
@@ -322,17 +320,21 @@ class PlayerQuizzes(Quizzes):
 
     def player_played_in_4_leagues(self, q_num) -> list:
         questions = []
-        while q_num > 0:
-            leagues = ['Premier League', 'LaLiga', 'Serie A','Ligue 1', 'Bundesliga']
-            league_names = random.sample(leagues, 4)
+        combinations = [
+            ['LaLiga', 'Serie A','Ligue 1', 'Bundesliga'],
+            ['Premier League', 'LaLiga', 'Serie A','Ligue 1'],
+            ['Premier League', 'Serie A','Ligue 1', 'Bundesliga'],
+            ['Premier League', 'LaLiga', 'Ligue 1', 'Bundesliga'],
+            ['Premier League', 'LaLiga', 'Serie A','Bundesliga']
+            ]
+        for league_names in combinations:
             options_df = self.generate_df(played_in_less_4_leagues_query)
-            time.sleep(15)
+            time.sleep(5)
             correct_df = self.generate_df(played_in_4_major_leagues.format(*league_names))
-            time.sleep(15)
-            question_statement = "Which player has played in the {}, {}, {}, and {}?".format(*league_names)
+            time.sleep(5)
+            question_statement = "Which player played in the {}, {}, {}, and {}?".format(*league_names)
             correct_response = correct_df.sample(1)['fullname'].iloc[0]
-            if correct_response in self.players:
-                continue
+
             options = list(options_df.sample(3)['fullname'].unique())
             options.append(correct_response)
             variables = league_names
@@ -340,9 +342,6 @@ class PlayerQuizzes(Quizzes):
             description = "{} played in 4 major European leagues including {}, {}, {} and {}".format(*variables)
             question = self.question_template(question_statement, options, correct_response, description)
             questions.append(question)
-            q_num -= 1
-            if q_num == 0:
-                break
         return questions
     
     def player_played_in_all_major_leagues(self, q_num) -> list:
@@ -363,7 +362,7 @@ class PlayerQuizzes(Quizzes):
             own_goals = int(correct_df['own_goals'])
             goals = int(correct_df['goals'])
             options_df = self.generate_df(own_goals_options_query).sample(3)
-            time.sleep(15)
+            time.sleep(10)
             options = list(options_df['fullname'].unique())
             options.append(correct_response)
             q1 = f"Which player scored {own_goals} own goals in the {league_name}, while scoring just {goals} goals for his team?"
@@ -401,9 +400,9 @@ class PlayerQuizzes(Quizzes):
                 options_df = self.generate_df(player_position_performance_options_query.format(league_name, position_group, metric))
                 options = list(options_df.sample(3)['fullname'].unique())
                 options.append(correct_response)
-                q1 = f"Who is the {league_name}'s highest-scoring {position_group}, with {goals} goals?"
-                q2 = f"Who is the {league_name}'s all-time top-scoring {position_group},  with {goals} goals?"
-                description = f"{correct_response} is a famously known {league_name} player who scored a record amount of goals for a {position_group}"
+                q1 = f"Who is the {league_name}'s highest-scoring {position_group}?"
+                q2 = f"Who is the {league_name}'s all-time top-scoring {position_group}?"
+                description = f"{correct_response} is a famously known {league_name} player who scored a record amount of goals for a {position_group}, with {goals} goals"
             elif metric == 'assists':
                 df = self.generate_df(player_position_performance_query.format(league_name, position_group, metric))
                 assists = int(df['assists'].iloc[0])
@@ -411,9 +410,9 @@ class PlayerQuizzes(Quizzes):
                 options_df = self.generate_df(player_position_performance_options_query.format(league_name, position_group, metric))
                 options = list(options_df.sample(3)['fullname'].unique())
                 options.append(correct_response)
-                q1 = f"Which {position_group} has provided the most in assists in {league_name}'s history?"
-                q2 = f"Who holds the record for the highest number of assists in {league_name} for a {position_group},  with {assists} assists?"
-                description = f"{correct_response} is until today the {league_name} top-assistant"
+                q1 = f"Which {position_group} has provided the most assists in {league_name}'s history?"
+                q2 = f"Who holds the record for the highest number of assists in {league_name} for a {position_group}?"
+                description = f"{correct_response} is until today the {league_name} top-assistant with {assists} assists"
             question_statement = random.choice([q1,q2])
             question = self.question_template(question_statement, options, correct_response, description)
             questions.append(question)
@@ -492,8 +491,10 @@ class PlayerQuizzes(Quizzes):
             metric_options_top_limit = int(metric_top_limit - 15)
             metric_options_bottom_limit = int(metric_options_top_limit - 30)
             variables = [league_name, 
-                        metric, metric_top_limit, 
-                        league_name, metric, 
+                        metric, 
+                        metric_top_limit, 
+                        league_name, 
+                        metric, 
                         metric_options_top_limit, 
                         metric, 
                         metric_options_bottom_limit
