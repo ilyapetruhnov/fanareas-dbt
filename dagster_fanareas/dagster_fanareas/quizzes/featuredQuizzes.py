@@ -136,7 +136,8 @@ class FeaturedQuizzes(Quizzes):
         correct_response = df['rnk'].iloc[0]
         season_name = f"{season_id}/{season_id+1}"
         option_lst = ["1st","2nd","3rd","4th","5th","6th","7th","8th"]
-        option_lst.remove(correct_response)
+        if correct_response in option_lst:
+            option_lst.remove(correct_response)
         options = random.sample(option_lst, 3)
         options.append(correct_response)
         question_statement = f"What position did {team_name} finish in the {league_name} during the {season_name} season?"
