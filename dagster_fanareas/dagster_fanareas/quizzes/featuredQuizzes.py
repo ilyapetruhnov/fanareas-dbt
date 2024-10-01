@@ -46,8 +46,8 @@ class FeaturedQuizzes(Quizzes):
     def create_quiz(self, team_id, season_id):
         team_name = team_mapping[team_id]
         season_name = f"{season_id}/{season_id+1}"
-        quiz_title = f"{team_name} in {season_name} season quiz"
-        quiz_description = f"5-question quiz on {team_name} in {season_name} season"
+        quiz_title = f"{team_name} in the {season_name} season"
+        quiz_description = f"5-question quiz on {team_name} in the {season_name} season"
         self.collect_featured_quiz_questions(team_id, season_id)
         questions = random.sample(self.quiz_collection, 5)
         tags = self.quiz_tags(

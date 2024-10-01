@@ -49,7 +49,11 @@ def new_featured_quiz(context) -> bool:
     featured_quiz = FeaturedQuizzes(title, description, quiz_type, is_demo)
     team_ids = ['11','985','631','148','31','131','418','506','12','6195','46','27','16','5']
     season_ids = [2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]
-    for team_id, season_id in product(team_ids, season_ids):
+    combs = product(team_ids, season_ids)
+    combs_list = list(combs)
+    random.shuffle(combs_list)
+    shuffled_combs = iter(combs_list)
+    for team_id, season_id in shuffled_combs:
         featured_quiz.create_quiz(team_id, season_id)
         context.log.info(f"generated quiz for {team_id} in {season_id} season")
         time.sleep(5)
