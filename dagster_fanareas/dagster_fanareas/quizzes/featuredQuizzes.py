@@ -90,6 +90,8 @@ class FeaturedQuizzes(Quizzes):
     def part_of_squad(self, team_id, season_id):
         season_prev = season_id - 2
         df = self.generate_df(part_of_squad_query.format(team_id, season_id, team_id, season_prev, season_id ))
+        if len(df) < 4:
+            return None
         team_name = df[df['current_player']==True]['team_name'].iloc[0]
         other_team_name = df[df['current_player']==False]['team_name'].iloc[0]
         season_name = f"{season_id}/{season_id+1}"
