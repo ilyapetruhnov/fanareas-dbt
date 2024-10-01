@@ -205,9 +205,7 @@ class FeaturedQuizzes(Quizzes):
     
     def trophies_won(self, team_id, season_id):
         correct_df = self.generate_df(trophies_query.format(team_id, season_id))
-        if correct_df.empty:
-            return None
-        team_name = correct_df['team_name'].iloc[0]
+        team_name = team_mapping[team_id]
         if correct_df.empty:
             correct_response = 'None'
         else:
@@ -256,7 +254,7 @@ class FeaturedQuizzes(Quizzes):
         season_name = f"{season}/{season_1}"
 
         correct_df = self.generate_df(transfers_query.format(team_id))
-        if correct_df.empty:
+        if season_name not in correct_df['season'].unique():
             return None
         competition_id = correct_df['to_competition_id'].iloc[0]
         others_df = self.generate_df(other_transfers_query.format(team_id, season_name, competition_id))
