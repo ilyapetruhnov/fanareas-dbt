@@ -193,7 +193,8 @@ class FeaturedQuizzes(Quizzes):
         league_id = [k for k, v in league_mapping.items() if v == league_name][0]
         options_df = self.generate_df(team_options_query.format(league_id, season_id))
         option_lst = list(options_df['club_name'].unique())
-        option_lst.remove(correct_response)
+        if correct_response in option_lst:
+            option_lst.remove(correct_response)
         options = random.sample(option_lst, 3)
         options.append(correct_response)
 
