@@ -53,7 +53,7 @@ def new_featured_quiz(context) -> bool:
     season_ids = [2009,2011]
     for team_id, season_id in product(team_ids, season_ids):
         featured_quiz.create_quiz(team_id, season_id)
-        context.log.info(f"generated quiz for {len(team_ids, season_ids)}")
+        context.log.info(f"generated quiz for {team_ids} in {season_ids} season")
         time.sleep(5)
     return True
 
