@@ -53,8 +53,8 @@ class FeaturedQuizzes(Quizzes):
         tags = self.quiz_tags(
             team_name, 
             season_name, 
-            entityIdTeam=team_id, 
-            entityIdSeason=season_id,
+            entityIdTeam=int(team_id), 
+            entityIdSeason=int(season_id),
             entityTypeTeam=1,
             entityTypeSeason=2
                               )
