@@ -70,6 +70,10 @@ class Quizzes:
             self.quiz_collection.append(question)
         return True
     
+    def clear_collection(self):
+        self.quiz_collection = []
+        return True
+    
     def get_season(self):
         seasons = ['2020/2021', '2021/2022', '2022/2023', '2023/2024']
         return random.choice(seasons)

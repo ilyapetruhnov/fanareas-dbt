@@ -1,5 +1,6 @@
 from dagster import asset
 import random
+from itertools import product
 import time
 from dagster_fanareas.quizzes.quizzes import Quizzes
 from dagster_fanareas.quizzes.transferQuizzes import TransferQuizzes
@@ -9,6 +10,7 @@ from dagster_fanareas.quizzes.teamQuizz import TeamQuizz
 from dagster_fanareas.quizzes.playerQuizzes import PlayerQuizzes
 from dagster_fanareas.quizzes.nationalQuizzes import NationalTeamQuizzes
 from dagster_fanareas.quizzes.stadiumQuizzes import StadiumQuizzes
+from dagster_fanareas.quizzes.featuredQuizzes import FeaturedQuizzes
 from dagster_fanareas.quizzes.queries import *
 from dagster_fanareas.ops.utils import get_dim_name_and_id
 from dagster_fanareas.quizzes.quiz_collection import validate_team_season, post_guess_team_player_quiz
@@ -36,6 +38,23 @@ def new_guess_the_player_quiz(context) -> bool:
         random.shuffle(batch)
         player_quiz.post_quiz(batch)
         time.sleep(10)
+    return True
+
+@asset(group_name="quizzes")
+def new_featured_quiz(context) -> bool:
+    title = 'Featured quiz'
+    description = 'Featured quiz description'
+    quiz_type = 0
+    is_demo = False
+    featured_quiz = FeaturedQuizzes(title, description, quiz_type, is_demo)
+    # team_ids = [11,985,631,148,31,131,418,506,12,6195,46,27,16,5]
+    # season_ids = [2005,2006,2007,2008,2009,2010,2011,2012,2013,2014]
+    team_ids = [11,31,5]
+    season_ids = [2009,2011]
+    for team_id, season_id in product(team_ids, season_ids):
+        featured_quiz.create_quiz(team_id, season_id)
+        context.log.info(f"generated quiz for {len(team_ids, season_ids)}")
+        time.sleep(5)
     return True
 
 @asset(group_name="quizzes")

@@ -66,12 +66,62 @@ else:
     dbt_manifest_path = dbt_project_dir.joinpath("target", "manifest.json")
 
 
+ordinal_mapping = {
+    1: "1st",
+    2: "2nd",
+    3: "3rd",
+    4: "4th",
+    5: "5th",
+    6: "6th",
+    7: "7th",
+    8: "8th",
+    9: "9th",
+    10: "10th",
+    11: "11th",
+    12: "12th",
+    13: "13th",
+    14: "14th",
+    15: "15th",
+    16: "16th",
+    17: "17th",
+    18: "18th",
+    19: "19th",
+    20: "20th"
+}
+
+times_mapping = {
+    1: "once",
+    2: "twice",
+    3: "three times",
+    4: "four times",
+    5: "five times",
+    6: "six times",
+    7: "seven times"
+}
+
 league_mapping = {
     'ES1': 'LaLiga',
     'GB1': 'Premier League',
     'L1': 'Bundesliga',
     'IT1': 'Serie A',
     'FR1': 'Ligue 1'
+}
+
+team_mapping = {
+'11'  :'Arsenal FC',
+'985':'Manchester United',
+'631':'Chelsea FC',
+'148':'Tottenham Hotspur',
+'31':'Liverpool FC',
+'131':'FC Barcelona',
+'418':'Real Madrid',
+'506':'Juventus FC',
+'12': 'AS Roma',
+'6195':'SSC Napoli',
+'46' :'Inter Milan',
+'27' :'Bayern Munich',
+'16' :'Borussia Dortmund',
+'5' :'AC Milan'
 }
 
 
