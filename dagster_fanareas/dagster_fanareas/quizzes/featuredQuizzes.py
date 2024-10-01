@@ -24,7 +24,7 @@ class FeaturedQuizzes(Quizzes):
 
         return json_data
     
-    def post_featured_quiz(self, quiz_title, quiz_description, questions, tags = None):
+    def post_featured_quiz(self, quiz_title, quiz_description, questions, tags):
         random.shuffle(questions)
         json_data = self.featured_quiz_template(quiz_title, quiz_description, questions, tags)
         return post_json(json_data, self.url)
@@ -49,7 +49,15 @@ class FeaturedQuizzes(Quizzes):
         quiz_description = f"5-question quiz on {team_name} in {season_name} season"
         self.collect_featured_quiz_questions(team_id, season_id)
         questions = random.sample(self.quiz_collection, 5)
-        return self.post_featured_quiz(quiz_title, quiz_description, questions, tags = None)
+        tags = self.quiz_tags(
+            team_name, 
+            season_name, 
+            entityIdTeam=team_id, 
+            entityIdSeason=season_id,
+            entityTypeTeam=1,
+            entityTypeSeason=2
+                              )
+        return self.post_featured_quiz(quiz_title, quiz_description, questions, tags = tags)
 
     def top_player_stats(self, team_id, season_id):
         questions = []
