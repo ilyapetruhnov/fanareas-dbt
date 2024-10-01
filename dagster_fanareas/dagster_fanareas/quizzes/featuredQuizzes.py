@@ -31,7 +31,8 @@ class FeaturedQuizzes(Quizzes):
     
     def collect_featured_quiz_questions(self, team_id, season_id):
         self.clear_collection()
-        self.collect_questions(self.top_player_stats(team_id, season_id))
+        self.collect_questions(self.top_player_stats(team_id, season_id, striker=True))
+        self.collect_questions(self.top_player_stats(team_id, season_id, striker=False))
         self.collect_questions(self.part_of_squad(team_id, season_id))
         self.collect_questions(self.player_position(team_id, season_id))
         self.collect_questions(self.team_standing(team_id, season_id))
@@ -59,32 +60,32 @@ class FeaturedQuizzes(Quizzes):
                               )
         return self.post_featured_quiz(quiz_title, quiz_description, questions, tags = tags)
 
-    def top_player_stats(self, team_id, season_id):
-        questions = []
+    def top_player_stats(self, team_id, season_id, striker):
         df = self.generate_df(top_player_stats_query.format(team_id, season_id))
-        metrics = ['goals','matches_coming_off_the_bench']
         team_name = df['team_arr'].iloc[0][0]
         league_name = df['league_name'].iloc[0]
         season_name = f"{season_id}/{season_id+1}"
-
-        for i in metrics:
+        if striker == True:
+            i = 'goals'
             correct_df = df.sort_values(i, ascending=False).head(4)[['fullname','appearances',i]]
             correct_response = correct_df['fullname'].iloc[0]
             metric_num = int(correct_df.iloc[0][i])
-            # num_appearances = int(correct_df.iloc[0]['appearances'])
             options = list(correct_df['fullname'].unique())
-            if i == 'goals':
-                question_statement = f"Who was {team_name} top striker during the {season_name} season?"
-                description = f"{correct_response} was {team_name} top scorer that season, scoring {metric_num} goals in the {league_name}"
-            elif i == 'matches_coming_off_the_bench':
-                question_statement = f"Which player made the most appearances coming off the bench for {team_name} in the {season_name} season?"
-                description = f"{correct_response} was known for his role as a super-sub during that season, being brought on in {metric_num} matches to change the dynamic of games"
+            question_statement = f"Who was {team_name} top striker during the {season_name} season?"
+            description = f"{correct_response} was {team_name} top scorer that season, scoring {metric_num} goals in the {league_name}"
+        else:
+            i = 'matches_coming_off_the_bench'
+            correct_df = df.sort_values(i, ascending=False).head(4)[['fullname','appearances',i]]
+            correct_response = correct_df['fullname'].iloc[0]
+            metric_num = int(correct_df.iloc[0][i])
+            options = list(correct_df['fullname'].unique())
+            question_statement = f"Which player made the most appearances coming off the bench for {team_name} in the {season_name} season?"
+            description = f"{correct_response} was known for his role as a super-sub during that season, being brought on in {metric_num} matches to change the dynamic of games"
             # elif i == 'yellow_cards':
             #     question_statement = f"Which {team_name} player received the most bookings (yellow cards) during the {season_name} season?"
             #     description = f"{correct_response} has often been on the referee's radar. He received {metric_num} yellow cards in his {num_appearances} {league_name} appearances"
-            question = self.question_template(question_statement, options, correct_response, description)
-            questions.append(question)
-        return questions
+        question = self.question_template(question_statement, options, correct_response, description)
+        return question
     
     
     def part_of_squad(self, team_id, season_id):
@@ -102,7 +103,7 @@ class FeaturedQuizzes(Quizzes):
         question_statement = f"Which player was not in {team_name} squad during the {season_name} season?"
         description = f"""{correct_response} left {team_name} for {other_team_name} before the start of the {season_name} season"""
         question = self.question_template(question_statement, options, correct_response, description)
-        return [question]
+        return question
     
     def player_position(self, team_id, season_id):
         df = self.generate_df(position_played_query.format(team_id, season_id))
@@ -116,7 +117,7 @@ class FeaturedQuizzes(Quizzes):
         question_statement = f"Who played as a {correct_position} for {team_name} during the {season_name} season?"
         description = f"""{correct_response} was a key {correct_position_group} for Arsenal in the {season_name} season"""
         question = self.question_template(question_statement, options, correct_response, description)
-        return [question]
+        return question
     
     def team_standing(self, team_id, season_id):
         df = self.generate_df(standing_query.format(team_id, season_id))
@@ -138,7 +139,7 @@ class FeaturedQuizzes(Quizzes):
             description = f"""{team_name} finished {correct_response} in the {league_name} with {points} points"""
 
         question = self.question_template(question_statement, options, correct_response, description)
-        return [question]
+        return question
     
     def sent_off(self, team_id, season_id):
         df = self.generate_df(sent_off_query.format(team_id, season_id, team_id, season_id))
@@ -157,7 +158,7 @@ class FeaturedQuizzes(Quizzes):
         question_statement = f"Which {team_name} player was sent off during a {league_name} match in the {season_name} season?"
         description = f"""{correct_response}. He was sent off {times} during the {season_name} season"""
         question = self.question_template(question_statement, options, correct_response, description)
-        return [question]
+        return question
     
         
     def own_goals(self, team_id, season_id):
@@ -180,7 +181,7 @@ class FeaturedQuizzes(Quizzes):
         else:
             description = f"""{team_name} {position} {correct_response} scored {total_own_goals} own goals during the {season_name} season"""
         question = self.question_template(question_statement, options, correct_response, description)
-        return [question]
+        return question
     
 
     def biggest_win(self, team_id, season_id):
@@ -204,7 +205,7 @@ class FeaturedQuizzes(Quizzes):
         question_statement = f"{winner_team} secured their largest {league_name} win of the season with a {score} scoreline. Which team did they defeat by this margin?"
         description = f"""The biggest win of the {season_name} season came against {correct_response}, with an emphatic {score} victory"""
         question = self.question_template(question_statement, options, correct_response, description)
-        return [question]
+        return question
     
     def trophies_won(self, team_id, season_id):
         correct_df = self.generate_df(trophies_query.format(team_id, season_id))
@@ -249,7 +250,7 @@ class FeaturedQuizzes(Quizzes):
         else:
             description = f"""{correct_response}. {team_name} did not win any other major trophies that season"""
         question = self.question_template(question_statement, options, correct_response, description)
-        return [question]
+        return question
     
     def transfers(self, team_id, season_id):
         season = str(season_id)[-2:]
@@ -271,7 +272,7 @@ class FeaturedQuizzes(Quizzes):
         question_statement = f"Which of the following players joined {team_name} during the {season_name} season?"
         description = f"""{correct_response} joined {team_name} from {from_team} for a €{fee_value} million transfer fee"""
         question = self.question_template(question_statement, options, correct_response, description)
-        return [question]
+        return question
     
 
 
