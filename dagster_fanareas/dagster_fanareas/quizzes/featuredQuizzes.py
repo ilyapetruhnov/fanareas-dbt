@@ -38,8 +38,15 @@ class FeaturedQuizzes(Quizzes):
         self.collect_questions(self.team_standing(team_id, season_id))
         self.collect_questions(self.sent_off(team_id, season_id))
         self.collect_questions(self.own_goals(team_id, season_id))
-        self.collect_questions(self.trophies_won(team_id, season_id))
-        self.collect_questions(self.biggest_win(team_id, season_id))
+        try:
+            self.collect_questions(self.trophies_won(team_id, season_id))
+        except Exception as e:
+            pass
+        try:
+            self.collect_questions(self.biggest_win(team_id, season_id))
+        except Exception as e:
+            pass
+
         self.collect_questions(self.transfers(team_id, season_id))
         return True
 
