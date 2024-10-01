@@ -115,7 +115,7 @@ class FeaturedQuizzes(Quizzes):
         correct_position_group = correct_df['position_group'].iloc[0]
         options = list(df['fullname'].unique())
         question_statement = f"Who played as a {correct_position} for {team_name} during the {season_name} season?"
-        description = f"""{correct_response} was a key {correct_position_group} for Arsenal in the {season_name} season"""
+        description = f"""{correct_response} was a key {correct_position_group} for {team_name} in the {season_name} season"""
         question = self.question_template(question_statement, options, correct_response, description)
         return question
     
