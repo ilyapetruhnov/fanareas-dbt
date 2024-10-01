@@ -217,6 +217,8 @@ class FeaturedQuizzes(Quizzes):
 
         other_df = self.generate_df(other_trophies_query.format(team_id))
         b = list(set(other_df['trophies'].iloc[0]))
+        second_leagues = ['Serie B','Championship']
+        b = [i for i in b if i not in second_leagues]
         b.append('None')
 
         if correct_response == 'None':

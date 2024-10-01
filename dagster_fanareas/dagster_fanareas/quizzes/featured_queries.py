@@ -180,7 +180,7 @@ group by team_name
 other_trophies_query = """
 select
 team_name,
-array_agg(distinct trophy) || ARRAY['UEFA Super Cup', 'Europa League','UEFA Champions League'] as trophies
+array_agg(distinct trophy) || ARRAY['UEFA Super Cup', 'UEFA Champions League'] as trophies
 from tm_team_trophies where team_id = '{}'
 group by team_name
 """
