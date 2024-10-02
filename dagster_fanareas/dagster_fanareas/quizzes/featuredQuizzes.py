@@ -31,13 +31,34 @@ class FeaturedQuizzes(Quizzes):
     
     def collect_featured_quiz_questions(self, team_id, season_id):
         self.clear_collection()
-        self.collect_questions(self.top_player_stats(team_id, season_id, striker=True))
-        self.collect_questions(self.top_player_stats(team_id, season_id, striker=False))
-        self.collect_questions(self.part_of_squad(team_id, season_id))
-        self.collect_questions(self.player_position(team_id, season_id))
-        self.collect_questions(self.team_standing(team_id, season_id))
-        self.collect_questions(self.sent_off(team_id, season_id))
-        self.collect_questions(self.own_goals(team_id, season_id))
+        try:
+            self.collect_questions(self.top_player_stats(team_id, season_id, striker=True))
+        except Exception as e:
+            pass
+        try:
+            self.collect_questions(self.top_player_stats(team_id, season_id, striker=False))
+        except Exception as e:
+            pass
+        try:
+            self.collect_questions(self.part_of_squad(team_id, season_id))
+        except Exception as e:
+            pass
+        try:
+            self.collect_questions(self.player_position(team_id, season_id))
+        except Exception as e:
+            pass
+        try:
+            self.collect_questions(self.team_standing(team_id, season_id))
+        except Exception as e:
+            pass
+        try:
+            self.collect_questions(self.sent_off(team_id, season_id))
+        except Exception as e:
+            pass
+        try:
+            self.collect_questions(self.own_goals(team_id, season_id))
+        except Exception as e:
+            pass
         try:
             self.collect_questions(self.trophies_won(team_id, season_id))
         except Exception as e:
@@ -46,8 +67,10 @@ class FeaturedQuizzes(Quizzes):
             self.collect_questions(self.biggest_win(team_id, season_id))
         except Exception as e:
             pass
-
-        self.collect_questions(self.transfers(team_id, season_id))
+        try:
+            self.collect_questions(self.transfers(team_id, season_id))
+        except Exception as e:
+            pass
         return True
 
     def create_quiz(self, team_id, season_id):

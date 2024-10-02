@@ -72,7 +72,7 @@ union(
 select fullname, team_arr[1] as team_name, league_name, position_group, second_yellow_cards, red_cards, false as sent_off  from tm_dim_player_stats
 where '{}' = ANY(team_id_arr)
 and season_id = {}
-and (second_yellow_cards = 0 or red_cards = 0)
+and (second_yellow_cards = 0 and red_cards = 0)
 limit 3)
 """
 
