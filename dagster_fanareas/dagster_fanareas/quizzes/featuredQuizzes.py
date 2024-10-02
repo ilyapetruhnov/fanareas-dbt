@@ -51,10 +51,10 @@ class FeaturedQuizzes(Quizzes):
             self.collect_questions(self.team_standing(team_id, season_id))
         except Exception as e:
             pass
-        try:
-            self.collect_questions(self.sent_off(team_id, season_id))
-        except Exception as e:
-            pass
+        # try:
+        #     self.collect_questions(self.sent_off(team_id, season_id))
+        # except Exception as e:
+        #     pass
         try:
             self.collect_questions(self.own_goals(team_id, season_id))
         except Exception as e:

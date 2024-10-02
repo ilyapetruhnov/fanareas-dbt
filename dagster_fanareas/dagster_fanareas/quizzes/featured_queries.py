@@ -110,7 +110,7 @@ JOIN
 t winner_team ON vw1.winning_team = winner_team.id
 JOIN
 t loser_team ON vw1.losing_team = loser_team.id
-where goal_difference > 5
+where goal_difference > 4
 order by goal_difference desc
     )
 select

@@ -53,7 +53,7 @@ def new_featured_quiz(context) -> bool:
                 '148',
                 '31',
                 '131',
-                '418',
+                #'418',
                 '506',
                 #'12',
                 #'6195',
@@ -61,11 +61,11 @@ def new_featured_quiz(context) -> bool:
                 '27',
                 #'16',
                 '5']
-    season_ids = [2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016]
+    season_ids = [2008,2009,2010,2011,2012,2013,2014,2015,2016]
     combs = product(team_ids, season_ids)
     combs_list = list(combs)
     random.shuffle(combs_list)
-    sample_combs_list = random.sample(combs_list, 30)
+    sample_combs_list = random.sample(combs_list, 33)
     shuffled_combs = iter(sample_combs_list)
     for team_id, season_id in shuffled_combs:
         featured_quiz.create_quiz(team_id, season_id)
