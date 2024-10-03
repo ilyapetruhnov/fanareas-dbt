@@ -85,12 +85,16 @@ def new_featured_quiz(context) -> bool:
     # combs_list = list(combs)
     # random.shuffle(combs_list)
     # sample_combs_list = random.sample(combs_list, 33)
-    shuffled_combs = ['418',2021]
     # shuffled_combs = iter(sample_combs_list)
-    for team_id, season_id in shuffled_combs:
-        featured_quiz.create_quiz(team_id, season_id)
-        context.log.info(f"generated quiz for {team_id} in {season_id} season")
-        time.sleep(5)
+    # for team_id, season_id in shuffled_combs:
+    #     featured_quiz.create_quiz(team_id, season_id)
+    #     context.log.info(f"generated quiz for {team_id} in {season_id} season")
+    #     time.sleep(5)
+
+    team_id = '418'
+    season_id = 2021
+    featured_quiz.create_quiz(team_id, season_id)
+
     return True
 
 @asset(group_name="quizzes")
