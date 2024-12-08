@@ -567,7 +567,7 @@ class PlayerQuizzes(Quizzes):
         lst = [options1,options2,options3,options4,options5]
         question_statement = 'Who scored this goal?'
         for options in lst:
-            correct_response = options.pop(0)
+            correct_response = options[0]
             correct_url = ''.join(correct_response.split()[1:]).lower()
             image_url = f'/gifs/{correct_url}.gif'
             question = self.question_template(question_statement = question_statement,
