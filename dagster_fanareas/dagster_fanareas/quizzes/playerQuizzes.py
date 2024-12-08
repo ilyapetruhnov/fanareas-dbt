@@ -519,6 +519,65 @@ class PlayerQuizzes(Quizzes):
             question = self.question_template(question_statement, options, correct_response, description)
             questions.append(question)
         return questions
+    
+    def player_gif_quiz(self) -> list:
+        questions = []
+        options1 = [
+            'Dejan Stankovich',
+            'Wesley Sneijder',
+            'Diego Milito',
+            'Thiago Motta'
+        ]
+
+        options2 = [
+            'Alessandro Del Piero',
+            'Mauro Camoranesi',
+            'Claudio Marchisio',
+            'Sebastian Giovinco'
+        ]
+
+        options3 = [
+            'Dennis Bergkamp',
+            'Eric Cantona',
+            'Roberto Baggio',
+            'Gianfranco Zola'
+        ]
+
+        options4 = [
+            "Juninho",
+            'Alessandro Del Piero',
+            'Andrea Pirlo',
+            'David Beckham'
+        ]
+
+        options5 = [
+            "Wayne Rooney",
+            'Paul Scholes',
+            'Carlos Tévez',
+            'Michael Owen'
+        ]
+
+        # options6 = [
+        #     'Aaron Ramsey',
+        #     'Ilkay Gündogan',
+        #     'Steven Gerrard',
+        #     'Martin Ødegaard'
+        # ]
+        
+        lst = [options1,options2,options3,options4,options5]
+        question_statement = 'Who scored this goal?'
+        for options in lst:
+            correct_response = options.pop(0)
+            correct_url = ''.join(correct_response.split()[1:]).lower()
+            image_url = f'/gifs/{correct_url}.gif'
+            question = self.question_template(question_statement = question_statement,
+                                              correct_response = correct_response,
+                                              options = options, 
+                                              image_url = image_url, 
+                                              image_size = 4)
+            questions.append(question)
+
+        return questions
 
     
 

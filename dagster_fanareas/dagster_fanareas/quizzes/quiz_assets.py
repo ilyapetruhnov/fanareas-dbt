@@ -18,6 +18,19 @@ from dagster_fanareas.quizzes.quiz_collection import validate_team_season, post_
 
 
 @asset(group_name="quizzes")
+def gif_quiz(context) -> bool:
+    title = "Guess the player"
+    description = "5 questions about football players"
+    quiz_type = 3
+    is_demo = False
+    player_quiz = PlayerQuizzes(title, description, quiz_type, is_demo)
+    result = player_quiz.player_gif_quiz()
+    context.log.info(f"generated {len(result)} questions")
+    random.shuffle(result)
+    player_quiz.post_quiz(result)
+    return True
+
+@asset(group_name="quizzes")
 def new_guess_the_player_quiz(context) -> bool:
     title = "Guess the player"
     description = "5 questions about football players"
