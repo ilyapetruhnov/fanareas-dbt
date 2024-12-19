@@ -7,6 +7,7 @@ from dagster_fanareas.quizzes.transferQuizzes import TransferQuizzes
 from dagster_fanareas.quizzes.photoQuizzes import PhotoQuizzes
 from dagster_fanareas.quizzes.teamQuizzes import TeamQuizzes
 from dagster_fanareas.quizzes.teamQuizz import TeamQuizz
+from dagster_fanareas.quizzes.gifQuizzes import GIFQuizzes
 from dagster_fanareas.quizzes.playerQuizzes import PlayerQuizzes
 from dagster_fanareas.quizzes.nationalQuizzes import NationalTeamQuizzes
 from dagster_fanareas.quizzes.stadiumQuizzes import StadiumQuizzes
@@ -21,13 +22,10 @@ from dagster_fanareas.quizzes.quiz_collection import validate_team_season, post_
 def gif_quiz(context) -> bool:
     title = "Guess the player"
     description = "5 questions about football players"
-    quiz_type = 3
+    quiz_type = 4
     is_demo = False
-    player_quiz = PlayerQuizzes(title, description, quiz_type, is_demo)
-    result = player_quiz.player_gif_quiz()
-    context.log.info(f"generated {len(result)} questions")
-    random.shuffle(result)
-    player_quiz.post_quiz(result)
+    gif_quiz = GIFQuizzes(title, description, quiz_type, is_demo)
+    gif_quiz.create_bouns_quizzes()
     return True
 
 @asset(group_name="quizzes")

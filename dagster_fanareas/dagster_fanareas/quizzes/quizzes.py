@@ -554,6 +554,17 @@ class Quizzes:
         description = f"""{player_1} played for {team_1} / {player_2} played for {team_2} / {player_3} played for {team_3}"""
         question = self.demo_question_template(statement, options, correct_response, description)
         return question
+    
+    def create_gif_quiz(self, options: list, correct_response: str, question_statement: str):
+        correct_url = ''.join(correct_response.split()[1:]).lower()
+        image_url = f'/gifs/{correct_url}.gif'
+        question = self.question_template(question_statement = question_statement,
+                                          correct_response = correct_response,
+                                          options = options, 
+                                          image_url = image_url, 
+                                          image_size = 4)
+        return question
+            
 
     def post_quiz(self, questions, tags = None):
         random.shuffle(questions)
