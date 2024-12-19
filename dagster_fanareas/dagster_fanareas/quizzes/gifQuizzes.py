@@ -6,12 +6,6 @@ class GIFQuizzes(Quizzes):
         super().__init__(title, description, quiz_type, is_demo)
         self.quiz_collection = []
 
-    def create_bouns_quizzes(self):
-        self.post_quiz(self.bonus_quiz_1())
-        self.post_quiz(self.bonus_quiz_2())
-        self.post_quiz(self.bonus_quiz_3())
-        return True
-
     def create_gif_question(self, options: list, correct_response: str, question_statement: str):
         correct_url = ''.join(correct_response.split()[1:]).lower()
         image_url = f'/gifs/{correct_url}.gif'
@@ -33,6 +27,7 @@ class GIFQuizzes(Quizzes):
         return True
 
     def bonus_quiz_1(self):
+        self.clear_collection()
         question_statement = 'Who scored this goal?'
         self.bouns_question(question_statement, 
                             options = [
@@ -78,6 +73,7 @@ class GIFQuizzes(Quizzes):
 
     
     def bonus_quiz_2(self):
+        self.clear_collection()
         question_statement = 'Who scored this goal?'
         self.bouns_question(question_statement, 
                             options = [
@@ -122,6 +118,7 @@ class GIFQuizzes(Quizzes):
         return self.quiz_collection 
     
     def bonus_quiz_3(self):
+        self.clear_collection()
         question_statement = 'Who is the goalkeeper making this save?'
         self.bouns_question(question_statement, 
                             options = [

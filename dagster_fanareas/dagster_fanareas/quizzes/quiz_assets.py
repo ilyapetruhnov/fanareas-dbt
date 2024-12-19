@@ -25,7 +25,11 @@ def gif_quiz(context) -> bool:
     quiz_type = 4
     is_demo = False
     gif_quiz = GIFQuizzes(title, description, quiz_type, is_demo)
-    gif_quiz.create_bouns_quizzes()
+    gif_quiz.post_quiz(gif_quiz.bonus_quiz_1())
+    time.sleep(5)
+    gif_quiz.post_quiz(gif_quiz.bonus_quiz_2())
+    time.sleep(5)
+    gif_quiz.post_quiz(gif_quiz.bonus_quiz_3())
     return True
 
 @asset(group_name="quizzes")
