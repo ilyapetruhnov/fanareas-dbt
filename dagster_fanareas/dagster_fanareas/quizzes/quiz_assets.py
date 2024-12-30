@@ -8,6 +8,7 @@ from dagster_fanareas.quizzes.photoQuizzes import PhotoQuizzes
 from dagster_fanareas.quizzes.teamQuizzes import TeamQuizzes
 from dagster_fanareas.quizzes.teamQuizz import TeamQuizz
 from dagster_fanareas.quizzes.gifQuizzes import GIFQuizzes
+from dagster_fanareas.quizzes.lineupQuizzes import LineupQuizzes
 from dagster_fanareas.quizzes.playerQuizzes import PlayerQuizzes
 from dagster_fanareas.quizzes.nationalQuizzes import NationalTeamQuizzes
 from dagster_fanareas.quizzes.stadiumQuizzes import StadiumQuizzes
@@ -30,6 +31,28 @@ def gif_quiz(context) -> bool:
     gif_quiz.post_quiz(gif_quiz.bonus_quiz_2())
     time.sleep(5)
     gif_quiz.post_quiz(gif_quiz.bonus_quiz_3())
+    return True
+
+@asset(group_name="quizzes")
+def lineup_quiz(context) -> bool:
+    title = "Guess the team"
+    description = "5 questions about football teams"
+    quiz_type = 5
+    is_demo = False
+    lineup_quiz = LineupQuizzes(title, description, quiz_type, is_demo)
+    result = lineup_quiz.collect_lineups_questions()
+    random.shuffle(result)
+    context.log.info(f"generated {len(result)} questions")
+    # Generate 5 batches with 5 items each
+    batches = [result[i:i + 5] for i in range(0, len(result), 5)]
+    context.log.info(f"generated {len(batches)} batches")
+    random.shuffle(batches)
+    for idx, batch in enumerate(batches, start=1):
+        context.log.info(f"generated quiz {idx}")
+        context.log.info(f"batch size {len(batch)}")
+        random.shuffle(batch)
+        lineup_quiz.post_quiz(batch)
+        time.sleep(10)
     return True
 
 @asset(group_name="quizzes")
