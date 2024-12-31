@@ -1,6 +1,5 @@
 from dagster import asset
 import random
-from itertools import product
 import time
 from dagster_fanareas.quizzes.quizzes import Quizzes
 from dagster_fanareas.quizzes.transferQuizzes import TransferQuizzes
@@ -9,6 +8,8 @@ from dagster_fanareas.quizzes.teamQuizzes import TeamQuizzes
 from dagster_fanareas.quizzes.teamQuizz import TeamQuizz
 from dagster_fanareas.quizzes.gifQuizzes import GIFQuizzes
 from dagster_fanareas.quizzes.lineupQuizzes import LineupQuizzes
+from dagster_fanareas.quizzes.careerPathQuizzes import CareerPathQuizzes
+from dagster_fanareas.quizzes.exclusiveQuizzes import RulesQuizzes
 from dagster_fanareas.quizzes.playerQuizzes import PlayerQuizzes
 from dagster_fanareas.quizzes.nationalQuizzes import NationalTeamQuizzes
 from dagster_fanareas.quizzes.stadiumQuizzes import StadiumQuizzes
@@ -17,7 +18,16 @@ from dagster_fanareas.quizzes.queries import *
 from dagster_fanareas.ops.utils import get_dim_name_and_id
 from dagster_fanareas.quizzes.quiz_collection import validate_team_season, post_guess_team_player_quiz
 
-
+@asset(group_name="quizzes")
+def rules_quiz(context) -> bool:
+    title = "Football Essentials"
+    description = "5 questions about football rules and dimensions "
+    quiz_type = 5
+    is_demo = False
+    rules_quiz = RulesQuizzes(title, description, quiz_type, is_demo)
+    result = rules_quiz.create_rules_quiz()
+    rules_quiz.post_quiz(result)
+    return True
 
 @asset(group_name="quizzes")
 def gif_quiz(context) -> bool:
@@ -52,6 +62,28 @@ def lineup_quiz(context) -> bool:
         context.log.info(f"batch size {len(batch)}")
         random.shuffle(batch)
         lineup_quiz.post_quiz(batch)
+        time.sleep(10)
+    return True
+
+@asset(group_name="quizzes")
+def career_path_quiz(context) -> bool:
+    title = "Guess the player"
+    description = "5 questions about football players"
+    quiz_type = 5
+    is_demo = False
+    career_quiz = CareerPathQuizzes(title, description, quiz_type, is_demo)
+    result = career_quiz.collect_career_path_questions()
+    random.shuffle(result)
+    context.log.info(f"generated {len(result)} questions")
+    # Generate 5 batches with 5 items each
+    batches = [result[i:i + 5] for i in range(0, len(result), 5)]
+    context.log.info(f"generated {len(batches)} batches")
+    random.shuffle(batches)
+    for idx, batch in enumerate(batches, start=1):
+        context.log.info(f"generated quiz {idx}")
+        context.log.info(f"batch size {len(batch)}")
+        random.shuffle(batch)
+        career_quiz.post_quiz(batch)
         time.sleep(10)
     return True
 
