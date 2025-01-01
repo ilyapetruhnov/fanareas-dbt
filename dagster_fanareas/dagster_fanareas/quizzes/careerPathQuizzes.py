@@ -27,7 +27,7 @@ class CareerPathQuizzes(Quizzes):
         return True
     
     def format_player_name(self, player_name: str):
-        return " ".join(word.capitalize() for word in player_name[:-4].split('-'))
+        return " ".join(word.capitalize() for word in player_name.split('-'))
 
     def collect_career_path_questions(self):
         self.clear_collection()
