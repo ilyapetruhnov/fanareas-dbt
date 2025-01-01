@@ -11,7 +11,8 @@ class CareerPathQuizzes(Quizzes):
         image_url = f'/career_path/{img_name}.jpg'
         correct_response = self.format_player_name(img_name)
 
-        options.remove(correct_response)
+        if correct_response in options:
+            options.remove(correct_response)
         q_options = random.sample(options, 3)
         q_options.append(correct_response)
 
