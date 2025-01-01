@@ -19,9 +19,9 @@ class CareerPathQuizzes(Quizzes):
         question = self.question_template(
             question_statement = question_statement,
             correct_response = correct_response,
-            options = options,
+            options = q_options,
             image_url = image_url,
-            image_size = 4
+            image_size = 3
             )
         self.quiz_collection.append(question)
         return True
