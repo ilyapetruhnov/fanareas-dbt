@@ -111,6 +111,7 @@ defs = Definitions(
             transfers_quiz_job,
             photo_quiz_job,
             post_news_job,
+            post_tokens_job,
             post_team_facts_job,
             post_facts_by_team_job,
             post_facts_player_season_job,
@@ -118,6 +119,7 @@ defs = Definitions(
             ingest_job
             ],
     schedules=[news_schedule,
+               tokens_schedule,
                transfers_quiz_schedule,
                photo_quiz_schedule,
                guess_the_player_quiz_schedule,
