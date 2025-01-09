@@ -35,6 +35,8 @@ guess_the_team_quiz_job = define_asset_job(name="trigger_team_quiz", selection="
 
 post_news_job = define_asset_job(name="trigger_post_news", selection="post_news")
 
+post_tokens_job = define_asset_job(name="trigger_post_tokens", selection="post_tokens")
+
 # post_facts_job = define_asset_job(name="trigger_post_facts", selection="publish_one_fact")
 post_team_facts_job = define_asset_job(name="trigger_post_team_facts", selection="publish_team_fact")
 
@@ -49,6 +51,11 @@ dbt_job = define_asset_job("daily_dbt_assets", selection=dbt_selection)
 news_schedule = ScheduleDefinition(
     job=post_news_job, 
     cron_schedule="0 0,2,4,6,8,10,12,14,16,18,20,22 * * *"
+)
+
+tokens_schedule = ScheduleDefinition(
+    job=post_tokens_job, 
+    cron_schedule="0 7 * * *"
 )
 
 transfers_quiz_schedule = ScheduleDefinition(

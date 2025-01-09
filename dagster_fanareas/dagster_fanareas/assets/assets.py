@@ -1,8 +1,7 @@
 from dagster import asset
 import pandas as pd
-from dagster_fanareas.ops.utils import api_call, fetch_data, flatten_list, upsert, call_news
+from dagster_fanareas.ops.utils import api_call, fetch_data, flatten_list, upsert, call_url
 from dagster_fanareas.constants import base_url
-from itertools import product
 import time
 
 @asset( group_name="ingest", compute_kind="pandas", io_manager_key="db_io_manager")
@@ -208,7 +207,13 @@ def team_stats_detailed(context, team_stats_dict: dict) -> pd.DataFrame:
 @asset( group_name="news")
 def post_news() -> bool:
     url = "https://fanareas.com/api/news/parseNews"
-    call_news(url)
+    call_url(url)
+    return True
+
+@asset(group_name="tokens")
+def post_tokens() -> bool:
+    url = "https://fanareas.com/api/users/sendTokens"
+    call_url(url)
     return True
 
 

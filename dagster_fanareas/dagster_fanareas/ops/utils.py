@@ -125,7 +125,7 @@ def post_json(json_data, url):
     return True
 
 @op
-def call_news(url):
+def call_url(url):
     response = requests.post(url)
 
     if response.status_code == 200:
