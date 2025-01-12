@@ -55,7 +55,7 @@ news_schedule = ScheduleDefinition(
 
 tokens_schedule = ScheduleDefinition(
     job=post_tokens_job, 
-    cron_schedule="0 7 * * *"
+    cron_schedule="0 0 * * *"
 )
 
 transfers_quiz_schedule = ScheduleDefinition(
